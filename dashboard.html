@@ -1,1 +1,77 @@
-nothing here!
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clever | Portal</title>
+    <link rel="icon" type="image/png" href="images/Clever-Logo.jpg"> <!-- Favicon -->
+    <style>
+        /* Reset default margin and padding */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Full page black background */
+        body {
+            background-color: #000;
+            color: white;
+        }
+
+        /* Top Navigation Bar */
+        .navbar {
+            width: 100%;
+            background-color: #1a1a1a; /* Dark gray for contrast */
+            padding: 15px 0;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+
+        /* Navigation links */
+        .nav-item {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            padding: 10px 20px;
+            transition: 0.3s ease-in-out;
+        }
+
+        /* Hover effect */
+        .nav-item:hover {
+            background-color: #333;
+            border-radius: 5px;
+        }
+
+        /* Responsive - Stack items on small screens */
+        @media (max-width: 600px) {
+            .navbar {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <a href="#" class="nav-item">Games</a>
+        <a href="#" class="nav-item">Apps</a>
+        <a href="#" class="nav-item">Movies</a>
+    </nav>
+
+    <!-- Content Section -->
+    <div style="padding-top: 70px; text-align: center;">
+        <h1>Welcome to the Site</h1>
+        <p>Explore Games, Apps, and Movies.</p>
+    </div>
+
+</body>
+</html>
