@@ -18,12 +18,26 @@
         body {
             background-color: #000;
             color: white;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* Animated Background Layer */
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle, rgba(0, 0, 0, 1) 20%, rgba(10, 10, 10, 1) 40%, rgba(30, 30, 30, 1) 80%);
+            transition: background 0.1s ease-out;
+            z-index: -1;
         }
 
         /* Top Navigation Bar */
         .navbar {
             width: 100%;
-            background-color: #1a1a1a; /* Dark gray for contrast */
+            background-color: rgba(26, 26, 26, 0.9); /* Slight transparency */
             padding: 15px 0;
             display: flex;
             justify-content: center;
@@ -31,6 +45,7 @@
             position: fixed;
             top: 0;
             left: 0;
+            z-index: 10;
         }
 
         /* Navigation links */
@@ -44,7 +59,7 @@
 
         /* Hover effect */
         .nav-item:hover {
-            background-color: #333;
+            background-color: rgba(255, 255, 255, 0.2);
             border-radius: 5px;
         }
 
@@ -60,18 +75,26 @@
 </head>
 <body>
 
+    <!-- Animated Background -->
+    <div class="background"></div>
+
     <!-- Navigation Bar -->
     <nav class="navbar">
-        <a href="#" class="nav-item">Games</a>
-        <a href="#" class="nav-item">Apps</a>
-        <a href="#" class="nav-item">Movies</a>
+        <a href="gxmes.html" class="nav-item">Class Tools</a>
+        <a href="apps.html" class="nav-item">Math Help</a>
+        <a href="movies.html" class="nav-item">Learning Tips</a>
     </nav>
 
-    <!-- Content Section -->
-    <div style="padding-top: 70px; text-align: center;">
-        <h1>Welcome to the Site</h1>
-        <p>Explore Games, Apps, and Movies.</p>
-    </div>
+    <!-- JavaScript for Mouse-Responsive Background -->
+    <script>
+        document.addEventListener("mousemove", (event) => {
+            let x = (event.clientX / window.innerWidth) * 100;
+            let y = (event.clientY / window.innerHeight) * 100;
+
+            document.querySelector(".background").style.background = 
+                `radial-gradient(circle at ${x}% ${y}%, rgba(50,50,50,1) 0%, rgba(10,10,10,1) 60%, rgba(0,0,0,1) 100%)`;
+        });
+    </script>
 
 </body>
 </html>
