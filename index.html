@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f9;
+        }
+        .login-container {
+            width: 300px;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        .input-field {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .login-btn, .signup-btn {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .login-btn {
+            background-color: #007bff;
+            color: white;
+        }
+        .login-btn:hover {
+            background-color: #0056b3;
+        }
+        .signup-btn {
+            background-color: #28a745;
+            color: white;
+        }
+        .signup-btn:hover {
+            background-color: #1e7e34;
+        }
+        .error-message {
+            color: red;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <h2>Login</h2>
+    <input type="text" id="username" class="input-field" placeholder="Username" required>
+    <input type="password" id="password" class="input-field" placeholder="Password" required>
+    <button class="login-btn" onclick="login()">Login</button>
+    <p id="error-message" class="error-message"></p>
+    <button class="signup-btn" onclick="redirectToSignUp()">Sign Up</button>
+</div>
+
+<script>
+    function login() {
+        const enteredUsername = document.getElementById("username").value;
+        const enteredPassword = document.getElementById("password").value;
+        const errorMessage = document.getElementById("error-message");
+
+        // Retrieve users from local storage (if any)
+        let users = JSON.parse(localStorage.getItem("users")) || [];
+
+        // Check if user exists
+        const user = users.find(u => u.username === enteredUsername && u.password === enteredPassword);
+
+        if (user) {
+            alert(`Login successful! Welcome, ${user.username}!`);
+            window.location.href = "dashboard.html";  // Replace with your dashboard page
+        } else {
+            errorMessage.textContent = "Invalid username or password.";
+        }
+    }
+
+    function redirectToSignUp() {
+        window.location.href = "signup.html";
+    }
+</script>
+
+</body>
+</html>
