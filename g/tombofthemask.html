@@ -1,1 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clever | Portal</title>
+  <link rel="icon" href="images/Clever-logo.jpg">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+    }
 
+    .background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: radial-gradient(circle, rgba(0, 0, 0, 1) 20%, rgba(10, 10, 10, 1) 40%, rgba(30, 30, 30, 1) 80%);
+      transition: background 0.1s ease-out;
+      z-index: -1;
+    }
+
+    .iframe-container {
+      position: relative;
+      width: 80%;
+      max-width: 1000px;
+      height: 500px;
+      border: 1px solid #ccc;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      z-index: 1;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .bar {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #f8f9fa;
+      padding: 10px;
+      box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .bar button {
+      padding: 5px 10px;
+      border: none;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    .bar button:hover {
+      background-color: #0056b3;
+    }
+
+    .bar span {
+      font-size: 14px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+<div class="background"></div>
+
+<div class="iframe-container">
+  <iframe id="embed-iframe" src="https://google-opensocial.googleusercontent.com/gadgets/ifr?url=https://cdn.jsdelivr.net/gh/sk1bx/element@9cccb2fafb569c963501a5d818472b561121cea6/totm.xml&container=ig"></iframe>
+  <div class="bar">
+    <span id="page-name">Tomb of The Mask</span>
+    <button id="fullscreen-btn">Fullscreen</button>
+  </div>
+</div>
+
+<script>
+  // Fullscreen button functionality
+  document.getElementById('fullscreen-btn').addEventListener('click', () => {
+    const iframeContainer = document.querySelector('.iframe-container');
+    if (iframeContainer.requestFullscreen) {
+      iframeContainer.requestFullscreen();
+    } else if (iframeContainer.webkitRequestFullscreen) { // For Safari compatibility
+      iframeContainer.webkitRequestFullscreen();
+    } else if (iframeContainer.msRequestFullscreen) { // For IE11 compatibility
+      iframeContainer.msRequestFullscreen();
+    }
+  });
+
+  // Restrict embedding to specific sites
+  const allowedHosts = ['yoursite.com']; // Add allowed hostnames here
+  const referrer = document.referrer;
+  const parser = new URL(referrer);
+
+  if (!allowedHosts.includes(parser.hostname)) {
+    document.body.innerHTML = '<h1>404 Error.</h1>';
+  }
+
+  // JavaScript for Mouse-Responsive Background
+  document.addEventListener("mousemove", (event) => {
+    let x = (event.clientX / window.innerWidth) * 100;
+    let y = (event.clientY / window.innerHeight) * 100;
+
+    document.querySelector(".background").style.background = 
+      `radial-gradient(circle at ${x}% ${y}%, rgba(255,255,255,1) 0%, rgba(50,50,50,1) 30%, rgba(0,0,0,1) 100%)`;
+  });
+</script>
+
+</body>
+</html>
