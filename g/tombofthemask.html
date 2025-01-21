@@ -16,19 +16,32 @@
       justify-content: center;
       height: 100vh;
       overflow: hidden;
+      background: black;
     }
 
+    /* Star Background with Blinking Effect */
     .background {
       position: fixed;
       top: 0;
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: black;
-      background-image: url('https://www.transparenttextures.com/patterns/stardust.png');
-      background-size: cover;
-      transition: background-position 0.1s ease-out;
       z-index: -1;
+      overflow: hidden;
+    }
+
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      opacity: 0.8;
+      animation: blink 2s infinite alternate;
+    }
+
+    @keyframes blink {
+      0% { opacity: 0.3; }
+      100% { opacity: 1; }
     }
 
     .iframe-container {
@@ -47,9 +60,9 @@
       border: none;
     }
 
-    .iframe-container.fullscreen iframe {
-      height: 100vh;
+    .iframe-container.fullscreen {
       width: 100vw;
+      height: 100vh;
     }
 
     .bar {
@@ -110,21 +123,15 @@
 
   fullscreenButton.addEventListener('click', () => {
     if (!document.fullscreenElement) {
+      iframeContainer.requestFullscreen().catch(err => console.error(err));
       iframeContainer.classList.add('fullscreen');
-      if (iframeContainer.requestFullscreen) {
-        iframeContainer.requestFullscreen();
-      } else if (iframeContainer.webkitRequestFullscreen) { // Safari compatibility
-        iframeContainer.webkitRequestFullscreen();
-      } else if (iframeContainer.msRequestFullscreen) { // IE11 compatibility
-        iframeContainer.msRequestFullscreen();
-      }
     } else {
       document.exitFullscreen();
       iframeContainer.classList.remove('fullscreen');
     }
   });
 
-  // Listen for exit fullscreen event (e.g., pressing Escape key)
+  // Listen for exit fullscreen event
   document.addEventListener('fullscreenchange', () => {
     if (!document.fullscreenElement) {
       iframeContainer.classList.remove('fullscreen');
@@ -132,21 +139,29 @@
   });
 
   // Restrict embedding to specific sites
-  const allowedHosts = ['yoursite.com']; // Add allowed hostnames here
-  const referrer = document.referrer;
-  const parser = new URL(referrer);
-
-  if (!allowedHosts.includes(parser.hostname)) {
-    document.body.innerHTML = '<h1>Embedding not allowed from this site.</h1>';
+  const allowedHosts = ['yoursite.com']; 
+  try {
+    const referrer = new URL(document.referrer);
+    if (!allowedHosts.includes(referrer.hostname)) {
+      document.body.innerHTML = '<h1>Embedding not allowed from this site.</h1>';
+    }
+  } catch (error) {
+    console.warn("Invalid referrer", error);
   }
 
-  // JavaScript for Mouse-Responsive Background
-  document.addEventListener("mousemove", (event) => {
-    let x = (event.clientX / window.innerWidth) * 100;
-    let y = (event.clientY / window.innerHeight) * 100;
-
-    document.querySelector(".background").style.backgroundPosition = `${x}% ${y}%`;
-  });
+  // Generate random stars
+  function createStars(count) {
+    const background = document.querySelector(".background");
+    for (let i = 0; i < count; i++) {
+      let star = document.createElement("div");
+      star.classList.add("star");
+      star.style.top = `${Math.random() * 100}vh`;
+      star.style.left = `${Math.random() * 100}vw`;
+      star.style.animationDuration = `${1.5 + Math.random()}s`; // Vary blinking speed
+      background.appendChild(star);
+    }
+  }
+  createStars(150);
 </script>
 
 </body>
