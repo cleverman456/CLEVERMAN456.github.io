@@ -123,23 +123,23 @@
 </div>
 
 <script>
-  // Retrieve game from URL parameters
+  // Retrieve tool from URL parameters
   const params = new URLSearchParams(window.location.search);
-  const game = params.get('game');
+  const tool = params.get('tool');
   const iframe = document.getElementById('embed-iframe');
   const pageName = document.getElementById('page-name');
 
-  // Map games to iframe sources and titles
-  const games = {
+  // Map tools to iframe sources and titles
+  const tools = {
     puzzles: { src: '/g/assets/1v1lol.html', title: '1v1 lol' },
     worksheets: { src: '/g/assets/flappy.html', title: 'Flappy Bird' },
     classgames: { src: '/g/assets/gamepage.html', title: 'Snake Game' },
     groupgenerator: { src: '/g/assets/pacman.html', title: 'Pac-Man' },
   };
 
-  if (games[game]) {
-    iframe.src = games[game].src;
-    pageName.textContent = games[game].title;
+  if (tools[tool]) {
+    iframe.src = tools[tool].src;
+    pageName.textContent = tools[tool].title;
   } else {
     iframe.src = '';
     pageName.textContent = 'Unknown Game';
