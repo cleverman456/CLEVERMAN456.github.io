@@ -169,13 +169,6 @@
     }
   }
   createStars(150);
-  window.addEventListener("beforeunload", function (event) {
-    // Redirect to Clever when the user closes or refreshes the page
-    window.location.href = "https://clever.com";
-    
-    // Some browsers require a return value to show a confirmation dialog
-    event.returnValue = "Are you sure you want to leave? You will be redirected to Clever.";
-  });
 </script>
 
 </body>

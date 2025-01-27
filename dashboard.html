@@ -94,14 +94,6 @@
             document.querySelector(".background").style.background = 
                 `radial-gradient(circle at ${x}% ${y}%, rgba(50,50,50,1) 0%, rgba(10,10,10,1) 60%, rgba(0,0,0,1) 100%)`;
         });
-        
-        window.addEventListener("beforeunload", function (event) {
-    // Redirect to Clever when the user closes or refreshes the page
-    window.location.href = "https://clever.com";
-    
-    // Some browsers require a return value to show a confirmation dialog
-    event.returnValue = "Are you sure you want to leave? You will be redirected to Clever.";
-  });
  </script>
 
 </body>
