@@ -15,8 +15,8 @@
       align-items: center;
       justify-content: center;
       height: 100vh;
-      background: black;
       overflow: hidden;
+      background: black;
     }
 
     /* Star Background with Blinking Effect */
@@ -44,66 +44,75 @@
       100% { opacity: 1; }
     }
 
-    /* Game Buttons Container */
-    .game-container {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr); /* 4 games per row */
-      gap: 20px;
+    .iframe-container {
+      position: relative;
       width: 80%;
-      max-width: 1200px;
-      margin-top: 20px;
-    }
-
-    /* Game Button Styling */
-    .game-button {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      height: 220px;
+      max-width: 1000px;
+      height: 500px;
       border-radius: 12px;
       overflow: hidden;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .iframe-container.fullscreen {
+      width: 100vw;
+      height: 100vh;
+      border-radius: 0;
+    }
+
+    /* Modernized Bar */
+    .bar {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 25px;
       background: rgba(255, 255, 255, 0.1);
       backdrop-filter: blur(10px);
-      border: 2px solid rgba(255, 255, 255, 0.2);
-      cursor: pointer;
-      transition: transform 0.2s ease, box-shadow 0.3s ease;
-      box-shadow: 0 4px 10px rgba(255, 255, 255, 0.2);
-      text-align: center;
-      color: white;
-      text-decoration: none;
+      border-top: 2px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.3);
+      border-radius: 0 0 12px 12px;
+      transition: opacity 0.3s ease;
     }
 
-    .game-button img {
-      width: 100%;
-      height: 140px;
-      object-fit: cover;
+    .bar.hidden {
+      opacity: 0;
+      pointer-events: none;
     }
 
-    .game-button span {
-      font-size: 16px;
+    .bar span {
+      font-size: 18px;
       font-weight: bold;
-      padding: 10px;
+      color: white;
       text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.6);
     }
 
-    .game-button:hover {
+    .bar button {
+      padding: 12px 24px;
+      border: none;
+      background: linear-gradient(135deg, #ff416c, #ff4b2b);
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 30px;
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+      box-shadow: 0 4px 15px rgba(255, 81, 47, 0.5);
+    }
+
+    .bar button:hover {
       transform: scale(1.1);
-      box-shadow: 0 8px 20px rgba(255, 255, 255, 0.4);
-    }
-
-    /* Responsive Design */
-    @media (max-width: 1000px) {
-      .game-container {
-        grid-template-columns: repeat(2, 1fr); /* 2 games per row on tablets */
-      }
-    }
-
-    @media (max-width: 600px) {
-      .game-container {
-        grid-template-columns: repeat(1, 1fr); /* 1 game per row on mobile */
-      }
+      box-shadow: 0 8px 20px rgba(255, 81, 47, 0.8);
     }
   </style>
 </head>
@@ -111,70 +120,104 @@
 
 <div class="background"></div>
 
-<h1 style="color: white; text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);">Select a Game</h1>
 
-<div class="game-container">
-  <a href="classtools.html?tool=suggest" class="game-button">
-    <img src="/images/suggest.jpg" alt="suggest">
-    <span>Suggest</span>
-  </a>
-
-  <a href="classtools.html?tool=puzzles" class="game-button">
-    <img src="/images/1v1.jpg" alt="1v1 lol">
-    <span>1v1 lol</span>
-  </a>
-
-  <a href="classtools.html?tool=worksheets" class="game-button">
-    <img src="/images/flappy.jpg" alt="Flappy Bird">
-    <span>Flappy Bird</span>
-  </a>
-
-  <a href="classtools.html?tool=groupgenerator" class="game-button">
-    <img src="/images/pacman.jpg" alt="Pac-Man">
-    <span>Pac-Man</span>
-  </a>
-
-  <a href="classtools.html?tool=vista" class="game-button">
-    <img src="/images/subway.jpg" alt="Subway Surfers">
-    <span>Subway Surfers</span>
-  </a>
-
-  <a href="classtools.html?tool=whiteboard" class="game-button">
-    <img src="/images/minecraft.jpg" alt="Minecraft">
-    <span>Minecraft</span>
-  </a>
-
-  <a href="classtools.html?tool=kahoot" class="game-button">
-    <img src="/images/mario.jpg" alt="Super Mario">
-    <span>Super Mario</span>
-  </a>
-
-  <a href="classtools.html?tool=quizlet" class="game-button">
-    <img src="/images/battlewheels.jpg" alt="battle wheels">
-    <span>Battle Wheels</span>
-  </a>
-
-  <a href="classtools.html?tool=blooket" class="game-button">
-    <img src="/images/moto.jpg" alt="Doodle Jump">
-    <span>Moto X3M</span>
-  </a>
+<div class="iframe-container" id="iframe-container">
+  <iframe id="embed-iframe" src=""></iframe>
+  <div class="bar" id="bar">
+    <span id="page-name">Game Title</span>
+    <select id="version-selector" style="display: none; padding: 8px; font-size: 16px;"></select>
+    <button id="fullscreen-btn">Fullscreen</button>
+  </div>
 </div>
 
 <script>
+  const params = new URLSearchParams(window.location.search);
+  const tool = params.get('tool');
+  const iframe = document.getElementById('embed-iframe');
+  const pageName = document.getElementById('page-name');
+  const versionSelector = document.getElementById('version-selector');
+
+  const tools = {
+    suggest: { src: '/g/assets/suggest.html', title: 'Suggest a game!' },
+    puzzles: { src: '/g/assets/1v1lol.html', title: '1v1 lol' },
+    worksheets: { src: '/g/assets/flappy.html', title: 'Flappy Bird' },
+    groupgenerator: { src: '/g/assets/pacman.html', title: 'Pac-Man' },
+    whiteboard: { src: '/g/assets/eagtek.html', title: 'Minecraft' },
+    kahoot: { src: '/g/assets/mario.html', title: 'Super Mario' },
+    quizlet: { src: '/g/assets/wheels.html', title: 'Battle Wheels' },
+    blooket: { src: '/g/assets/moto.html', title: 'Moto X3M' },
+    vista: {
+      versions: [
+        { src: '/g/assets/subway.html', title: 'Subway Surfers (Original)' },
+        { src: '/g/assets/subway-monaco.html', title: 'Subway Surfers: Monaco' },
+        { src: '/g/assets/subway-beijing.html', title: 'Subway Surfers: Beijing' },
+        { src: '/g/assets/subway-houston.html', title: 'Subway Surfers: Houston' },
+        { src: '/g/assets/subway-ny.html', title: 'Subway Surfers: New York' }
+      ]
+    }
+  };
+
+  if (tool === "vista") {
+    versionSelector.style.display = "inline-block";
+    pageName.textContent = "Subway Surfers"
+    
+    tools.vista.versions.forEach(version => {
+      let option = document.createElement("option");
+      option.value = version.src;
+      option.textContent = version.title;
+      versionSelector.appendChild(option);
+    });
+
+    iframe.src = tools.vista.versions[0].src; // Load default version
+    versionSelector.addEventListener("change", () => {
+      iframe.src = versionSelector.value;
+    });
+
+  } else if (tools[tool]) {
+    iframe.src = tools[tool].src;
+    pageName.textContent = tools[tool].title;
+  } else {
+    iframe.src = '';
+    pageName.textContent = 'Unknown Game';
+  }
+  // Fullscreen button functionality
+  const iframeContainer = document.getElementById('iframe-container');
+  const fullscreenButton = document.getElementById('fullscreen-btn');
+  const bar = document.getElementById('bar');
+
+  fullscreenButton.addEventListener('click', () => {
+    if (!document.fullscreenElement) {
+      iframeContainer.requestFullscreen().catch(err => console.error(err));
+      iframeContainer.classList.add('fullscreen');
+      bar.classList.add('hidden'); // Hide bar in fullscreen
+    } else {
+      document.exitFullscreen();
+      iframeContainer.classList.remove('fullscreen');
+      bar.classList.remove('hidden'); // Show bar when exiting fullscreen
+    }
+  });
+
+  // Listen for exit fullscreen event
+  document.addEventListener('fullscreenchange', () => {
+    if (!document.fullscreenElement) {
+      iframeContainer.classList.remove('fullscreen');
+      bar.classList.remove('hidden'); // Ensure bar reappears on exit
+    }
+  });
+
   // Generate random stars
   function createStars(count) {
-    const background = document.querySelector(".background");
+    const background = document.querySelector('.background');
     for (let i = 0; i < count; i++) {
-      let star = document.createElement("div");
-      star.classList.add("star");
-      star.style.top = `${Math.random() * 100}vh`; // Use template literals correctly
-      star.style.left = `${Math.random() * 100}vw`; // Use template literals correctly
-      star.style.animationDuration = `${1.5 + Math.random()}s`; // Vary blinking speed correctly
+      let star = document.createElement('div');
+      star.classList.add('star');
+      star.style.top = ${Math.random() * 100}vh;
+      star.style.left = ${Math.random() * 100}vw;
+      star.style.animationDuration = ${1.5 + Math.random()}s;
       background.appendChild(star);
     }
   }
   createStars(150);
 </script>
-
 </body>
 </html>
