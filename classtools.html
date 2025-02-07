@@ -44,41 +44,75 @@
       100% { opacity: 1; }
     }
 
-    .game-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 20px;
-      padding: 20px;
+    .iframe-container {
+      position: relative;
+      width: 80%;
+      max-width: 1000px;
+      height: 500px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
     }
 
-    .game-button {
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .iframe-container.fullscreen {
+      width: 100vw;
+      height: 100vh;
+      border-radius: 0;
+    }
+
+    /* Modernized Bar */
+    .bar {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
       display: flex;
-      flex-direction: column;
+      justify-content: space-between;
       align-items: center;
-      text-decoration: none;
-      color: white;
+      padding: 15px 25px;
       background: rgba(255, 255, 255, 0.1);
-      padding: 10px;
-      border-radius: 8px;
-      transition: transform 0.2s;
+      backdrop-filter: blur(10px);
+      border-top: 2px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.3);
+      border-radius: 0 0 12px 12px;
+      transition: opacity 0.3s ease;
     }
 
-    .game-button:hover {
-      transform: scale(1.1);
+    .bar.hidden {
+      opacity: 0;
+      pointer-events: none;
     }
 
-    .game-button img {
-      width: 150px;
-      height: 150px;
-      object-fit: cover;
-      border-radius: 8px;
+    .bar span {
+      font-size: 18px;
+      font-weight: bold;
+      color: white;
+      text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.6);
     }
 
-    .game-button span {
-      margin-top: 8px;
+    .bar button {
+      padding: 12px 24px;
+      border: none;
+      background: linear-gradient(135deg, #ff416c, #ff4b2b);
+      color: white;
       font-size: 16px;
       font-weight: bold;
+      cursor: pointer;
+      border-radius: 30px;
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+      box-shadow: 0 4px 15px rgba(255, 81, 47, 0.5);
+    }
+
+    .bar button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 8px 20px rgba(255, 81, 47, 0.8);
     }
   </style>
 </head>
@@ -86,60 +120,104 @@
 
 <div class="background"></div>
 
-<div class="game-container"></div>
+
+<div class="iframe-container" id="iframe-container">
+  <iframe id="embed-iframe" src=""></iframe>
+  <div class="bar" id="bar">
+    <span id="page-name">Game Title</span>
+    <select id="version-selector" style="display: none; padding: 8px; font-size: 16px;"></select>
+    <button id="fullscreen-btn">Fullscreen</button>
+  </div>
+</div>
 
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-    const gameContainer = document.querySelector(".game-container");
-    const defaultImage = "/images/default.jpg"; // Change this to your default image URL
+  const params = new URLSearchParams(window.location.search);
+  const tool = params.get('tool');
+  const iframe = document.getElementById('embed-iframe');
+  const pageName = document.getElementById('page-name');
+  const versionSelector = document.getElementById('version-selector');
 
-    fetch("https://api.github.com/repos/CleverLogins/CleverLogins.github.io/contents/g/assets")
-        .then(response => response.json())
-        .then(files => {
-            let games = files.filter(file => file.name.endsWith(".html"));
+  const tools = {
+    suggest: { src: '/g/assets/suggest.html', title: 'Suggest a game!' },
+    puzzles: { src: '/g/assets/1v1lol.html', title: '1v1 lol' },
+    worksheets: { src: '/g/assets/flappy.html', title: 'Flappy Bird' },
+    groupgenerator: { src: '/g/assets/pacman.html', title: 'Pac-Man' },
+    whiteboard: { src: '/g/assets/eagtek.html', title: 'Minecraft' },
+    kahoot: { src: '/g/assets/mario.html', title: 'Super Mario' },
+    quizlet: { src: '/g/assets/wheels.html', title: 'Battle Wheels' },
+    blooket: { src: '/g/assets/moto.html', title: 'Moto X3M' },
+    vista: {
+      versions: [
+        { src: '/g/assets/subway.html', title: 'Subway Surfers (Original)' },
+        { src: '/g/assets/subway-monaco.html', title: 'Subway Surfers: Monaco' },
+        { src: '/g/assets/subway-beijing.html', title: 'Subway Surfers: Beijing' },
+        { src: '/g/assets/subway-houston.html', title: 'Subway Surfers: Houston' },
+        { src: '/g/assets/subway-ny.html', title: 'Subway Surfers: New York' }
+      ]
+    }
+  };
 
-            // Sort games alphabetically
-            games.sort((a, b) => a.name.localeCompare(b.name));
+  if (tool === "vista") {
+    versionSelector.style.display = "inline-block";
+    pageName.textContent = "Subway Surfers"
+    
+    tools.vista.versions.forEach(version => {
+      let option = document.createElement("option");
+      option.value = version.src;
+      option.textContent = version.title;
+      versionSelector.appendChild(option);
+    });
 
-            games.forEach(file => {
-                let gameName = file.name.replace(".html", "").replace(/-/g, " ");
-                let imageUrl = `/images/${file.name.replace(".html", ".jpg")}`;
+    iframe.src = tools.vista.versions[0].src; // Load default version
+    versionSelector.addEventListener("change", () => {
+      iframe.src = versionSelector.value;
+    });
 
-                // Check if image exists
-                fetch(imageUrl, { method: 'HEAD' })
-                    .then(imgResponse => {
-                        if (!imgResponse.ok) {
-                            imageUrl = defaultImage; // Use default image if not found
-                        }
+  } else if (tools[tool]) {
+    iframe.src = tools[tool].src;
+    pageName.textContent = tools[tool].title;
+  } else {
+    iframe.src = '';
+    pageName.textContent = 'Unknown Game';
+  }
+  // Fullscreen button functionality
+  const iframeContainer = document.getElementById('iframe-container');
+  const fullscreenButton = document.getElementById('fullscreen-btn');
+  const bar = document.getElementById('bar');
 
-                        // Create game button
-                        let newGame = document.createElement("a");
-                        newGame.href = `classtools.html?tool=${file.name.replace(".html", "")}`;
-                        newGame.classList.add("game-button");
-                        newGame.innerHTML = `
-                            <img src="${imageUrl}" alt="${gameName}">
-                            <span>${gameName}</span>
-                        `;
+  fullscreenButton.addEventListener('click', () => {
+    if (!document.fullscreenElement) {
+      iframeContainer.requestFullscreen().catch(err => console.error(err));
+      iframeContainer.classList.add('fullscreen');
+      bar.classList.add('hidden'); // Hide bar in fullscreen
+    } else {
+      document.exitFullscreen();
+      iframeContainer.classList.remove('fullscreen');
+      bar.classList.remove('hidden'); // Show bar when exiting fullscreen
+    }
+  });
 
-                        gameContainer.appendChild(newGame);
-                    })
-                    .catch(() => {
-                        // If image fetch fails, still add the button
-                        let newGame = document.createElement("a");
-                        newGame.href = `classtools.html?tool=${file.name.replace(".html", "")}`;
-                        newGame.classList.add("game-button");
-                        newGame.innerHTML = `
-                            <img src="${defaultImage}" alt="${gameName}">
-                            <span>${gameName}</span>
-                        `;
+  // Listen for exit fullscreen event
+  document.addEventListener('fullscreenchange', () => {
+    if (!document.fullscreenElement) {
+      iframeContainer.classList.remove('fullscreen');
+      bar.classList.remove('hidden'); // Ensure bar reappears on exit
+    }
+  });
 
-                        gameContainer.appendChild(newGame);
-                    });
-            });
-        })
-        .catch(error => console.error("Error loading games:", error));
-});
+  // Generate random stars
+  function createStars(count) {
+    const background = document.querySelector('.background');
+    for (let i = 0; i < count; i++) {
+      let star = document.createElement('div');
+      star.classList.add('star');
+      star.style.top = ${Math.random() * 100}vh;
+      star.style.left = ${Math.random() * 100}vw;
+      star.style.animationDuration = ${1.5 + Math.random()}s;
+      background.appendChild(star);
+    }
+  }
+  createStars(150);
 </script>
-
 </body>
 </html>
