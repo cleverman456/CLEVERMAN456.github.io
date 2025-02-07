@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movies Portal</title>
-    <link rel="icon" href="/images/movie-icon.jpg">
+    <title>Movies</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -16,8 +15,8 @@
             justify-content: center;
             height: 100vh;
             background: black;
-            overflow: hidden;
             color: white;
+            overflow: hidden;
             text-align: center;
         }
 
@@ -46,123 +45,83 @@
             100% { opacity: 1; }
         }
 
-        /* Movies Grid */
-        .movie-container {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            width: 80%;
-            max-width: 600px;
-            margin-top: 20px;
+        h1 {
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
         }
 
-        /* Movie Buttons */
-        .movie-button {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            height: 180px;
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.3s ease;
-            box-shadow: 0 4px 10px rgba(255, 255, 255, 0.2);
-            text-align: center;
-            text-decoration: none;
-            color: white;
+        button, select {
+            margin: 10px;
+            padding: 12px 20px;
             font-size: 18px;
-            font-weight: bold;
-            padding: 20px;
-        }
-
-        .movie-button:hover {
-            transform: scale(1.1);
-            box-shadow: 0 8px 20px rgba(255, 255, 255, 0.4);
-        }
-
-        /* Dropdown Styling */
-        .dropdown-container {
-            margin-top: 20px;
-        }
-
-        select, button {
-            padding: 10px;
-            font-size: 16px;
-            margin-top: 10px;
-            border-radius: 5px;
             border: none;
+            border-radius: 8px;
             cursor: pointer;
-        }
-
-        button {
-            background: #4CAF50;
-            color: white;
-            font-weight: bold;
             transition: 0.3s;
         }
 
-        button:hover {
-            background: #45a049;
+        button {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.6);
         }
 
-        /* Responsive Design */
-        @media (max-width: 600px) {
-            .movie-container {
-                grid-template-columns: repeat(1, 1fr);
-            }
+        button:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(1.1);
+        }
+
+        select {
+            background: white;
+            color: black;
         }
     </style>
 </head>
 <body>
 
-<div class="background"></div>
+    <div class="background"></div>
 
-<h1>Movie Selection</h1>
+    <h1>Movies</h1>
 
-<div class="movie-container">
-    <a href="sonic3.html" class="movie-button">Sonic 3</a>
-</div>
+    <!-- Sonic 3 Button -->
+    <button onclick="location.href='./g/assets/movies/sonic3.html'">Sonic 3</button>
 
-<div class="dropdown-container">
-    <label for="squidGameSelect">Select Squid Game Episode:</label>
+    <!-- Squid Game Dropdown -->
+    <label for="squidGameSelect">Select Season & Episode:</label>
     <select id="squidGameSelect">
         <option value="">Choose an episode...</option>
-        <option value="s1e1.html">Season 1, Episode 1</option>
-        <option value="s1e2.html">Season 1, Episode 2</option>
-        <option value="s1e3.html">Season 1, Episode 3</option>
+        <option value="./g/assets/movies/squid_game-s2e1.html">Season 2, Episode 1</option>
+        <option value="./g/assets/movies/squid_game-s1e2.html">Season 1, Episode 2</option>
+        <option value="./g/assets/movies/squid_game-s1e3.html">Season 1, Episode 3</option>
     </select>
     <button onclick="goToEpisode()">Go</button>
-</div>
 
-<script>
-    function goToEpisode() {
-        var select = document.getElementById("squidGameSelect");
-        var episodePage = select.value;
-        if (episodePage) {
-            location.href = episodePage;
-        } else {
-            alert("Please select a season and episode.");
+    <script>
+        function goToEpisode() {
+            var select = document.getElementById("squidGameSelect");
+            var episodePage = select.value;
+            if (episodePage) {
+                location.href = episodePage;
+            } else {
+                alert("Please select a season and episode.");
+            }
         }
-    }
 
-    // Generate stars
-    function createStars(count) {
-        const background = document.querySelector(".background");
-        for (let i = 0; i < count; i++) {
-            let star = document.createElement("div");
-            star.classList.add("star");
-            star.style.top = `${Math.random() * 100}vh`;
-            star.style.left = `${Math.random() * 100}vw`;
-            star.style.animationDuration = `${1.5 + Math.random()}s`;
-            background.appendChild(star);
+        // Generate stars
+        function createStars(count) {
+            const background = document.querySelector(".background");
+            for (let i = 0; i < count; i++) {
+                let star = document.createElement("div");
+                star.classList.add("star");
+                star.style.top = `${Math.random() * 100}vh`;
+                star.style.left = `${Math.random() * 100}vw`;
+                star.style.animationDuration = `${1.5 + Math.random()}s`;
+                background.appendChild(star);
+            }
         }
-    }
-    createStars(100);
-</script>
+        createStars(100);
+    </script>
 
 </body>
 </html>
