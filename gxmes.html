@@ -15,8 +15,8 @@
       align-items: center;
       justify-content: center;
       height: 100vh;
-      overflow: hidden;
       background: black;
+      overflow: hidden;
     }
 
     /* Star Background with Blinking Effect */
@@ -44,41 +44,66 @@
       100% { opacity: 1; }
     }
 
+    /* Game Buttons Container */
     .game-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr); /* 4 games per row */
       gap: 20px;
-      padding: 20px;
+      width: 80%;
+      max-width: 1200px;
+      margin-top: 20px;
     }
 
+    /* Game Button Styling */
     .game-button {
       display: flex;
       flex-direction: column;
       align-items: center;
-      text-decoration: none;
-      color: white;
+      justify-content: center;
+      width: 100%;
+      height: 220px;
+      border-radius: 12px;
+      overflow: hidden;
       background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+      box-shadow: 0 4px 10px rgba(255, 255, 255, 0.2);
+      text-align: center;
+      color: white;
+      text-decoration: none;
+    }
+
+    .game-button img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+    }
+
+    .game-button span {
+      font-size: 16px;
+      font-weight: bold;
       padding: 10px;
-      border-radius: 8px;
-      transition: transform 0.2s;
+      text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.6);
     }
 
     .game-button:hover {
       transform: scale(1.1);
+      box-shadow: 0 8px 20px rgba(255, 255, 255, 0.4);
     }
 
-    .game-button img {
-      width: 150px;
-      height: 150px;
-      object-fit: cover;
-      border-radius: 8px;
+    /* Responsive Design */
+    @media (max-width: 1000px) {
+      .game-container {
+        grid-template-columns: repeat(2, 1fr); /* 2 games per row on tablets */
+      }
     }
 
-    .game-button span {
-      margin-top: 8px;
-      font-size: 16px;
-      font-weight: bold;
+    @media (max-width: 600px) {
+      .game-container {
+        grid-template-columns: repeat(1, 1fr); /* 1 game per row on mobile */
+      }
     }
   </style>
 </head>
@@ -86,59 +111,69 @@
 
 <div class="background"></div>
 
-<div class="game-container"></div>
+<h1 style="color: white; text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);">Select a Game</h1>
+
+<div class="game-container">
+  <a href="classtools.html?tool=suggest" class="game-button">
+    <img src="/images/suggest.jpg" alt="suggest">
+    <span>Suggest</span>
+  </a>
+
+  <a href="classtools.html?tool=puzzles" class="game-button">
+    <img src="/images/1v1.jpg" alt="1v1 lol">
+    <span>1v1 lol</span>
+  </a>
+
+  <a href="classtools.html?tool=worksheets" class="game-button">
+    <img src="/images/flappy.jpg" alt="Flappy Bird">
+    <span>Flappy Bird</span>
+  </a>
+
+  <a href="classtools.html?tool=groupgenerator" class="game-button">
+    <img src="/images/pacman.jpg" alt="Pac-Man">
+    <span>Pac-Man</span>
+  </a>
+
+  <a href="classtools.html?tool=vista" class="game-button">
+    <img src="/images/subway.jpg" alt="Subway Surfers">
+    <span>Subway Surfers</span>
+  </a>
+
+  <a href="classtools.html?tool=whiteboard" class="game-button">
+    <img src="/images/minecraft.jpg" alt="Minecraft">
+    <span>Minecraft</span>
+  </a>
+
+  <a href="classtools.html?tool=kahoot" class="game-button">
+    <img src="/images/mario.jpg" alt="Super Mario">
+    <span>Super Mario</span>
+  </a>
+
+  <a href="classtools.html?tool=quizlet" class="game-button">
+    <img src="/images/battlewheels.jpg" alt="battle wheels">
+    <span>Battle Wheels</span>
+  </a>
+
+  <a href="classtools.html?tool=blooket" class="game-button">
+    <img src="/images/moto.jpg" alt="Doodle Jump">
+    <span>Moto X3M</span>
+  </a>
+</div>
 
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-    const gameContainer = document.querySelector(".game-container");
-    const defaultImage = "/images/default.jpg"; // Change this to your default image URL
-
-    fetch("https://api.github.com/repos/CleverLogins/CleverLogins.github.io/contents/g/assets")
-        .then(response => response.json())
-        .then(files => {
-            let games = files.filter(file => file.name.endsWith(".html"));
-
-            // Sort games alphabetically
-            games.sort((a, b) => a.name.localeCompare(b.name));
-
-            games.forEach(file => {
-                let gameName = file.name.replace(".html", "").replace(/-/g, " ");
-                let imageUrl = `/images/${file.name.replace(".html", ".jpg")}`;
-
-                // Check if image exists
-                fetch(imageUrl, { method: 'HEAD' })
-                    .then(imgResponse => {
-                        if (!imgResponse.ok) {
-                            imageUrl = defaultImage; // Use default image if not found
-                        }
-
-                        // Create game button
-                        let newGame = document.createElement("a");
-                        newGame.href = `classtools.html?tool=${file.name.replace(".html", "")}`;
-                        newGame.classList.add("game-button");
-                        newGame.innerHTML = `
-                            <img src="${imageUrl}" alt="${gameName}">
-                            <span>${gameName}</span>
-                        `;
-
-                        gameContainer.appendChild(newGame);
-                    })
-                    .catch(() => {
-                        // If image fetch fails, still add the button
-                        let newGame = document.createElement("a");
-                        newGame.href = `classtools.html?tool=${file.name.replace(".html", "")}`;
-                        newGame.classList.add("game-button");
-                        newGame.innerHTML = `
-                            <img src="${defaultImage}" alt="${gameName}">
-                            <span>${gameName}</span>
-                        `;
-
-                        gameContainer.appendChild(newGame);
-                    });
-            });
-        })
-        .catch(error => console.error("Error loading games:", error));
-});
+  // Generate random stars
+  function createStars(count) {
+    const background = document.querySelector(".background");
+    for (let i = 0; i < count; i++) {
+      let star = document.createElement("div");
+      star.classList.add("star");
+      star.style.top = ${Math.random() * 100}vh;
+      star.style.left = ${Math.random() * 100}vw;
+      star.style.animationDuration = ${1.5 + Math.random()}s; // Vary blinking speed
+      background.appendChild(star);
+    }
+  }
+  createStars(150);
 </script>
 
 </body>
