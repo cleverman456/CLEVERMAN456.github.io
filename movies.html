@@ -1,1 +1,46 @@
-movies are at cleverlogins.github.io/g/assets/movies/NAME_OF_MOVIE for now
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movies</title>
+    <style>
+        button, select {
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Movies</h1>
+
+    <!-- Sonic 3 Button -->
+    <button onclick="location.href='sonic3.html'">Sonic 3</button>
+
+    <!-- Squid Game Dropdown -->
+    <label for="squidGameSelect">Select Season & Episode:</label>
+    <select id="squidGameSelect">
+        <option value="">Choose an episode...</option>
+        <option value="./g/assets/movies/squid_game-s1e1.html">Season 1, Episode 1</option>
+        <option value="s1e2.html">Season 1, Episode 2</option>
+        <option value="s1e3.html">Season 1, Episode 3</option>
+        <!-- Add more episodes as needed -->
+    </select>
+    <button onclick="goToEpisode()">Go</button>
+
+    <script>
+        function goToEpisode() {
+            var select = document.getElementById("squidGameSelect");
+            var episodePage = select.value;
+            if (episodePage) {
+                location.href = episodePage;
+            } else {
+                alert("Please select a season and episode.");
+            }
+        }
+    </script>
+
+</body>
+</html>
