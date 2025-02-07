@@ -120,7 +120,6 @@
 
 <div class="background"></div>
 
-
 <div class="iframe-container" id="iframe-container">
   <iframe id="embed-iframe" src=""></iframe>
   <div class="bar" id="bar">
@@ -180,6 +179,7 @@
     iframe.src = '';
     pageName.textContent = 'Unknown Game';
   }
+
   // Fullscreen button functionality
   const iframeContainer = document.getElementById('iframe-container');
   const fullscreenButton = document.getElementById('fullscreen-btn');
@@ -211,13 +211,14 @@
     for (let i = 0; i < count; i++) {
       let star = document.createElement('div');
       star.classList.add('star');
-      star.style.top = ${Math.random() * 100}vh;
-      star.style.left = ${Math.random() * 100}vw;
-      star.style.animationDuration = ${1.5 + Math.random()}s;
+      star.style.top = `${Math.random() * 100}vh`;  // Corrected template literals
+      star.style.left = `${Math.random() * 100}vw`;  // Corrected template literals
+      star.style.animationDuration = `${1.5 + Math.random()}s`;  // Corrected template literals
       background.appendChild(star);
     }
   }
   createStars(150);
 </script>
+
 </body>
 </html>
