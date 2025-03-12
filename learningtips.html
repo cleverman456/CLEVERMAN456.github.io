@@ -86,8 +86,8 @@
     <h1>Drag these bookmarklets to your bookmarks bar</h1>
 
     <div class="button-container">
-        <a href="javascript:document.body.contentEditable=true" draggable="true">Edit Content of Page</a>
-        <a href="javascript:(function(){var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/eruda';document.body.appendChild(s);s.onload=function(){eruda.init();};})();" draggable="true">JS Console</a>
+        <a href="javascript:void(function(){document.body.contentEditable=true})()" draggable="true">Edit Content of Page</a>
+        <a href="javascript:void(function(){var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/eruda';document.body.appendChild(s);s.onload=function(){eruda.init();};})()" draggable="true">JS Console</a>
     </div>
 
     <script>
