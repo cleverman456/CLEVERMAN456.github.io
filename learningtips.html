@@ -57,7 +57,8 @@
             margin-top: 20px;
         }
 
-        button {
+        a {
+            display: inline-block;
             padding: 12px 20px;
             font-size: 18px;
             border: none;
@@ -69,9 +70,10 @@
             backdrop-filter: blur(10px);
             border: 2px solid rgba(255, 255, 255, 0.2);
             text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.6);
+            text-decoration: none;
         }
 
-        button:hover {
+        a:hover {
             background: rgba(255, 255, 255, 0.4);
             transform: scale(1.1);
         }
@@ -81,21 +83,14 @@
 
     <div class="background"></div>
 
-    <h1>Bookmarklets</h1>
+    <h1>Drag these bookmarklets to your bookmarks bar</h1>
 
     <div class="button-container">
-        <button onclick="runBookmarklet('document.body.contentEditable=true')">Edit Page Content</button>
-        <button onclick="runBookmarklet('var s=document.createElement(\'script\');s.src=\'https://cdn.jsdelivr.net/npm/eruda\';document.body.appendChild(s);s.onload=function(){eruda.init();};')">JS Console</button>
+        <a href="javascript:document.body.contentEditable=true" draggable="true">Edit Content of Page</a>
+        <a href="javascript:(function(){var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/eruda';document.body.appendChild(s);s.onload=function(){eruda.init();};})();" draggable="true">JS Console</a>
     </div>
 
     <script>
-        function runBookmarklet(code) {
-            let script = document.createElement('script');
-            script.textContent = code;
-            document.body.appendChild(script);
-            document.body.removeChild(script);
-        }
-
         function createStars(count) {
             const background = document.querySelector(".background");
             for (let i = 0; i < count; i++) {
