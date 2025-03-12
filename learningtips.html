@@ -84,7 +84,8 @@
     <h1>Bookmarklets</h1>
 
     <div class="button-container">
-        <button onclick="runBookmarklet('document.body.contentEditable=true')">Edit Content of Page</button>
+        <button onclick="runBookmarklet('document.body.contentEditable=true')">Edit Page Content</button>
+        <button onclick="runBookmarklet('var s=document.createElement(\'script\');s.src=\'https://cdn.jsdelivr.net/npm/eruda\';document.body.appendChild(s);s.onload=function(){eruda.init();};')">JS Console</button>
     </div>
 
     <script>
