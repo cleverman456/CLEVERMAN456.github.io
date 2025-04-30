@@ -3,108 +3,76 @@
 <head>
   <meta charset="UTF-8" />
   <title>Clever | Portal</title>
-  <link rel="icon" type="image/png" href="images/Clever-Logo.jpg">
-  <link rel="stylesheet" href="./style.css" />
+  
+  <link rel="stylesheet" href="./secret.css">
   <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-      color: white;
-      background: black;
-      overflow: hidden;
-    }
-
-    #starCanvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: -1;
-      width: 100vw;
-      height: 100vh;
-    }
-
-    .form-container {
-      width: 90%;
-      max-width: 500px;
+    form {
+      position: relative;
+      z-index: 1;
       margin: 100px auto;
-      background: rgba(0, 0, 0, 0.6);
+      max-width: 400px;
+      background: rgba(0, 0, 0, 0.7);
       padding: 20px;
       border-radius: 10px;
-      border: 1px solid #00ff88;
-    }
-
-    h2 {
-      text-align: center;
-      color: #00ff88;
-    }
-
-    label {
-      display: block;
-      margin: 15px 0 5px;
+      color: white;
     }
 
     input, textarea {
       width: 100%;
       padding: 10px;
+      margin: 10px 0;
       border-radius: 5px;
       border: none;
-      margin-bottom: 15px;
     }
 
     button {
-      background-color: #00ff88;
-      border: none;
       padding: 10px 20px;
+      border: none;
+      background: limegreen;
+      color: white;
       border-radius: 5px;
       cursor: pointer;
-      color: black;
-      font-weight: bold;
-      width: 100%;
     }
 
-    button:hover {
-      background-color: #00c3ff;
+    #starCanvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
     }
   </style>
 </head>
 <body>
   <canvas id="starCanvas"></canvas>
 
-  <div class="form-container">
-    <h2>Submit Your Message</h2>
-    <form id="submission-form">
-      <label for="name">Name:</label>
-      <input type="text" id="name" name="name" required />
+  <form id="feedback-form">
+    <h2>Submit Feedback</h2>
+    <input type="text" name="name" placeholder="Your name" required />
+    <textarea name="message" placeholder="Your message" required></textarea>
+    <button type="submit">Send</button>
+    <p id="status"></p>
+  </form>
 
-      <label for="message">Message:</label>
-      <textarea id="message" name="message" rows="5" required></textarea>
-
-      <button type="submit">Submit</button>
-    </form>
-    <p id="response" style="text-align:center; color: #00ff88;"></p>
-  </div>
-
-  <script src="secret.js"></script>
+  <script src="./secret.js"></script>
   <script>
-    const form = document.getElementById("submission-form");
-    const response = document.getElementById("response");
-
-    form.addEventListener("submit", (e) => {
+    document.getElementById('feedback-form').addEventListener('submit', function(e) {
       e.preventDefault();
-      const data = new FormData(form);
 
-      fetch("https://script.google.com/a/macros/stamfordpublicschools.org/s/AKfycbzuOR8vca0tDWtk7cPzrr-elKcbF2GSAyd8XT73FxBo4G52C5RW6OyRrUbfcls-wsBr2Q/exec", {
-        method: "POST",
-        body: data,
+      const formData = new FormData(this);
+      const status = document.getElementById('status');
+
+      fetch('https://script.google.com/macros/s/AKfycbwcDgdt8quy1r8AYssVyjptA1-VTPCY6saoagvkWNAMKlSuvCpkT8VK-90Wkr6Ee2Wqfw/exec', {
+        method: 'POST',
+        body: formData
       })
       .then(res => res.text())
-      .then(text => {
-        response.textContent = "Submission successful!";
-        form.reset();
+      .then(data => {
+        status.textContent = "Submitted successfully!";
+        this.reset();
       })
       .catch(err => {
-        response.textContent = "Error submitting form.";
+        status.textContent = "Submission failed.";
         console.error(err);
       });
     });
