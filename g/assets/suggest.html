@@ -57,25 +57,21 @@
   <script src="./secret.js"></script>
   <script>
     document.getElementById('feedback-form').addEventListener('submit', function(e) {
-      e.preventDefault();
+  e.preventDefault();
 
-      const formData = new FormData(this);
-      const status = document.getElementById('status');
+  const formData = new FormData(this);
 
-      fetch('https://script.google.com/a/macros/stamfordpublicschools.org/s/AKfycbzn9sl0nmbhmYHQF9RK4fyvBN772h4-hWLc-2DhH7TAnT7VgHZirKmTQeg6U7W2C5L5TA/exec', {
-        method: 'POST',
-        body: formData
-      })
-      .then(res => res.text())
-      .then(data => {
-        status.textContent = "Submitted successfully!";
-        this.reset();
-      })
-      .catch(err => {
-        status.textContent = "Submission failed.";
-        console.error(err);
-      });
-    });
+  fetch('https://script.google.com/a/macros/stamfordpublicschools.org/s/AKfycbzn9sl0nmbhmYHQF9RK4fyvBN772h4-hWLc-2DhH7TAnT7VgHZirKmTQeg6U7W2C5L5TA/exec', {
+    method: 'POST',
+    body: formData,
+    mode: 'no-cors' // important for GitHub Pages
+  }).then(() => {
+    alert("Submitted successfully!");
+    this.reset();
+  }).catch(() => {
+    alert("Failed to submit.");
+  });
+});
   </script>
 </body>
 </html>
