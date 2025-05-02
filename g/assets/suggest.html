@@ -6,51 +6,43 @@
   <link rel="icon" type="image/png" href="images/Clever-Logo.jpg">
   <link rel="stylesheet" href="./secret.css">
   <style>
-    form {
+        form {
       position: relative;
-      z-index: 1;
-      margin: 100px auto;
-      max-width: 400px;
-      background: rgba(0, 0, 0, 0.7);
+      z-index: 2;
+      background: rgba(0,0,0,0.7);
       padding: 20px;
       border-radius: 10px;
       color: white;
+      max-width: 400px;
+      margin: 100px auto;
     }
 
-    input, textarea {
+    label, input, textarea, button {
+      display: block;
       width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      border-radius: 5px;
-      border: none;
+      margin-bottom: 10px;
+      font-size: 1em;
     }
 
-    button {
-      padding: 10px 20px;
-      border: none;
-      background: limegreen;
-      color: white;
-      border-radius: 5px;
-      cursor: pointer;
+    #status {
+      text-align: center;
+      margin-top: 10px;
     }
 
-    #starCanvas {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-    }
   </style>
 </head>
 <body>
   <canvas id="starCanvas"></canvas>
 
   <form id="feedback-form">
-    <h2>Submit Feedback</h2>
-    <input type="text" name="name" placeholder="Your name" required />
-    <textarea name="message" placeholder="Your message" required></textarea>
-    <button type="submit">Send</button>
+    <h2>Submit Game Ideas!</h2>
+    <label for="name">Name</label>
+    <input name="name" id="name" required />
+
+    <label for="message">Message</label>
+    <textarea name="message" id="message" rows="5" required></textarea>
+
+    <button type="submit">Submit</button>
     <p id="status"></p>
   </form>
 
