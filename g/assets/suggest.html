@@ -56,22 +56,38 @@
 
   <script src="./secret.js"></script>
   <script>
-    document.getElementById('feedback-form').addEventListener('submit', function(e) {
-  e.preventDefault();
+   const form = document.getElementById('feedback-form');
+    const status = document.getElementById('status');
 
-  const formData = new FormData(this);
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
 
-  fetch('https://script.google.com/a/macros/stamfordpublicschools.org/s/AKfycbzn9sl0nmbhmYHQF9RK4fyvBN772h4-hWLc-2DhH7TAnT7VgHZirKmTQeg6U7W2C5L5TA/exec', {
-    method: 'POST',
-    body: formData,
-    mode: 'no-cors' // important for GitHub Pages
-  }).then(() => {
-    alert("Submitted successfully!");
-    this.reset();
-  }).catch(() => {
-    alert("Failed to submit.");
-  });
-});
+      const name = form.name.value;
+      const message = form.message.value;
+
+      fetch('https://api.backendless.com/9091C975-CAE2-4C35-887B-C8293A283FFA/71A3BD2C-14E2-4531-BE8D-6D085529CF1E/data/Submissions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ name, message })
+      })
+      .then(response => {
+        if (response.ok) {
+          status.textContent = 'Submitted successfully!';
+          status.style.color = 'lightgreen';
+          form.reset();
+        } else {
+          status.textContent = 'Submission failed.';
+          status.style.color = 'orange';
+        }
+      })
+      .catch(error => {
+        status.textContent = 'Network error.';
+        status.style.color = 'red';
+        console.error(error);
+      });
+    });
   </script>
 </body>
 </html>
