@@ -3,82 +3,134 @@
 <head>
   <meta charset="UTF-8" />
   <title>Clever | Portal</title>
-  <link rel="icon" type="image/png" href="images/Clever-Logo.jpg">
-  <link rel="stylesheet" href="./secret.css">
+  <link rel="stylesheet" href="secret.css" />
   <style>
-        form {
-      position: relative;
-      z-index: 2;
-      background: rgba(0,0,0,0.7);
-      padding: 20px;
-      border-radius: 10px;
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
       color: white;
-      max-width: 400px;
-      margin: 100px auto;
+      overflow: hidden;
     }
 
-    label, input, textarea, button {
-      display: block;
+    canvas#starCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+
+    .form-container {
+      position: relative;
+      z-index: 1;
+      max-width: 500px;
+      margin: 100px auto;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 0 30px rgba(0, 255, 180, 0.4);
+      backdrop-filter: blur(5px);
+    }
+
+    .form-container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    label {
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    input,
+    textarea {
       width: 100%;
-      margin-bottom: 10px;
+      padding: 12px;
+      margin-top: 5px;
+      margin-bottom: 15px;
+      border: none;
+      border-radius: 8px;
+      background: #1a1a1a;
+      color: white;
       font-size: 1em;
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #00ffaa;
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      font-size: 1em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #00dd99;
     }
 
     #status {
       text-align: center;
       margin-top: 10px;
+      font-size: 0.95em;
     }
-
   </style>
 </head>
 <body>
   <canvas id="starCanvas"></canvas>
 
-  <form id="feedback-form">
-    <h2>Submit Game Ideas!</h2>
-    <label for="name">Name</label>
-    <input name="name" id="name" required />
+  <div class="form-container">
+    <form id="feedback-form">
+      <h2>Send Us Your Game Ideas!</h2>
 
-    <label for="message">Message</label>
-    <textarea name="message" id="message" rows="5" required></textarea>
+      <label for="name">Your Name</label>
+      <input type="text" id="name" name="name" required />
 
-    <button type="submit">Submit</button>
-    <p id="status"></p>
-  </form>
+      <label for="message">Message</label>
+      <textarea id="message" name="message" rows="5" required></textarea>
 
-  <script src="./secret.js"></script>
+      <button type="submit">Submit</button>
+      <p id="status"></p>
+    </form>
+  </div>
+
+  <script src="secret.js"></script>
   <script>
-   const form = document.getElementById('feedback-form');
+    const form = document.getElementById('feedback-form');
     const status = document.getElementById('status');
 
-    form.addEventListener('submit', function(e) {
+    form.addEventListener('submit', function (e) {
       e.preventDefault();
 
       const name = form.name.value;
       const message = form.message.value;
 
-      fetch('https://api.backendless.com/9091C975-CAE2-4C35-887B-C8293A283FFA/71A3BD2C-14E2-4531-BE8D-6D085529CF1E/data/Submissions', {
+      fetch('https://api.backendless.com/YOUR-APP-ID/YOUR-REST-API-KEY/data/Submissions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ name, message })
       })
-      .then(response => {
-        if (response.ok) {
-          status.textContent = 'Submitted successfully!';
-          status.style.color = 'lightgreen';
-          form.reset();
-        } else {
-          status.textContent = 'Submission failed.';
-          status.style.color = 'orange';
-        }
-      })
-      .catch(error => {
-        status.textContent = 'Network error.';
-        status.style.color = 'red';
-        console.error(error);
-      });
+        .then(response => {
+          if (response.ok) {
+            status.textContent = 'Thanks! Your feedback was sent successfully.';
+            status.style.color = 'lightgreen';
+            form.reset();
+          } else {
+            status.textContent = 'Oops. Something went wrong.';
+            status.style.color = 'orange';
+          }
+        })
+        .catch(error => {
+          status.textContent = 'Network error. Please try again.';
+          status.style.color = 'red';
+          console.error(error);
+        });
     });
   </script>
 </body>
