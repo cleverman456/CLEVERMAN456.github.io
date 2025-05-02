@@ -1,7 +1,8 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Feedback Form</title>
+  <title>Submit Feedback</title>
   <link rel="stylesheet" href="secret.css" />
   <style>
     body {
@@ -12,70 +13,72 @@
       overflow: hidden;
     }
 
-    canvas#starCanvas {
+    #starCanvas {
       position: fixed;
       top: 0;
       left: 0;
+      width: 100%;
+      height: 100%;
       z-index: 0;
     }
 
     .form-container {
       position: relative;
       z-index: 1;
+      width: 90%;
       max-width: 500px;
       margin: 100px auto;
-      background: rgba(0, 0, 0, 0.7);
+      background: rgba(0, 0, 0, 0.75);
       padding: 30px;
       border-radius: 16px;
-      box-shadow: 0 0 30px rgba(0, 255, 180, 0.4);
-      backdrop-filter: blur(5px);
+      box-shadow: 0 0 20px rgba(0, 255, 200, 0.5);
+      backdrop-filter: blur(6px);
     }
 
-    .form-container h2 {
+    h2 {
       text-align: center;
       margin-bottom: 20px;
     }
 
     label {
+      display: block;
+      margin-bottom: 8px;
       font-weight: bold;
-      margin-top: 10px;
     }
 
     input,
     textarea {
       width: 100%;
       padding: 12px;
-      margin-top: 5px;
-      margin-bottom: 15px;
       border: none;
       border-radius: 8px;
       background: #1a1a1a;
       color: white;
       font-size: 1em;
-      outline: none;
+      margin-bottom: 20px;
     }
 
     button {
       width: 100%;
       padding: 12px;
       background: #00ffaa;
-      color: #000;
+      color: black;
       border: none;
       border-radius: 8px;
-      font-size: 1em;
       font-weight: bold;
       cursor: pointer;
-      transition: background 0.3s;
+      font-size: 1em;
+      transition: background 0.3s ease;
     }
 
     button:hover {
-      background: #00dd99;
+      background: #00cc88;
     }
 
     #status {
+      margin-top: 15px;
       text-align: center;
-      margin-top: 10px;
-      font-size: 0.95em;
+      font-size: 0.9em;
     }
   </style>
 </head>
@@ -84,24 +87,25 @@
 
   <div class="form-container">
     <form id="feedback-form">
-      <h2>Send Us Your Game Ideas!</h2>
+      <h2>Send Feedback</h2>
 
       <label for="name">Your Name</label>
-      <input type="text" id="name" name="name" required />
+      <input type="text" name="name" id="name" required />
 
-      <label for="message">Message</label>
-      <textarea id="message" name="message" rows="5" required></textarea>
+      <label for="message">Your Message</label>
+      <textarea name="message" id="message" rows="5" required></textarea>
 
       <button type="submit">Submit</button>
       <p id="status"></p>
     </form>
   </div>
 
-  <script src="secret.js"></script>  <script>
+  <script src="secret.js"></script>
+  <script>
     const form = document.getElementById('feedback-form');
     const status = document.getElementById('status');
 
-    form.addEventListener('submit', function(e) {
+    form.addEventListener('submit', function (e) {
       e.preventDefault();
 
       const name = form.name.value;
@@ -114,20 +118,19 @@
         },
         body: JSON.stringify({ name, message })
       })
-              .then(response => {
-          if (response.ok) {
-            status.textContent = 'Thanks! Your feedback was sent successfully.';
-            status.style.color = 'lightgreen';
+        .then(res => {
+          if (res.ok) {
+            status.textContent = "Thanks! Your message was sent.";
+            status.style.color = "lightgreen";
             form.reset();
           } else {
-            status.textContent = 'Oops. Something went wrong.';
-            status.style.color = 'orange';
+            status.textContent = "Error submitting. Try again.";
+            status.style.color = "orange";
           }
         })
-        .catch(error => {
-          status.textContent = 'Network error. Please try again.';
-          status.style.color = 'red';
-          console.error(error);
+        .catch(() => {
+          status.textContent = "Network error. Check CORS settings.";
+          status.style.color = "red";
         });
     });
   </script>
