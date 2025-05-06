@@ -11,76 +11,52 @@
       background-color: #111;
       color: #fff;
       margin: 0;
-      padding: 0;
+      padding: 20px;
     }
-    header {
-      background-color: #222;
-      padding: 10px;
-      text-align: center;
-    }
-    header h1 {
+    h1 {
       color: #ff0000;
+      text-align: center;
     }
     #search-bar {
       display: flex;
+      flex-wrap: wrap;
       justify-content: center;
-      padding: 20px 0;
+      margin: 20px 0;
     }
     input[type="text"] {
+      flex: 1 1 250px;
       padding: 10px;
-      width: 70%;
-      border-radius: 5px;
+      border-radius: 5px 0 0 5px;
       border: none;
       font-size: 16px;
-      margin-right: 10px;
-      background-color: #333;
-      color: #fff;
+      max-width: 400px;
     }
     button {
       padding: 10px 20px;
+      border: none;
       background-color: #ff0000;
       color: white;
-      border: none;
-      border-radius: 5px;
+      border-radius: 0 5px 5px 0;
       cursor: pointer;
+      font-size: 16px;
     }
     .video-list {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 15px;
-      padding: 20px;
+      gap: 20px;
     }
     .video {
       background: #222;
       border-radius: 10px;
       overflow: hidden;
       cursor: pointer;
-      transition: transform 0.2s ease;
     }
-    .video:hover {
-      transform: scale(1.05);
-    }
-    .video-thumbnail {
+    iframe {
       width: 100%;
       height: 180px;
-      object-fit: cover;
     }
     .video-title {
       padding: 10px;
-      font-size: 16px;
-    }
-    .video-player {
-      display: none;
-      background-color: #111;
-      padding: 20px;
-    }
-    .player-view iframe {
-      width: 100%;
-      height: 400px;
-      margin-bottom: 20px;
-    }
-    .meta {
-      margin: 10px 0;
     }
     .back-button {
       background: #444;
@@ -90,6 +66,14 @@
       border: none;
       border-radius: 5px;
       cursor: pointer;
+    }
+    .player-view iframe {
+      width: 100%;
+      height: 400px;
+      margin-bottom: 10px;
+    }
+    .meta {
+      margin-bottom: 10px;
     }
     .like-dislike {
       display: flex;
@@ -114,17 +98,12 @@
   </style>
 </head>
 <body>
-  <header>
-    <h1>Clever | YouTube Explorer</h1>
-  </header>
-
+  <h1>🔍 YouTube Explorer</h1>
   <div id="search-bar">
     <input type="text" id="searchInput" placeholder="Search YouTube..." />
     <button onclick="searchVideos()">Search</button>
   </div>
-
   <div id="videos" class="video-list"></div>
-  <div id="video-player" class="video-player"></div>
 
   <script>
     const options = {
@@ -144,6 +123,7 @@
       const data = await response.json();
 
       const container = document.getElementById('videos');
+      container.classList.add('video-list');
       container.innerHTML = '';
       lastVideosHTML = ''; // reset
 
@@ -153,12 +133,11 @@
           const title = item.video.title;
           const description = item.video.descriptionSnippet?.map(d => d.text).join(' ') || 'No description available';
           const views = item.video.stats?.views ? `${item.video.stats.views.toLocaleString()} views` : '';
-          const thumbnail = item.video.thumbnails[0].url;
 
           const videoDiv = document.createElement('div');
           videoDiv.classList.add('video');
           videoDiv.innerHTML = `
-            <img class="video-thumbnail" src="${thumbnail}" alt="${title}" />
+            <iframe id="vid-${videoId}" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
             <div class="video-title">${title}</div>
           `;
           videoDiv.onclick = () => showVideoPlayer({ videoId, title, description, views });
@@ -170,8 +149,8 @@
     }
 
     function showVideoPlayer({ videoId, title, description, views }) {
-      const container = document.getElementById('video-player');
-      container.style.display = 'block';
+      const container = document.getElementById('videos');
+      container.classList.remove('video-list');
       container.innerHTML = `
         <button class="back-button" onclick="goBack()">← Back to results</button>
         <div class="player-view">
@@ -200,9 +179,27 @@
     }
 
     function goBack() {
-      const container = document.getElementById('video-player');
-      container.style.display = 'none';
-      fetchRapidVideos(lastQuery);
+      const container = document.getElementById('videos');
+      container.classList.add('video-list');
+      container.innerHTML = lastVideosHTML;
+      bindClickHandlers();
+    }
+
+    function bindClickHandlers() {
+      const videoDivs = document.querySelectorAll('.video');
+      videoDivs.forEach(div => {
+        div.onclick = () => {
+          const iframe = div.querySelector('iframe');
+          const videoId = iframe.src.split('/embed/')[1].split('?')[0];
+          const title = div.querySelector('.video-title').textContent;
+          showVideoPlayer({
+            videoId,
+            title,
+            description: 'No description loaded.',
+            views: ''
+          });
+        };
+      });
     }
 
     function searchVideos() {
