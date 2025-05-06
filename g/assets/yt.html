@@ -106,14 +106,11 @@
   <div id="videos" class="video-list"></div>
 
   <script>
-    const apiKey = '7313b58ea6mshcc1d8072ef2867dp148986jsnb6352d4da368';
-    const apiHost = 'youtube138.p.rapidapi.com';
-
     const options = {
       method: 'GET',
       headers: {
-        'X-RapidAPI-Key': apiKey,
-        'X-RapidAPI-Host': apiHost
+        'X-RapidAPI-Key': '7313b58ea6mshcc1d8072ef2867dp148986jsnb6352d4da368',
+        'X-RapidAPI-Host': 'youtube138.p.rapidapi.com'
       }
     };
 
@@ -121,52 +118,51 @@
     let lastQuery = '';
 
     async function fetchVideos(query = '') {
-      const container = document.getElementById('videos');
-      container.classList.add('video-list');
-      container.innerHTML = '<p>Loading...</p>';
-      lastQuery = query;
-
-      let url = query
-        ? `https://${apiHost}/search/?q=${encodeURIComponent(query)}&hl=en&gl=US`
-        : `https://${apiHost}/search/?q=new+uploads&hl=en&gl=US`;
-
       try {
-        const response = await fetch(url, options);
-        const data = await response.json();
+        const url = query
+          ? `https://youtube138.p.rapidapi.com/search/?q=${encodeURIComponent(query)}&hl=en&gl=US`
+          : `https://youtube138.p.rapidapi.com/search/?q=newest%20videos&hl=en&gl=US`;
 
-        container.innerHTML = '';
-        lastVideosHTML = '';
-
-        (data.contents || []).forEach(item => {
-          if (item.type === 'video') {
-            const videoId = item.video.videoId;
-            const title = item.video.title;
-            const description = item.video.descriptionSnippet?.map(d => d.text).join(' ') || 'No description';
-            const views = item.video.stats?.views ? `${item.video.stats.views.toLocaleString()} views` : '';
-
-            const videoDiv = document.createElement('div');
-            videoDiv.classList.add('video');
-            videoDiv.innerHTML = `
-              <iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
-              <div class="video-title">${title}</div>
-            `;
-            videoDiv.onclick = () => showVideoPlayer({ videoId, title, description, views });
-            container.appendChild(videoDiv);
-          }
-        });
-
-        lastVideosHTML = container.innerHTML;
-      } catch (err) {
-        console.error('Error loading videos:', err);
-        container.innerHTML = '<p>Failed to load videos.</p>';
+        const res = await fetch(url, options);
+        const data = await res.json();
+        renderVideos(data.contents || []);
+        lastQuery = query;
+      } catch (error) {
+        document.getElementById('videos').innerHTML = `<p>Error loading videos. Check API usage or network.</p>`;
+        console.error(error);
       }
+    }
+
+    function renderVideos(items) {
+      const container = document.getElementById('videos');
+      container.innerHTML = '';
+      container.classList.add('video-list');
+
+      items.forEach(item => {
+        if (item.type !== 'video') return;
+
+        const { videoId, title, descriptionSnippet, stats } = item.video;
+        const description = descriptionSnippet?.map(d => d.text).join(' ') || 'No description.';
+        const views = stats?.views ? `${stats.views.toLocaleString()} views` : '';
+
+        const videoDiv = document.createElement('div');
+        videoDiv.className = 'video';
+        videoDiv.innerHTML = `
+          <iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
+          <div class="video-title">${title}</div>
+        `;
+        videoDiv.onclick = () => showVideoPlayer({ videoId, title, description, views });
+        container.appendChild(videoDiv);
+      });
+
+      lastVideosHTML = container.innerHTML;
     }
 
     function showVideoPlayer({ videoId, title, description, views }) {
       const container = document.getElementById('videos');
       container.classList.remove('video-list');
       container.innerHTML = `
-        <button class="back-button" onclick="goBack()">← Back to results</button>
+        <button class="back-button" onclick="goBack()">← Back</button>
         <div class="player-view">
           <iframe id="player" src="https://www.youtube.com/embed/${videoId}?autoplay=1" frameborder="0" allowfullscreen></iframe>
           <h2>${title}</h2>
@@ -181,12 +177,6 @@
       `;
     }
 
-    function goBack() {
-      const container = document.getElementById('videos');
-      container.classList.add('video-list');
-      container.innerHTML = lastVideosHTML;
-    }
-
     function fullscreenPlayer() {
       const iframe = document.getElementById('player');
       if (iframe.requestFullscreen) iframe.requestFullscreen();
@@ -194,12 +184,34 @@
       else if (iframe.msRequestFullscreen) iframe.msRequestFullscreen();
     }
 
-    function searchVideos() {
-      const input = document.getElementById('searchInput').value.trim();
-      fetchVideos(input);
+    function goBack() {
+      const container = document.getElementById('videos');
+      container.classList.add('video-list');
+      container.innerHTML = lastVideosHTML;
+      bindVideoClickHandlers();
     }
 
-    // Load recent uploads initially
+    function bindVideoClickHandlers() {
+      const videoDivs = document.querySelectorAll('.video');
+      videoDivs.forEach(div => {
+        const iframe = div.querySelector('iframe');
+        const videoId = iframe.src.split('/embed/')[1].split('?')[0];
+        const title = div.querySelector('.video-title').textContent;
+        div.onclick = () => showVideoPlayer({
+          videoId,
+          title,
+          description: 'No description loaded.',
+          views: ''
+        });
+      });
+    }
+
+    function searchVideos() {
+      const query = document.getElementById('searchInput').value.trim();
+      fetchVideos(query);
+    }
+
+    // Load recent uploads on page load
     fetchVideos();
 
     // Auto-refresh every 60s if no search is active
