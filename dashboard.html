@@ -84,48 +84,7 @@
             }
         }
 
-        /* Proxy Form Section */
-        .proxy-section {
-            position: absolute;
-            top: 10%;
-            left: 50%;
-            transform: translateX(-50%);
-            text-align: center;
-            z-index: 5;
-        }
-
-        .proxy-form input {
-            padding: 10px;
-            font-size: 16px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-            margin-right: 10px;
-            width: 300px;
-        }
-
-        .proxy-form button {
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .proxy-form button:hover {
-            background-color: #0056b3;
-        }
-
-        iframe {
-            margin-top: 50px;
-            border: none;
-            width: 90%;
-            height: 600px;
-            border-radius: 8px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-        }
+        
     </style>
 </head>
 <body>
@@ -140,29 +99,8 @@
         <a href="learningtips.html" class="nav-item">Learning Tips</a>
     </nav>
 
-    <!-- Proxy Form Section -->
-    <div class="proxy-section">
-        <h2>Access Websites Through Proxy</h2>
-        <form class="proxy-form" id="proxyForm">
-            <input type="text" id="urlInput" placeholder="Enter URL" required>
-            <button type="submit">Go Proxy</button>
-        </form>
-        <iframe id="proxyFrame"></iframe>
-    </div>
 
-    <!-- JavaScript to Handle Proxy Form -->
     <script>
-        // Proxy Form submission logic
-        document.getElementById('proxyForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            var url = document.getElementById('urlInput').value;
-            if (url) {
-                // Using your actual Replit URL for the proxy
-                var proxyUrl = 'https://95d198a3-5914-4a78-a40a-fddfe07e78de-00-1ex9th0cm4h1q.worf.replit.dev/?url=' + encodeURIComponent(url);
-                // Load the proxied URL inside the iframe
-                document.getElementById('proxyFrame').src = proxyUrl;
-            }
-        });
 
         // JavaScript to Generate Stars for Background
         function createStars(count) {
