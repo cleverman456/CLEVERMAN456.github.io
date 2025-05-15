@@ -6,76 +6,17 @@
   <title>Clever | Portal</title>
   <link rel="icon" type="image/png" href="images/Clever-Logo.jpg" />
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: Arial, sans-serif;
-    }
-
     body {
       background-color: #000;
       color: white;
-      overflow: hidden;
-      height: 100vh;
-    }
-
-    .stars {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: -1;
-    }
-
-    .star {
-      position: absolute;
-      width: 2px;
-      height: 2px;
-      background: white;
-      opacity: 0.8;
-      animation: blink 2s infinite alternate;
-    }
-
-    @keyframes blink {
-      0% { opacity: 0.3; }
-      100% { opacity: 1; }
-    }
-
-    .navbar {
-      width: 100%;
-      background-color: rgba(26, 26, 26, 0.9);
-      padding: 15px 0;
+      font-family: Arial, sans-serif;
       display: flex;
+      flex-direction: column;
+      align-items: center;
       justify-content: center;
-      gap: 40px;
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: 10;
+      height: 100vh;
+      margin: 0;
     }
-
-    .nav-item {
-      color: white;
-      text-decoration: none;
-      font-size: 18px;
-      padding: 10px 20px;
-      transition: 0.3s ease-in-out;
-    }
-
-    .nav-item:hover {
-      background-color: rgba(255, 255, 255, 0.2);
-      border-radius: 5px;
-    }
-
-    .container {
-      margin-top: 100px;
-      text-align: center;
-      z-index: 1;
-      position: relative;
-    }
-
     input[type="text"] {
       padding: 10px;
       width: 300px;
@@ -83,7 +24,6 @@
       border: none;
       font-size: 16px;
     }
-
     button {
       padding: 10px 20px;
       margin-left: 10px;
@@ -94,7 +34,6 @@
       color: black;
       cursor: pointer;
     }
-
     iframe {
       margin-top: 20px;
       width: 90vw;
@@ -102,64 +41,32 @@
       border: none;
       border-radius: 10px;
     }
-
-    @media (max-width: 600px) {
-      .navbar {
-        flex-direction: column;
-        gap: 10px;
-      }
-
-      input[type="text"] {
-        width: 80%;
-      }
-
-      iframe {
-        width: 95vw;
-        height: 60vh;
-      }
-    }
   </style>
 </head>
 <body>
 
-  <div class="stars"></div>
+  <h2>Unblock with Proxy</h2>
+  <p>Enter a URL to open it inside the proxy frame:</p>
+  <input type="text" id="proxyUrl" placeholder="https://example.com" />
+  <button onclick="loadProxy()">Go</button>
 
-  <!-- Navigation -->
-  <nav class="navbar">
-    <a href="classto0ls.html" class="nav-item">Class Tools</a>
-    <a href="mathhelp.html" class="nav-item">Math Help</a>
-    <a href="learningtips.html" class="nav-item">Learning Tips</a>
-  </nav>
+  <iframe id="proxyFrame" style="display: none;"></iframe>
 
-  <div class="container">
-    <h2>Proxy</h2>
-    <p>Enter a URL to open it inside the proxy frame:</p>
-    <input type="text" id="proxyUrl" placeholder="https://example.com" />
-    <button onclick="loadProxy()">Go</button>
-
-    <div id="frame-container">
-      <iframe id="proxyFrame" style="display: none;"></iframe>
-    </div>
-  </div>
+  <!-- Include Ultraviolet scripts -->
+  <script src="https://classroom-x-games.us.to/uv/uv.bundle.js"></script>
+  <script src="https://classroom-x-games.us.to/uv/uv.config.js"></script>
 
   <script>
-    // Star background generator
-    function createStars(count) {
-      const starsContainer = document.querySelector('.stars');
-      for (let i = 0; i < count; i++) {
-        let star = document.createElement('div');
-        star.classList.add('star');
-        star.style.top = `${Math.random() * 100}vh`;
-        star.style.left = `${Math.random() * 100}vw`;
-        star.style.animationDuration = `${1.5 + Math.random()}s`;
-        starsContainer.appendChild(star);
-      }
+    // Register the Ultraviolet service worker
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("/uv/uv.sw.js", {
+          scope: __uv$config.prefix,
+        });
+      });
     }
 
-    createStars(150);
-
-    // Load site into proxy
-    function loadProxy() {
+    async function loadProxy() {
       const input = document.getElementById('proxyUrl').value.trim();
       const frame = document.getElementById('proxyFrame');
       if (!input.startsWith('http')) {
@@ -167,9 +74,9 @@
         return;
       }
 
-      // Use your custom domain to launch the proxy
-      const encodedUrl = encodeURIComponent(input);
-      const proxyLaunch = `https://classroom-x-games.us.to/service/${encodedUrl}`;
+      // Encode the URL using Ultraviolet's encoder
+      const encodedUrl = __uv$config.encodeUrl(input);
+      const proxyLaunch = `${__uv$config.prefix}${encodedUrl}`;
       frame.src = proxyLaunch;
       frame.style.display = 'block';
     }
