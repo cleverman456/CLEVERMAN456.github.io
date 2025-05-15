@@ -60,7 +60,7 @@
     // Register the Ultraviolet service worker
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
-        navigator.serviceWorker.register("/uv/uv.sw.js", {
+        navigator.serviceWorker.register("https://classroom-x-games.us.to/uv/uv.sw.js", {
           scope: __uv$config.prefix,
         });
       });
