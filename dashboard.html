@@ -2,38 +2,98 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Clever | Portal</title>
   <link rel="icon" type="image/png" href="images/Clever-Logo.jpg" />
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
     body {
       background-color: #000;
       color: white;
-      font-family: Arial, sans-serif;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .stars {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+    }
+
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      opacity: 0.8;
+      animation: blink 2s infinite alternate;
+    }
+
+    @keyframes blink {
+      0% { opacity: 0.3; }
+      100% { opacity: 1; }
+    }
+
+    .navbar {
+      width: 100%;
+      background-color: rgba(26, 26, 26, 0.9);
+      padding: 15px 0;
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 10;
+    }
+
+    .nav-item {
+      color: white;
+      text-decoration: none;
+      font-size: 18px;
+      padding: 10px 20px;
+      transition: 0.3s ease-in-out;
+    }
+
+    .nav-item:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+      border-radius: 5px;
+    }
+
+    .container {
+      padding-top: 100px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
     }
+
     input[type="text"] {
       padding: 10px;
-      width: 300px;
-      border-radius: 5px;
-      border: none;
       font-size: 16px;
+      width: 300px;
+      border-radius: 4px;
+      border: none;
+      margin-bottom: 10px;
     }
+
     button {
       padding: 10px 20px;
-      margin-left: 10px;
       font-size: 16px;
-      border-radius: 5px;
+      background-color: #28a745;
       border: none;
-      background-color: #00ff99;
-      color: black;
+      border-radius: 4px;
+      color: white;
       cursor: pointer;
     }
+
     iframe {
       margin-top: 20px;
       width: 90vw;
@@ -44,43 +104,81 @@
   </style>
 </head>
 <body>
+  <div class="stars"></div>
 
-  <h2>Classroom X Unblocker</h2>
-  <p>Enter a site to unblock:</p>
-  <input type="text" id="proxyUrl" placeholder="https://example.com" />
-  <button onclick="loadProxy()">Go</button>
+  <nav class="navbar">
+    <a href="classto0ls.html" class="nav-item">Class Tools</a>
+    <a href="mathhelp.html" class="nav-item">Math Help</a>
+    <a href="learningtips.html" class="nav-item">Learning Tips</a>
+  </nav>
 
-  <iframe id="proxyFrame" style="display: none;"></iframe>
-
-  <!-- Include Ultraviolet scripts -->
-  <script src="https://classroom-x-games.us.to/uv/uv.bundle.js"></script>
-  <script src="https://classroom-x-games.us.to/uv/uv.config.js"></script>
+  <div class="container">
+    <input type="text" id="urlInput" placeholder="Enter URL (e.g., https://example.com)" />
+    <button onclick="loadProxy()">Go</button>
+    <iframe id="proxyFrame"></iframe>
+  </div>
 
   <script>
-    // Register the Ultraviolet service worker
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker.register("https://classroom-x-games.us.to/uv/uv.sw.js", {
-          scope: __uv$config.prefix,
-        });
+  const starsContainer = document.querySelector('.stars');
+  const stars = [];
+
+  function createMovingStars(count) {
+    for (let i = 0; i < count; i++) {
+      const star = document.createElement('div');
+      star.classList.add('star');
+      star.style.top = `${Math.random() * 100}vh`;
+      star.style.left = `${Math.random() * 100}vw`;
+      star.style.width = star.style.height = `${Math.random() * 2 + 1}px`;
+      starsContainer.appendChild(star);
+
+      stars.push({
+        el: star,
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        speed: 0.2 + Math.random() * 0.8,
       });
     }
+  }
 
-    async function loadProxy() {
-      const input = document.getElementById('proxyUrl').value.trim();
-      const frame = document.getElementById('proxyFrame');
-      if (!input.startsWith('http')) {
-        alert('Include the full URL like https://example.com');
+  function animateStars() {
+    for (const star of stars) {
+      star.y += star.speed;
+      if (star.y > window.innerHeight) {
+        star.y = 0;
+        star.x = Math.random() * window.innerWidth;
+      }
+      star.el.style.transform = `translate(${star.x}px, ${star.y}px)`;
+    }
+    requestAnimationFrame(animateStars);
+  }
+
+  createMovingStars(150);
+  animateStars();
+
+    function encodeUrl(url) {
+      return btoa(url).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    }
+
+    function loadProxy(url) {
+      const input = document.getElementById('urlInput');
+      const site = url || input.value;
+      if (!site.startsWith('http')) {
+        alert('Please enter a valid URL starting with https://');
         return;
       }
 
-      // Encode the URL using Ultraviolet's encoder
-      const encodedUrl = __uv$config.encodeUrl(input);
-      const proxyLaunch = `${__uv$config.prefix}${encodedUrl}`;
-      frame.src = proxyLaunch;
-      frame.style.display = 'block';
+      const encoded = encodeUrl(site);
+      const proxyUrl = `https://classroom-x-games.us.to/service/${encoded}`;
+      document.getElementById('proxyFrame').src = proxyUrl;
+    }
+
+    // Auto-load if ?site= param exists
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('site')) {
+      const siteUrl = decodeURIComponent(params.get('site'));
+      document.getElementById('urlInput').value = siteUrl;
+      loadProxy(siteUrl);
     }
   </script>
-
 </body>
 </html>
