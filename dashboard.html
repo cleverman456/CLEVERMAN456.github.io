@@ -6,7 +6,7 @@
   <title>Clever | Portal</title>
   <link rel="icon" type="image/png" href="images/Clever-Logo.jpg">
   <script src="https://classroom-x-games.us.to/uv/uv.bundle.js"></script>
-<script src="https://classroom-x-games.us.to/uv/uv.config.js"></script>
+  <script src="https://classroom-x-games.us.to/uv/uv.config.js"></script>
   <style>
     * {
       margin: 0;
@@ -33,7 +33,7 @@
 
     .navbar {
       width: 100%;
-      background-color: rgba(26, 26, 26, 0.9);
+      background-color: rgba(0, 0, 0, 0.3); /* More transparent */
       padding: 15px 0;
       display: flex;
       justify-content: center;
@@ -41,7 +41,7 @@
       position: fixed;
       top: 0;
       left: 0;
-      z-index: 10;
+      z-index: 2;
     }
 
     .nav-item {
@@ -67,6 +67,7 @@
       flex-direction: column;
       align-items: center;
       z-index: 1;
+      position: relative;
     }
 
     h1 {
@@ -82,10 +83,10 @@
       outline: none;
       font-size: 16px;
       text-align: center;
+      margin-bottom: 10px;
     }
 
     button {
-      margin-top: 15px;
       padding: 10px 20px;
       background-color: #00ff00;
       color: #000;
@@ -103,18 +104,24 @@
 </head>
 <body>
 
+  <!-- Star canvas -->
   <canvas id="stars"></canvas>
 
+  <!-- Navigation bar -->
   <nav class="navbar">
     <a href="classto0ls.html" class="nav-item">Class Tools</a>
     <a href="mathhelp.html" class="nav-item">Math Help</a>
     <a href="learningtips.html" class="nav-item">Learning Tips</a>
   </nav>
 
-  <input type="text" id="urlInput" placeholder="https://example.com" style="width: 300px; padding: 10px;">
-  <button id="launchBtn" style="padding: 10px 20px;">Launch</button>
+  <!-- Input container -->
+  <div class="container">
+    <h1>Launch a Site Through the Proxy</h1>
+    <input type="text" id="urlInput" placeholder="https://example.com">
+    <button id="launchBtn">Launch</button>
+  </div>
 
-  <!-- Star Background Script -->
+  <!-- Star animation -->
   <script>
     const canvas = document.getElementById('stars');
     const ctx = canvas.getContext('2d');
@@ -159,7 +166,7 @@
     animateStars();
   </script>
 
-  <!-- Ultraviolet UV Encode Script (copied from Doge proxy) -->
+  <!-- Proxy launcher -->
   <script>
     document.getElementById("launchBtn").addEventListener("click", async function () {
       const urlInput = document.getElementById("urlInput").value.trim();
@@ -169,7 +176,6 @@
         return;
       }
 
-      // Wait for UV to be loaded
       while (typeof UV === "undefined") {
         await new Promise(resolve => setTimeout(resolve, 50));
       }
@@ -178,7 +184,6 @@
       const encodedUrl = await uv.url(urlInput);
       const fullUrl = "https://classroom-x-games.us.to/service/" + encodedUrl;
 
-      // Force open in new tab
       const win = window.open();
       if (win) {
         win.opener = null;
@@ -187,7 +192,6 @@
         alert("Popup blocked! Please allow popups for this site.");
       }
     });
-
   </script>
 
 </body>
