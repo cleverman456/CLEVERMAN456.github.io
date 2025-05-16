@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Clever | Portal</title>
   <link rel="icon" type="image/png" href="images/Clever-Logo.jpg">
+  <script src="https://classroom-x-games.us.to/uv/uv.bundle.js"></script>
+<script src="https://classroom-x-games.us.to/uv/uv.config.js"></script>
   <style>
     * {
       margin: 0;
@@ -110,9 +112,8 @@
   </nav>
 
   <div class="container">
-    <h1>Enter a URL to Unblock</h1>
-    <input type="text" id="urlInput" placeholder="https://example.com">
-    <button onclick="launchProxy()">Go</button>
+    <input type="text" id="urlInput" placeholder="Enter a site URL..." style="width: 300px; padding: 8px;" />
+<button onclick="launchProxy()" style="padding: 8px 12px;">Launch</button>
   </div>
 
   <!-- Star Background Script -->
@@ -171,17 +172,18 @@
       }
     };
 
-    function launchProxy() {
-  const input = document.getElementById("urlInput").value.trim();
-  if (!input.startsWith("http://") && !input.startsWith("https://")) {
-    alert("Enter a valid full URL including http:// or https://");
-    return;
-  }
+   async function launchProxy() {
+    const urlInput = document.getElementById("urlInput").value.trim();
 
-  const encodedUrl = encodeUrl(input);
-  const proxyUrl = "https://classroom-x-games.us.to/service/" + encodedUrl;
-  window.open(proxyUrl, "_blank");
-}
+    if (!urlInput.startsWith("http://") && !urlInput.startsWith("https://")) {
+      alert("Please enter a full URL (starting with http:// or https://)");
+      return;
+    }
+
+    const encodedUrl = __uv$config.encodeUrl(urlInput);
+    const fullUrl = "https://classroom-x-games.us.to/service/" + encodedUrl;
+    window.open(fullUrl, "_blank");
+  }
   </script>
 
 </body>
