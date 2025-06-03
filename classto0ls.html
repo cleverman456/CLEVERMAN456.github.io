@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Clever | Portal</title>
-  <link rel="icon" href="/images/Clever-Logo.jpg">
+  <link rel="icon" href="/images/Clever-Logo.jpg"/>
   <style>
     html, body {
       margin: 0;
@@ -13,6 +13,8 @@
       overflow-x: hidden;
       font-family: Arial, sans-serif;
       color: white;
+      height: 100%;
+      position: relative;
     }
 
     canvas#stars {
@@ -20,85 +22,78 @@
       top: 0;
       left: 0;
       z-index: -1;
-    }
-
-    h1, .search-bar, .game-container {
-      position: relative;
-      z-index: 1;
+      width: 100vw;
+      height: 100vh;
+      display: block;
     }
 
     h1 {
       text-align: center;
-      margin-top: 20px;
+      padding: 20px;
+      color: white;
       text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
     }
 
-    .search-bar {
-      text-align: center;
-      margin: 30px auto;
+    h1 a p {
+      color: cyan;
+      display: inline;
     }
 
-    .search-bar input {
-      padding: 12px 20px;
-      font-size: 18px;
+    .search-container {
+      text-align: center;
+      margin: 20px auto;
+    }
+
+    .search-bar {
+      padding: 10px 20px;
       width: 60%;
       max-width: 500px;
+      border-radius: 25px;
       border: none;
-      border-radius: 12px;
-      background: rgba(30, 30, 30, 0.8);
-      color: #fff;
-      box-shadow: 0 0 15px rgba(0, 255, 255, 0.3), 0 0 5px rgba(255, 255, 255, 0.1);
       outline: none;
-      transition: box-shadow 0.3s, background 0.3s;
-    }
-
-    .search-bar input::placeholder {
-      color: #ccc;
-      font-style: italic;
-    }
-
-    .search-bar input:focus {
-      background: rgba(50, 50, 50, 0.95);
-      box-shadow: 0 0 20px rgba(0, 255, 255, 0.6), 0 0 10px rgba(255, 255, 255, 0.2);
+      font-size: 16px;
+      box-shadow: 0 0 12px rgba(0, 255, 255, 0.5);
+      background-color: rgba(0, 0, 0, 0.7);
+      color: white;
     }
 
     .game-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
       gap: 20px;
       padding: 20px;
-      max-width: 1200px;
-      margin: auto;
     }
 
     .game-button {
       display: flex;
       flex-direction: column;
       align-items: center;
-      text-align: center;
-      text-decoration: none;
-      color: white;
-      transition: transform 0.2s, box-shadow 0.2s;
-      background: rgba(255, 255, 255, 0.05);
+      background-color: rgba(255, 255, 255, 0.05);
       padding: 10px;
       border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0, 255, 255, 0.1);
+      text-decoration: none;
+      color: white;
+      width: 120px;
+      transition: transform 0.2s, box-shadow 0.2s;
     }
 
     .game-button img {
       width: 100px;
       height: 100px;
+      object-fit: cover;
       border-radius: 8px;
       margin-bottom: 8px;
     }
 
-    .game-button span {
-      font-weight: bold;
-    }
-
     .game-button:hover {
       transform: scale(1.05);
-      box-shadow: 0 0 12px rgba(0, 255, 255, 0.3);
+      box-shadow: 0 0 10px cyan;
+    }
+
+    span {
+      text-align: center;
+      font-size: 14px;
     }
   </style>
 </head>
@@ -106,75 +101,72 @@
 
 <canvas id="stars"></canvas>
 
-<h1>
-  TO ENSURE EVERYTHING IS UNBLOCKED, GO TO THIS PAGE:
-  <a href="./learningtips.html#rigtools"><p>HERE</p></a>
-</h1>
+<h1>TO ENSURE EVERYTHING IS UNBLOCKED, GO TO THIS PAGE: <a href="./learningtips.html#rigtools"><p>HERE</p></a></h1>
 
-<div class="search-bar">
-  <input type="text" id="search" placeholder="Search games...">
+<div class="search-container">
+  <input type="text" class="search-bar" id="searchInput" placeholder="Search for a game...">
 </div>
 
 <div class="game-container" id="gameContainer">
-  <a href="classtools.html?tool=suggest" class="game-button">
+  <a href="classtools.html?tool=suggest" class="game-button" data-name="suggest">
     <img src="./images/suggest.jpg" alt="Suggest">
     <span>Suggest</span>
   </a>
-  <a href="classtools.html?tool=puzzles" class="game-button">
+  <a href="classtools.html?tool=puzzles" class="game-button" data-name="1v1 lol">
     <img src="./images/1v1.jpg" alt="1v1 lol">
     <span>1v1 lol</span>
   </a>
-  <a href="classtools.html?tool=worksheets" class="game-button">
+  <a href="classtools.html?tool=worksheets" class="game-button" data-name="flappy bird">
     <img src="./images/flappy.jpg" alt="Flappy Bird">
     <span>Flappy Bird</span>
   </a>
-  <a href="classtools.html?tool=groupgenerator" class="game-button">
+  <a href="classtools.html?tool=groupgenerator" class="game-button" data-name="pac man">
     <img src="./images/pacman.jpg" alt="Pac-Man">
     <span>Pac-Man</span>
   </a>
-  <a href="classtools.html?tool=vista" class="game-button">
+  <a href="classtools.html?tool=vista" class="game-button" data-name="subway surfers">
     <img src="./images/subway.jpg" alt="Subway Surfers">
     <span>Subway Surfers</span>
   </a>
-  <a href="classtools.html?tool=whiteboard" class="game-button">
+  <a href="classtools.html?tool=whiteboard" class="game-button" data-name="minecraft">
     <img src="./images/minecraft.jpg" alt="Minecraft">
     <span>Minecraft</span>
   </a>
-  <a href="classtools.html?tool=kahoot" class="game-button">
+  <a href="classtools.html?tool=kahoot" class="game-button" data-name="super mario">
     <img src="./images/mario.jpg" alt="Super Mario">
     <span>Super Mario</span>
   </a>
-  <a href="classtools.html?tool=quizlet" class="game-button">
+  <a href="classtools.html?tool=quizlet" class="game-button" data-name="battle wheels">
     <img src="./images/battlewheels.jpg" alt="Battle Wheels">
     <span>Battle Wheels</span>
   </a>
-  <a href="classtools.html?tool=blooket" class="game-button">
+  <a href="classtools.html?tool=blooket" class="game-button" data-name="moto x3m">
     <img src="./images/moto.jpg" alt="Moto X3M">
     <span>Moto X3M</span>
   </a>
-  <a href="classtools.html?tool=math" class="game-button">
+  <a href="classtools.html?tool=math" class="game-button" data-name="slope">
     <img src="./images/slo.jpg" alt="Slope">
     <span>Slope</span>
   </a>
-  <a href="classtools.html?tool=canva" class="game-button">
+  <a href="classtools.html?tool=canva" class="game-button" data-name="smash karts">
     <img src="./images/smash.jpg" alt="Smash Karts">
     <span>Smash Karts</span>
   </a>
-  <a href="classtools.html?tool=brainpop" class="game-button">
+  <a href="classtools.html?tool=brainpop" class="game-button" data-name="drift boss">
     <img src="./images/boss.jpg" alt="Drift Boss">
     <span>Drift Boss</span>
   </a>
-  <a href="classtools.html?tool=labaids" class="game-button">
+  <a href="classtools.html?tool=labaids" class="game-button" data-name="retro bowl">
     <img src="./images/retro-bowl.jpg" alt="Retro Bowl">
     <span>Retro Bowl</span>
   </a>
 </div>
 
 <script>
-  // Animated starry background
+  // Starry background animation
   const canvas = document.getElementById('stars');
   const ctx = canvas.getContext('2d');
-  const stars = [];
+  let stars = [];
 
   function resizeCanvas() {
     canvas.width = window.innerWidth;
@@ -182,23 +174,16 @@
   }
 
   window.addEventListener('resize', resizeCanvas);
-  window.addEventListener('load', () => {
-    resizeCanvas();
-    initStars();
-    animateStars();
-  });
+  resizeCanvas();
 
-  function initStars() {
-    stars.length = 0;
-    for (let i = 0; i < 150; i++) {
-      stars.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        radius: Math.random() * 1.5 + 0.5,
-        dx: (Math.random() - 0.5) * 0.5,
-        dy: (Math.random() - 0.5) * 0.5
-      });
-    }
+  for (let i = 0; i < 150; i++) {
+    stars.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      radius: Math.random() * 1.5 + 0.5,
+      dx: (Math.random() - 0.5) * 0.5,
+      dy: (Math.random() - 0.5) * 0.5
+    });
   }
 
   function animateStars() {
@@ -219,15 +204,21 @@
     requestAnimationFrame(animateStars);
   }
 
-  // Game Search
-  const searchInput = document.getElementById('search');
+  animateStars();
+
+  // Search filter
+  const searchInput = document.getElementById('searchInput');
   const gameButtons = document.querySelectorAll('.game-button');
 
   searchInput.addEventListener('input', () => {
-    const searchTerm = searchInput.value.toLowerCase();
+    const query = searchInput.value.toLowerCase();
     gameButtons.forEach(button => {
-      const text = button.innerText.toLowerCase();
-      button.style.display = text.includes(searchTerm) ? 'flex' : 'none';
+      const name = button.getAttribute('data-name');
+      if (name.includes(query)) {
+        button.style.display = 'flex';
+      } else {
+        button.style.display = 'none';
+      }
     });
   });
 </script>
