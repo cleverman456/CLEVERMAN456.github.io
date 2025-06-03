@@ -5,15 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Clever | Portal</title>
   <link rel="icon" href="/images/Clever-Logo.jpg">
-  <link rel="stylesheet" href="./style.css">
   <style>
-    body, html {
+    html, body {
       margin: 0;
       padding: 0;
-      overflow-x: hidden;
       background: black;
-      color: white;
+      overflow-x: hidden;
       font-family: Arial, sans-serif;
+      color: white;
     }
 
     canvas#stars {
@@ -64,11 +63,12 @@
     }
 
     .game-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
       gap: 20px;
       padding: 20px;
+      max-width: 1200px;
+      margin: auto;
     }
 
     .game-button {
@@ -78,15 +78,22 @@
       text-align: center;
       text-decoration: none;
       color: white;
-      width: 120px;
       transition: transform 0.2s, box-shadow 0.2s;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 10px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.1);
     }
 
     .game-button img {
       width: 100px;
       height: 100px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+
+    .game-button span {
+      font-weight: bold;
     }
 
     .game-button:hover {
@@ -110,7 +117,7 @@
 
 <div class="game-container" id="gameContainer">
   <a href="classtools.html?tool=suggest" class="game-button">
-    <img src="./images/suggest.jpg" alt="suggest">
+    <img src="./images/suggest.jpg" alt="Suggest">
     <span>Suggest</span>
   </a>
   <a href="classtools.html?tool=puzzles" class="game-button">
@@ -138,7 +145,7 @@
     <span>Super Mario</span>
   </a>
   <a href="classtools.html?tool=quizlet" class="game-button">
-    <img src="./images/battlewheels.jpg" alt="battle wheels">
+    <img src="./images/battlewheels.jpg" alt="Battle Wheels">
     <span>Battle Wheels</span>
   </a>
   <a href="classtools.html?tool=blooket" class="game-button">
@@ -164,7 +171,7 @@
 </div>
 
 <script>
-  // Starry background
+  // Animated starry background
   const canvas = document.getElementById('stars');
   const ctx = canvas.getContext('2d');
   const stars = [];
@@ -175,16 +182,23 @@
   }
 
   window.addEventListener('resize', resizeCanvas);
-  resizeCanvas();
+  window.addEventListener('load', () => {
+    resizeCanvas();
+    initStars();
+    animateStars();
+  });
 
-  for (let i = 0; i < 150; i++) {
-    stars.push({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      radius: Math.random() * 1.5 + 0.5,
-      dx: (Math.random() - 0.5) * 0.5,
-      dy: (Math.random() - 0.5) * 0.5
-    });
+  function initStars() {
+    stars.length = 0;
+    for (let i = 0; i < 150; i++) {
+      stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        radius: Math.random() * 1.5 + 0.5,
+        dx: (Math.random() - 0.5) * 0.5,
+        dy: (Math.random() - 0.5) * 0.5
+      });
+    }
   }
 
   function animateStars() {
@@ -205,16 +219,15 @@
     requestAnimationFrame(animateStars);
   }
 
-  animateStars();
-
-  // Search functionality
+  // Game Search
   const searchInput = document.getElementById('search');
-  searchInput.addEventListener('input', function () {
-    const query = this.value.toLowerCase();
-    const buttons = document.querySelectorAll('.game-button');
-    buttons.forEach(button => {
-      const text = button.textContent.toLowerCase();
-      button.style.display = text.includes(query) ? 'flex' : 'none';
+  const gameButtons = document.querySelectorAll('.game-button');
+
+  searchInput.addEventListener('input', () => {
+    const searchTerm = searchInput.value.toLowerCase();
+    gameButtons.forEach(button => {
+      const text = button.innerText.toLowerCase();
+      button.style.display = text.includes(searchTerm) ? 'flex' : 'none';
     });
   });
 </script>
