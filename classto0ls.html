@@ -27,6 +27,7 @@
       color: var(--text);
       font-family: Arial, sans-serif;
       height: 100%;
+      min-height: 100vh;
       overflow-x: hidden;
       transition: background 0.3s, color 0.3s;
     }
@@ -36,8 +37,6 @@
       top: 0;
       left: 0;
       z-index: -1;
-      width: 100vw;
-      height: 100vh;
     }
 
     h1 {
@@ -118,7 +117,6 @@
   </style>
 </head>
 <body class="dark">
-
 <canvas id="stars"></canvas>
 
 <h1>TO ENSURE EVERYTHING IS UNBLOCKED, GO TO THIS PAGE: 
@@ -131,7 +129,7 @@
 </div>
 
 <div class="game-container" id="gameContainer">
-  <!-- Add your buttons below (same structure) -->
+  <!-- FULL LIST OF GAME BUTTONS -->
   <a href="classtools.html?tool=suggest" class="game-button" data-name="suggest">
     <img src="./images/suggest.jpg" alt="Suggest">
     <span>Suggest</span>
@@ -156,11 +154,38 @@
     <img src="./images/minecraft.jpg" alt="Minecraft">
     <span>Minecraft</span>
   </a>
-  <!-- Add more buttons here... -->
+  <a href="classtools.html?tool=kahoot" class="game-button" data-name="super mario">
+    <img src="./images/mario.jpg" alt="Super Mario">
+    <span>Super Mario</span>
+  </a>
+  <a href="classtools.html?tool=quizlet" class="game-button" data-name="battle wheels">
+    <img src="./images/battlewheels.jpg" alt="Battle Wheels">
+    <span>Battle Wheels</span>
+  </a>
+  <a href="classtools.html?tool=blooket" class="game-button" data-name="moto x3m">
+    <img src="./images/moto.jpg" alt="Moto X3M">
+    <span>Moto X3M</span>
+  </a>
+  <a href="classtools.html?tool=math" class="game-button" data-name="slope">
+    <img src="./images/slo.jpg" alt="Slope">
+    <span>Slope</span>
+  </a>
+  <a href="classtools.html?tool=canva" class="game-button" data-name="smash karts">
+    <img src="./images/smash.jpg" alt="Smash Karts">
+    <span>Smash Karts</span>
+  </a>
+  <a href="classtools.html?tool=brainpop" class="game-button" data-name="drift boss">
+    <img src="./images/boss.jpg" alt="Drift Boss">
+    <span>Drift Boss</span>
+  </a>
+  <a href="classtools.html?tool=labaids" class="game-button" data-name="retro bowl">
+    <img src="./images/retro-bowl.jpg" alt="Retro Bowl">
+    <span>Retro Bowl</span>
+  </a>
 </div>
 
 <script>
-  // Starry background
+  // Starry Background Animation
   const canvas = document.getElementById('stars');
   const ctx = canvas.getContext('2d');
   let stars = [];
@@ -207,7 +232,7 @@
   initStars();
   animateStars();
 
-  // Search filtering
+  // Search filter
   const searchInput = document.getElementById('searchInput');
   const gameButtons = document.querySelectorAll('.game-button');
 
