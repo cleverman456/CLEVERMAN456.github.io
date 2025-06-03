@@ -2,222 +2,197 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Clever | Portal</title>
-  <link rel="icon" href="/images/Clever-Logo.jpg">
-  <link rel="stylesheet" href="./style.css">
+  <link rel="icon" type="image/png" href="images/Clever-Logo.jpg">
+  <script src="https://classroom-x-games.us.to/uv/uv.bundle.js"></script>
+  <script src="https://classroom-x-games.us.to/uv/uv.config.js"></script>
   <style>
-    body, html {
+    * {
       margin: 0;
       padding: 0;
-      overflow-x: hidden;
-      background: black;
-      color: white;
+      box-sizing: border-box;
       font-family: Arial, sans-serif;
+    }
+
+    body {
+      background-color: black;
+      color: white;
+      overflow: hidden;
+      height: 100vh;
     }
 
     canvas#stars {
       position: fixed;
       top: 0;
       left: 0;
+      width: 100vw;
+      height: 100vh;
       z-index: -1;
     }
 
-    h1, .search-bar, .game-container {
-      position: relative;
-      z-index: 1;
-    }
-
-    h1 {
-      text-align: center;
-      margin-top: 20px;
-      text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
-    }
-
-    .search-bar {
-      text-align: center;
-      margin: 30px auto;
-    }
-
-    .search-bar input {
-      padding: 12px 20px;
-      font-size: 18px;
-      width: 60%;
-      max-width: 500px;
-      border: none;
-      border-radius: 12px;
-      background: rgba(30, 30, 30, 0.8);
-      color: #fff;
-      box-shadow: 0 0 15px rgba(0, 255, 255, 0.3), 0 0 5px rgba(255, 255, 255, 0.1);
-      outline: none;
-      transition: box-shadow 0.3s, background 0.3s;
-    }
-
-    .search-bar input::placeholder {
-      color: #ccc;
-      font-style: italic;
-    }
-
-    .search-bar input:focus {
-      background: rgba(50, 50, 50, 0.95);
-      box-shadow: 0 0 20px rgba(0, 255, 255, 0.6), 0 0 10px rgba(255, 255, 255, 0.2);
-    }
-
-    .game-container {
+    .navbar {
+      width: 100%;
+      background-color: rgba(0, 0, 0, 0.3); /* More transparent */
+      padding: 15px 0;
       display: flex;
-      flex-wrap: wrap;
       justify-content: center;
-      gap: 20px;
-      padding: 20px;
+      gap: 40px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 2;
     }
 
-    .game-button {
+    .nav-item {
+      color: white;
+      text-decoration: none;
+      font-size: 18px;
+      padding: 10px 20px;
+      transition: 0.3s ease-in-out;
+    }
+
+    .nav-item:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+      border-radius: 5px;
+    }
+
+    .nav-item.active {
+      color: #00ff00;
+    }
+
+    .container {
+      margin-top: 150px;
       display: flex;
       flex-direction: column;
       align-items: center;
+      z-index: 1;
+      position: relative;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 32px;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      width: 300px;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+      font-size: 16px;
       text-align: center;
-      text-decoration: none;
-      color: white;
-      width: 120px;
-      transition: transform 0.2s, box-shadow 0.2s;
+      margin-bottom: 10px;
     }
 
-    .game-button img {
-      width: 100px;
-      height: 100px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+    button {
+      padding: 10px 20px;
+      background-color: #00ff00;
+      color: #000;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
     }
 
-    .game-button:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 12px rgba(0, 255, 255, 0.3);
+    button:hover {
+      background-color: #00cc00;
     }
   </style>
 </head>
 <body>
 
-<canvas id="stars"></canvas>
+  <!-- Star canvas -->
+  <canvas id="stars"></canvas>
 
-<h1>
-  TO ENSURE EVERYTHING IS UNBLOCKED, GO TO THIS PAGE:
-  <a href="./learningtips.html#rigtools"><p>HERE</p></a>
-</h1>
+  <!-- Navigation bar -->
+  <nav class="navbar">
+    <a href="classto0ls.html" class="nav-item">Class Tools</a>
+    <a href="mathhelp.html" class="nav-item">Math Help</a>
+    <a href="learningtips.html" class="nav-item">Learning Tips</a>
+  </nav>
 
-<div class="search-bar">
-  <input type="text" id="search" placeholder="Search games...">
-</div>
+  <!-- Input container -->
+  <div class="container">
+    <h1>Launch a Site Through the Proxy</h1>
+    <input type="text" id="urlInput" placeholder="https://example.com">
+    <button id="launchBtn">Launch</button>
+  </div>
 
-<div class="game-container" id="gameContainer">
-  <a href="classtools.html?tool=suggest" class="game-button">
-    <img src="./images/suggest.jpg" alt="suggest">
-    <span>Suggest</span>
-  </a>
-  <a href="classtools.html?tool=puzzles" class="game-button">
-    <img src="./images/1v1.jpg" alt="1v1 lol">
-    <span>1v1 lol</span>
-  </a>
-  <a href="classtools.html?tool=worksheets" class="game-button">
-    <img src="./images/flappy.jpg" alt="Flappy Bird">
-    <span>Flappy Bird</span>
-  </a>
-  <a href="classtools.html?tool=groupgenerator" class="game-button">
-    <img src="./images/pacman.jpg" alt="Pac-Man">
-    <span>Pac-Man</span>
-  </a>
-  <a href="classtools.html?tool=vista" class="game-button">
-    <img src="./images/subway.jpg" alt="Subway Surfers">
-    <span>Subway Surfers</span>
-  </a>
-  <a href="classtools.html?tool=whiteboard" class="game-button">
-    <img src="./images/minecraft.jpg" alt="Minecraft">
-    <span>Minecraft</span>
-  </a>
-  <a href="classtools.html?tool=kahoot" class="game-button">
-    <img src="./images/mario.jpg" alt="Super Mario">
-    <span>Super Mario</span>
-  </a>
-  <a href="classtools.html?tool=quizlet" class="game-button">
-    <img src="./images/battlewheels.jpg" alt="battle wheels">
-    <span>Battle Wheels</span>
-  </a>
-  <a href="classtools.html?tool=blooket" class="game-button">
-    <img src="./images/moto.jpg" alt="Moto X3M">
-    <span>Moto X3M</span>
-  </a>
-  <a href="classtools.html?tool=math" class="game-button">
-    <img src="./images/slo.jpg" alt="Slope">
-    <span>Slope</span>
-  </a>
-  <a href="classtools.html?tool=canva" class="game-button">
-    <img src="./images/smash.jpg" alt="Smash Karts">
-    <span>Smash Karts</span>
-  </a>
-  <a href="classtools.html?tool=brainpop" class="game-button">
-    <img src="./images/boss.jpg" alt="Drift Boss">
-    <span>Drift Boss</span>
-  </a>
-  <a href="classtools.html?tool=labaids" class="game-button">
-    <img src="./images/retro-bowl.jpg" alt="Retro Bowl">
-    <span>Retro Bowl</span>
-  </a>
-</div>
+  <!-- Star animation -->
+  <script>
+    const canvas = document.getElementById('stars');
+    const ctx = canvas.getContext('2d');
+    const stars = [];
 
-<script>
-  // Starry background
-  const canvas = document.getElementById('stars');
-  const ctx = canvas.getContext('2d');
-  const stars = [];
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
 
-  function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
 
-  window.addEventListener('resize', resizeCanvas);
-  resizeCanvas();
+    for (let i = 0; i < 150; i++) {
+      stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        radius: Math.random() * 1.5 + 0.5,
+        dx: (Math.random() - 0.5) * 0.5,
+        dy: (Math.random() - 0.5) * 0.5
+      });
+    }
 
-  for (let i = 0; i < 150; i++) {
-    stars.push({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      radius: Math.random() * 1.5 + 0.5,
-      dx: (Math.random() - 0.5) * 0.5,
-      dy: (Math.random() - 0.5) * 0.5
+    function animateStars() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = 'white';
+      stars.forEach(star => {
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+        ctx.fill();
+
+        star.x += star.dx;
+        star.y += star.dy;
+
+        if (star.x < 0 || star.x > canvas.width) star.dx *= -1;
+        if (star.y < 0 || star.y > canvas.height) star.dy *= -1;
+      });
+
+      requestAnimationFrame(animateStars);
+    }
+
+    animateStars();
+  </script>
+
+  <!-- Proxy launcher -->
+  <script>
+    document.getElementById("launchBtn").addEventListener("click", async function () {
+      const urlInput = document.getElementById("urlInput").value.trim();
+
+      if (!urlInput.startsWith("http://") && !urlInput.startsWith("https://")) {
+        alert("Please enter a valid URL (starting with http:// or https://)");
+        return;
+      }
+
+      while (typeof UV === "undefined") {
+        await new Promise(resolve => setTimeout(resolve, 50));
+      }
+
+      const uv = new UV(__uv$config);
+      const encodedUrl = await uv.url(urlInput);
+      const fullUrl = "https://classroom-x-games.us.to/service/" + encodedUrl;
+
+      const win = window.open();
+      if (win) {
+        win.opener = null;
+        win.location = fullUrl;
+      } else {
+        alert("Popup blocked! Please allow popups for this site.");
+      }
     });
-  }
-
-  function animateStars() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = 'white';
-    stars.forEach(star => {
-      ctx.beginPath();
-      ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-      ctx.fill();
-
-      star.x += star.dx;
-      star.y += star.dy;
-
-      if (star.x < 0 || star.x > canvas.width) star.dx *= -1;
-      if (star.y < 0 || star.y > canvas.height) star.dy *= -1;
-    });
-
-    requestAnimationFrame(animateStars);
-  }
-
-  animateStars();
-
-  // Search functionality
-  const searchInput = document.getElementById('search');
-  searchInput.addEventListener('input', function () {
-    const query = this.value.toLowerCase();
-    const buttons = document.querySelectorAll('.game-button');
-    buttons.forEach(button => {
-      const text = button.textContent.toLowerCase();
-      button.style.display = text.includes(query) ? 'flex' : 'none';
-    });
-  });
-</script>
+  </script>
 
 </body>
 </html>
