@@ -1,64 +1,150 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Clever | Portal</title>
   <link rel="icon" href="/images/Clever-Logo.jpg">
-  <link rel="stylesheet" href="./style.css"
+  <link rel="stylesheet" href="./style.css">
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      background: black;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+
+    canvas#stars {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+
+    h1, .search-bar, .game-container {
+      position: relative;
+      z-index: 1;
+    }
+
+    h1 {
+      text-align: center;
+      margin-top: 20px;
+      text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
+    }
+
+    .search-bar {
+      text-align: center;
+      margin: 30px auto;
+    }
+
+    .search-bar input {
+      padding: 12px 20px;
+      font-size: 18px;
+      width: 60%;
+      max-width: 500px;
+      border: none;
+      border-radius: 12px;
+      background: rgba(30, 30, 30, 0.8);
+      color: #fff;
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.3), 0 0 5px rgba(255, 255, 255, 0.1);
+      outline: none;
+      transition: box-shadow 0.3s, background 0.3s;
+    }
+
+    .search-bar input::placeholder {
+      color: #ccc;
+      font-style: italic;
+    }
+
+    .search-bar input:focus {
+      background: rgba(50, 50, 50, 0.95);
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.6), 0 0 10px rgba(255, 255, 255, 0.2);
+    }
+
+    .game-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .game-button {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      text-decoration: none;
+      color: white;
+      width: 120px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .game-button img {
+      width: 100px;
+      height: 100px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+    }
+
+    .game-button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 12px rgba(0, 255, 255, 0.3);
+    }
+  </style>
 </head>
 <body>
 
-<div class="background"></div>
+<canvas id="stars"></canvas>
 
-<h1 style="color: white; text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);">TO ENSURE EVERYTHING IS UNBLOCKED, GO TO THIS PAGE: <a href="./learningtips.html#rigtools"><p>HERE</p></a></h1>
+<h1>
+  TO ENSURE EVERYTHING IS UNBLOCKED, GO TO THIS PAGE:
+  <a href="./learningtips.html#rigtools"><p>HERE</p></a>
+</h1>
 
-<div class="game-container">
+<div class="search-bar">
+  <input type="text" id="search" placeholder="Search games...">
+</div>
+
+<div class="game-container" id="gameContainer">
   <a href="classtools.html?tool=suggest" class="game-button">
     <img src="./images/suggest.jpg" alt="suggest">
     <span>Suggest</span>
   </a>
-
   <a href="classtools.html?tool=puzzles" class="game-button">
     <img src="./images/1v1.jpg" alt="1v1 lol">
     <span>1v1 lol</span>
   </a>
-
   <a href="classtools.html?tool=worksheets" class="game-button">
     <img src="./images/flappy.jpg" alt="Flappy Bird">
     <span>Flappy Bird</span>
   </a>
-
   <a href="classtools.html?tool=groupgenerator" class="game-button">
     <img src="./images/pacman.jpg" alt="Pac-Man">
     <span>Pac-Man</span>
   </a>
-
   <a href="classtools.html?tool=vista" class="game-button">
     <img src="./images/subway.jpg" alt="Subway Surfers">
     <span>Subway Surfers</span>
   </a>
-
   <a href="classtools.html?tool=whiteboard" class="game-button">
     <img src="./images/minecraft.jpg" alt="Minecraft">
     <span>Minecraft</span>
   </a>
-
   <a href="classtools.html?tool=kahoot" class="game-button">
     <img src="./images/mario.jpg" alt="Super Mario">
     <span>Super Mario</span>
   </a>
-
   <a href="classtools.html?tool=quizlet" class="game-button">
     <img src="./images/battlewheels.jpg" alt="battle wheels">
     <span>Battle Wheels</span>
   </a>
-
   <a href="classtools.html?tool=blooket" class="game-button">
     <img src="./images/moto.jpg" alt="Moto X3M">
     <span>Moto X3M</span>
   </a>
-  
   <a href="classtools.html?tool=math" class="game-button">
     <img src="./images/slo.jpg" alt="Slope">
     <span>Slope</span>
@@ -68,29 +154,69 @@
     <span>Smash Karts</span>
   </a>
   <a href="classtools.html?tool=brainpop" class="game-button">
-    <img src="./images/boss.jpg" alt="Smash Karts">
+    <img src="./images/boss.jpg" alt="Drift Boss">
     <span>Drift Boss</span>
   </a>
   <a href="classtools.html?tool=labaids" class="game-button">
-    <img src="./images/retro-bowl.jpg" alt="Smash Karts">
+    <img src="./images/retro-bowl.jpg" alt="Retro Bowl">
     <span>Retro Bowl</span>
   </a>
 </div>
 
 <script>
-  // Generate random stars
-  function createStars(count) {
-    const background = document.querySelector(".background");
-    for (let i = 0; i < count; i++) {
-      let star = document.createElement("div");
-      star.classList.add("star");
-      star.style.top = `${Math.random() * 100}vh`;
-      star.style.left = `${Math.random() * 100}vw`;
-      star.style.animationDuration = `${1.5 + Math.random()}s`; // Vary blinking speed
-      background.appendChild(star);
-    }
+  // Starry background
+  const canvas = document.getElementById('stars');
+  const ctx = canvas.getContext('2d');
+  const stars = [];
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
   }
-  createStars(150);
+
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  for (let i = 0; i < 150; i++) {
+    stars.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      radius: Math.random() * 1.5 + 0.5,
+      dx: (Math.random() - 0.5) * 0.5,
+      dy: (Math.random() - 0.5) * 0.5
+    });
+  }
+
+  function animateStars() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = 'white';
+    stars.forEach(star => {
+      ctx.beginPath();
+      ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+      ctx.fill();
+
+      star.x += star.dx;
+      star.y += star.dy;
+
+      if (star.x < 0 || star.x > canvas.width) star.dx *= -1;
+      if (star.y < 0 || star.y > canvas.height) star.dy *= -1;
+    });
+
+    requestAnimationFrame(animateStars);
+  }
+
+  animateStars();
+
+  // Search functionality
+  const searchInput = document.getElementById('search');
+  searchInput.addEventListener('input', function () {
+    const query = this.value.toLowerCase();
+    const buttons = document.querySelectorAll('.game-button');
+    buttons.forEach(button => {
+      const text = button.textContent.toLowerCase();
+      button.style.display = text.includes(query) ? 'flex' : 'none';
+    });
+  });
 </script>
 
 </body>
