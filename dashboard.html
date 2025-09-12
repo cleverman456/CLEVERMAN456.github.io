@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Clever | Portal</title>
   <link rel="icon" type="image/png" href="images/Clever-Logo.jpg">
-  <script src="https://classroom-x-games.us.to/uv/uv.bundle.js"></script>
-  <script src="https://classroom-x-games.us.to/uv/uv.config.js"></script>
+  <script src="https://interfaith-unsquirming-chan.ngrok-free.app/uv/uv.bundle.js"></script>
+  <script src="https://interfaith-unsquirming-chan.ngrok-free.app/uv/uv.config.js"></script>
   <style>
     * {
       margin: 0;
@@ -33,7 +33,7 @@
 
     .navbar {
       width: 100%;
-      background-color: rgba(0, 0, 0, 0.3); /* More transparent */
+      background-color: rgba(0, 0, 0, 0.3);
       padding: 15px 0;
       display: flex;
       justify-content: center;
@@ -182,7 +182,7 @@
 
       const uv = new UV(__uv$config);
       const encodedUrl = await uv.url(urlInput);
-      const fullUrl = "https://classroom-x-games.us.to/service/" + encodedUrl;
+      const fullUrl = __uv$config.prefix + encodedUrl;
 
       const win = window.open();
       if (win) {
