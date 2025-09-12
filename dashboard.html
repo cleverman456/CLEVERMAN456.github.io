@@ -5,8 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Clever | Portal</title>
   <link rel="icon" type="image/png" href="images/Clever-Logo.jpg">
+  
+  <!-- Load UV bundle from your backend -->
   <script src="https://interfaith-unsquirming-chan.ngrok-free.app/uv/uv.bundle.js"></script>
   <script src="https://interfaith-unsquirming-chan.ngrok-free.app/uv/uv.config.js"></script>
+
   <style>
     * {
       margin: 0;
@@ -166,41 +169,38 @@
     animateStars();
   </script>
 
- <script>
-  // Use query string or default
-  const urlParams = new URLSearchParams(window.location.search);
-  const backend = urlParams.get('backend') || "https://interfaith-unsquirming-chan.ngrok-free.app";
+  <!-- Proxy launcher -->
+  <script>
+    document.getElementById("launchBtn").addEventListener("click", async function () {
+      const urlInput = document.getElementById("urlInput").value.trim();
+      if (!urlInput.startsWith("http://") && !urlInput.startsWith("https://")) {
+        alert("Please enter a valid URL (starting with http:// or https://)");
+        return;
+      }
 
-  const __uv$config = {
-    prefix: backend + "/service/",
-    bare: backend + "/"
-  };
+      while (typeof UV === "undefined") {
+        await new Promise(resolve => setTimeout(resolve, 50));
+      }
 
-  document.getElementById("launchBtn").addEventListener("click", async function () {
-    const urlInput = document.getElementById("urlInput").value.trim();
-    if (!urlInput.startsWith("http://") && !urlInput.startsWith("https://")) {
-      alert("Please enter a valid URL (starting with http:// or https://)");
-      return;
-    }
+      // Set UV config pointing to your ngrok backend
+      const __uv$config = {
+        prefix: "https://interfaith-unsquirming-chan.ngrok-free.app/service/",
+        bare: "https://interfaith-unsquirming-chan.ngrok-free.app/"
+      };
 
-    while (typeof UV === "undefined") {
-      await new Promise(resolve => setTimeout(resolve, 50));
-    }
+      const uv = new UV(__uv$config);
+      const encodedUrl = await uv.url(urlInput);
+      const fullUrl = __uv$config.prefix + encodedUrl;
 
-    const uv = new UV(__uv$config);
-    const encodedUrl = await uv.url(urlInput);
-    const fullUrl = __uv$config.prefix + encodedUrl;
-
-    const win = window.open();
-    if (win) {
-      win.opener = null;
-      win.location = fullUrl;
-    } else {
-      alert("Popup blocked! Please allow popups for this site.");
-    }
-  });
-</script>
-
+      const win = window.open();
+      if (win) {
+        win.opener = null;
+        win.location = fullUrl;
+      } else {
+        alert("Popup blocked! Please allow popups for this site.");
+      }
+    });
+  </script>
 
 </body>
 </html>
