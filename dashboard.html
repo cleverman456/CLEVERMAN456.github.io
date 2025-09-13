@@ -6,7 +6,7 @@
   <title>Clever | Portal</title>
   <link rel="icon" type="image/png" href="images/Clever-Logo.jpg">
 
-  <script src="https://interfaith-unsquirming-chan.ngrok-free.app/uv/uv.bundle.js"></script>
+  
 
   <style>
     * {
@@ -131,10 +131,31 @@
     <button id="launchBtn">Launch</button>
   </div>
 
-  <!-- Iframe container -->
-  <div class="iframe-container">
-    <iframe id="proxyFrame" src=""></iframe>
-  </div>
+  <iframe id="uv-frame" style="width:100%; height:100%; border:none;"></iframe>
+
+<script src="https://interfaith-unsquirming-chan.ngrok-free.app/uv/uv.bundle.js"></script>
+<script>
+  const __uv$config = {
+    prefix: "https://interfaith-unsquirming-chan.ngrok-free.app/service/",
+    bare: "https://interfaith-unsquirming-chan.ngrok-free.app/"
+  };
+
+  const iframe = document.getElementById("uv-frame");
+
+  async function loadURL(url) {
+    // Wait until UV is defined
+    while (typeof UV === "undefined") {
+      await new Promise(resolve => setTimeout(resolve, 50));
+    }
+
+    const uv = new UV(__uv$config);
+    const encoded = await uv.url(url);
+    iframe.src = __uv$config.prefix + encoded;
+  }
+
+  // Example usage:
+  loadURL("https://example.com"); // iframe now loads proxied site
+</script>
 
   <!-- Star animation -->
   <script>
@@ -176,53 +197,7 @@
     animateStars();
   </script>
 
-  <!-- Proxy launch -->
- <script>
-  const launchBtn = document.getElementById("launchBtn");
-  const urlInput = document.getElementById("urlInput");
-  const proxyFrame = document.getElementById("proxyFrame");
-
-  // UV config pointing to your backend
-  const __uv$config = {
-    prefix: "https://interfaith-unsquirming-chan.ngrok-free.app/service/",
-    bare: "https://interfaith-unsquirming-chan.ngrok-free.app/"
-  };
-
-  // Wait until UV is loaded
-  function waitForUV() {
-    return new Promise(resolve => {
-      if (typeof UV !== "undefined") return resolve();
-      const interval = setInterval(() => {
-        if (typeof UV !== "undefined") {
-          clearInterval(interval);
-          resolve();
-        }
-      }, 50);
-    });
-  }
-
-  launchBtn.addEventListener("click", async () => {
-    const url = urlInput.value.trim();
-    if (!url.startsWith("http://") && !url.startsWith("https://")) {
-      alert("Enter a valid URL starting with http:// or https://");
-      return;
-    }
-
-    await waitForUV();
-
-    try {
-      const uv = new UV(__uv$config);
-      const encodedUrl = await uv.url(url);
-      const fullUrl = __uv$config.prefix + encodedUrl;
-
-      // Load the proxied page in iframe
-      proxyFrame.src = fullUrl;
-    } catch (e) {
-      alert("Failed to load the proxy URL. Make sure your backend is running!");
-      console.error(e);
-    }
-  });
-</script>
+ 
 
 
 </body>
