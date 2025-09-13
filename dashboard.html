@@ -6,111 +6,29 @@
   <title>Clever | Portal</title>
   <link rel="icon" type="image/png" href="images/Clever-Logo.jpg">
 
-  
-
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: Arial, sans-serif;
-    }
-
-    body {
-      background-color: black;
-      color: white;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-
-    canvas#stars {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: -1;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+    body { background-color: black; color: white; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+    canvas#stars { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; }
 
     .navbar {
-      width: 100%;
-      background-color: rgba(0, 0, 0, 0.3);
-      padding: 15px 0;
-      display: flex;
-      justify-content: center;
-      gap: 40px;
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: 2;
+      width: 100%; background-color: rgba(0,0,0,0.3); padding: 15px 0; display: flex; justify-content: center; gap: 40px;
+      position: fixed; top: 0; left: 0; z-index: 2;
     }
-
-    .nav-item {
-      color: white;
-      text-decoration: none;
-      font-size: 18px;
-      padding: 10px 20px;
-      transition: 0.3s ease-in-out;
-    }
-
-    .nav-item:hover {
-      background-color: rgba(255, 255, 255, 0.2);
-      border-radius: 5px;
-    }
-
-    .nav-item.active {
-      color: #00ff00;
-    }
-
-    .iframe-container {
-      flex: 1;
-      margin-top: 60px; /* height of navbar */
-    }
-
-    iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
+    .nav-item { color: white; text-decoration: none; font-size: 18px; padding: 10px 20px; transition: 0.3s ease-in-out; }
+    .nav-item:hover { background-color: rgba(255,255,255,0.2); border-radius: 5px; }
+    .nav-item.active { color: #00ff00; }
 
     .input-bar {
-      width: 100%;
-      background-color: rgba(0,0,0,0.3);
-      padding: 10px;
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      position: fixed;
-      top: 60px;
-      z-index: 2;
+      width: 100%; background-color: rgba(0,0,0,0.3); padding: 10px; display: flex; justify-content: center; gap: 10px;
+      position: fixed; top: 60px; z-index: 2;
     }
+    .input-bar input[type="text"] { width: 400px; padding: 8px; border-radius: 6px; border: none; outline: none; font-size: 16px; text-align: center; }
+    .input-bar button { padding: 8px 16px; border-radius: 6px; border: none; background-color: #00ff00; color: #000; font-weight: bold; cursor: pointer; transition: 0.3s ease; }
+    .input-bar button:hover { background-color: #00cc00; }
 
-    .input-bar input[type="text"] {
-      width: 400px;
-      padding: 8px;
-      border-radius: 6px;
-      border: none;
-      outline: none;
-      font-size: 16px;
-      text-align: center;
-    }
-
-    .input-bar button {
-      padding: 8px 16px;
-      border-radius: 6px;
-      border: none;
-      background-color: #00ff00;
-      color: #000;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-
-    .input-bar button:hover {
-      background-color: #00cc00;
-    }
+    .iframe-container { flex: 1; margin-top: 110px; } /* navbar + input-bar height */
+    iframe { width: 100%; height: 100%; border: none; }
   </style>
 </head>
 <body>
@@ -125,37 +43,58 @@
     <a href="learningtips.html" class="nav-item">Learning Tips</a>
   </nav>
 
-  <!-- URL input bar -->
+  <!-- Input bar -->
   <div class="input-bar">
     <input type="text" id="urlInput" placeholder="https://example.com">
     <button id="launchBtn">Launch</button>
   </div>
 
-  <iframe id="uv-frame" style="width:100%; height:100%; border:none;"></iframe>
+  <!-- Iframe container -->
+  <div class="iframe-container">
+    <iframe id="uv-frame"></iframe>
+  </div>
 
-<script src="https://interfaith-unsquirming-chan.ngrok-free.app/uv/uv.bundle.js"></script>
-<script>
-  const __uv$config = {
-    prefix: "https://interfaith-unsquirming-chan.ngrok-free.app/service/",
-    bare: "https://interfaith-unsquirming-chan.ngrok-free.app/"
-  };
+  <!-- UV scripts -->
+  <script src="https://interfaith-unsquirming-chan.ngrok-free.app/uv/uv.bundle.js"></script>
 
-  const iframe = document.getElementById("uv-frame");
+  <script>
+    const __uv$config = {
+      prefix: "https://interfaith-unsquirming-chan.ngrok-free.app/service/",
+      bare: "https://interfaith-unsquirming-chan.ngrok-free.app/"
+    };
 
-  async function loadURL(url) {
-    // Wait until UV is defined
-    while (typeof UV === "undefined") {
-      await new Promise(resolve => setTimeout(resolve, 50));
+    const iframe = document.getElementById("uv-frame");
+    const urlInput = document.getElementById("urlInput");
+    const launchBtn = document.getElementById("launchBtn");
+
+    async function waitForUV() {
+      while (typeof UV === "undefined") {
+        await new Promise(resolve => setTimeout(resolve, 50));
+      }
     }
 
-    const uv = new UV(__uv$config);
-    const encoded = await uv.url(url);
-    iframe.src = __uv$config.prefix + encoded;
-  }
+    async function loadURL(url) {
+      await waitForUV();
+      try {
+        const uv = new UV(__uv$config);
+        const encoded = await uv.url(url);
+        iframe.src = __uv$config.prefix + encoded;
+      } catch (e) {
+        console.error(e);
+        alert("Failed to load proxied site. Make sure your backend is running!");
+      }
+    }
 
-  // Example usage:
-  loadURL("https://example.com"); // iframe now loads proxied site
-</script>
+    // Connect button
+    launchBtn.addEventListener("click", () => {
+      const url = urlInput.value.trim();
+      if (!url.startsWith("http://") && !url.startsWith("https://")) {
+        alert("Enter a valid URL starting with http:// or https://");
+        return;
+      }
+      loadURL(url);
+    });
+  </script>
 
   <!-- Star animation -->
   <script>
@@ -163,20 +102,17 @@
     const ctx = canvas.getContext('2d');
     const stars = [];
 
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
+    function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
     for (let i = 0; i < 150; i++) {
       stars.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        radius: Math.random() * 1.5 + 0.5,
-        dx: (Math.random() - 0.5) * 0.5,
-        dy: (Math.random() - 0.5) * 0.5
+        x: Math.random()*canvas.width,
+        y: Math.random()*canvas.height,
+        radius: Math.random()*1.5+0.5,
+        dx: (Math.random()-0.5)*0.5,
+        dy: (Math.random()-0.5)*0.5
       });
     }
 
@@ -185,20 +121,16 @@
       ctx.fillStyle = 'white';
       stars.forEach(star => {
         ctx.beginPath();
-        ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+        ctx.arc(star.x, star.y, star.radius, 0, Math.PI*2);
         ctx.fill();
-        star.x += star.dx;
-        star.y += star.dy;
-        if (star.x < 0 || star.x > canvas.width) star.dx *= -1;
-        if (star.y < 0 || star.y > canvas.height) star.dy *= -1;
+        star.x += star.dx; star.y += star.dy;
+        if (star.x < 0 || star.x > canvas.width) star.dx*=-1;
+        if (star.y < 0 || star.y > canvas.height) star.dy*=-1;
       });
       requestAnimationFrame(animateStars);
     }
     animateStars();
   </script>
-
- 
-
 
 </body>
 </html>
