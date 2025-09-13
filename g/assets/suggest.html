@@ -6,79 +6,35 @@
   <title>Suggest a Game</title>
   <link rel="icon" type="image/png" href="favicon.png">
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: black;
-      color: white;
-      overflow: hidden;
-    }
-    #stars {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-    }
-    .container {
-      padding: 40px;
-      text-align: center;
-    }
-    form {
-      display: inline-block;
-      text-align: left;
-      background: rgba(0,0,0,0.7);
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 20px rgba(255,255,255,0.2);
-    }
-    input, textarea, button {
-      display: block;
-      width: 100%;
-      margin: 10px 0;
-      padding: 10px;
-      border-radius: 6px;
-      border: none;
-      font-size: 16px;
-    }
-    button {
-      background: #4cafef;
-      color: white;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    button:hover {
-      background: #1c8adb;
-    }
+    body { font-family: Arial, sans-serif; background: black; color: white; }
+    form { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; max-width: 400px; margin: 40px auto; }
+    input, textarea, button { width: 100%; margin: 10px 0; padding: 10px; border-radius: 6px; border: none; }
+    button { background: #4cafef; color: white; cursor: pointer; }
+    button:hover { background: #1c8adb; }
   </style>
 </head>
 <body>
-  <canvas id="stars"></canvas>
-  <div class="container">
-    <h1>Suggest a Game</h1>
-    <form id="suggestionForm">
-      <label for="name">Your Name:</label>
-      <input type="text" id="name" required>
-      
-      <label for="game">Game Suggestion:</label>
-      <input type="text" id="game" required>
-      
-      <label for="reason">Why Suggest This Game?</label>
-      <textarea id="reason" rows="3" required></textarea>
-      
-      <button type="submit">Submit</button>
-    </form>
-    <p id="status"></p>
-  </div>
+  <h1 style="text-align:center;">Suggest a Game</h1>
+  <form id="suggestionForm">
+    <label>Your Name:</label>
+    <input type="text" id="name" required>
+    <label>Game Suggestion:</label>
+    <input type="text" id="game" required>
+    <label>Reason:</label>
+    <textarea id="reason" rows="3" required></textarea>
+    <button type="submit">Submit</button>
+  </form>
+  <p id="status" style="text-align:center;"></p>
 
-  <!-- ✅ Firebase v10 Modular SDK -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-    // ✅ Firebase Config
+    // ✅ Your Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyDQYpbyK3pSb4n2GnsM4RGeqJFBId6glCQ",
       authDomain: "game-suggestions-abe9a.firebaseapp.com",
+      databaseURL: "https://game-suggestions-abe9a-default-rtdb.firebaseio.com", 
       projectId: "game-suggestions-abe9a",
       storageBucket: "game-suggestions-abe9a.appspot.com",
       messagingSenderId: "85207461999",
@@ -88,59 +44,28 @@
 
     // ✅ Init Firebase
     const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    const db = getDatabase(app);
 
-    // ✅ Form handler
+    // ✅ Form Submit
     document.getElementById("suggestionForm").addEventListener("submit", async (e) => {
       e.preventDefault();
-
       const name = document.getElementById("name").value;
       const game = document.getElementById("game").value;
       const reason = document.getElementById("reason").value;
 
       try {
-        await addDoc(collection(db, "suggestions"), {
+        await push(ref(db, "suggestions"), {
           name,
           game,
           reason,
-          timestamp: new Date()
+          timestamp: Date.now()
         });
         document.getElementById("status").innerText = "✅ Suggestion submitted!";
         document.getElementById("suggestionForm").reset();
-      } catch (error) {
-        document.getElementById("status").innerText = "❌ Error: " + error.message;
+      } catch (err) {
+        document.getElementById("status").innerText = "❌ Error: " + err.message;
       }
     });
-
-    // 🌌 Star Background
-    const canvas = document.getElementById("stars");
-    const ctx = canvas.getContext("2d");
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    let stars = [];
-    for (let i = 0; i < 200; i++) {
-      stars.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        radius: Math.random() * 2,
-        speed: Math.random() * 0.5
-      });
-    }
-
-    function drawStars() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "white";
-      stars.forEach(star => {
-        ctx.beginPath();
-        ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-        ctx.fill();
-        star.y += star.speed;
-        if (star.y > canvas.height) star.y = 0;
-      });
-      requestAnimationFrame(drawStars);
-    }
-    drawStars();
   </script>
 </body>
 </html>
