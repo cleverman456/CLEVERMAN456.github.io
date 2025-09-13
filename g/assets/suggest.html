@@ -1,111 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Clever | Submit Feedback</title>
-  <link rel="icon" type="image/png" href="images/Clever-Logo.jpg" />
-  <link rel="stylesheet" href="secret.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Suggest a Game</title>
+  <link rel="icon" type="image/png" href="favicon.png">
   <style>
     body {
       margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', sans-serif;
+      font-family: Arial, sans-serif;
+      background: black;
       color: white;
       overflow: hidden;
     }
-
-    #starCanvas {
-      position: fixed;
-      top: 0;
-      left: 0;
+    #stars {
+      position: absolute;
       width: 100%;
       height: 100%;
-      z-index: 0;
+      z-index: -1;
     }
-
-    .form-container {
-      position: relative;
-      z-index: 1;
-      width: 90%;
-      max-width: 500px;
-      margin: 100px auto;
-      background: rgba(0, 0, 0, 0.75);
-      padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 0 20px rgba(0, 255, 200, 0.5);
-      backdrop-filter: blur(6px);
-    }
-
-    h2 {
+    .container {
+      padding: 40px;
       text-align: center;
-      margin-bottom: 20px;
     }
-
-    label {
+    form {
+      display: inline-block;
+      text-align: left;
+      background: rgba(0,0,0,0.7);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(255,255,255,0.2);
+    }
+    input, textarea, button {
       display: block;
-      margin-bottom: 8px;
-      font-weight: bold;
-    }
-
-    input,
-    textarea {
       width: 100%;
-      padding: 12px;
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 6px;
       border: none;
-      border-radius: 8px;
-      background: #1a1a1a;
-      color: white;
-      font-size: 1em;
-      margin-bottom: 20px;
+      font-size: 16px;
     }
-
     button {
-      width: 100%;
-      padding: 12px;
-      background: #00ffaa;
-      color: black;
-      border: none;
-      border-radius: 8px;
-      font-weight: bold;
+      background: #4cafef;
+      color: white;
       cursor: pointer;
-      font-size: 1em;
-      transition: background 0.3s ease;
+      transition: 0.3s;
     }
-
     button:hover {
-      background: #00cc88;
-    }
-
-    #status {
-      margin-top: 15px;
-      text-align: center;
-      font-size: 0.9em;
+      background: #1c8adb;
     }
   </style>
 </head>
 <body>
-  <canvas id="starCanvas"></canvas>
-
-  <div class="form-container">
-    <form id="feedback-form">
-      <h2>Send Feedback</h2>
-
-      <label for="name">Your Name</label>
-      <input type="text" name="name" id="name" required />
-
-      <label for="message">Your Message</label>
-      <textarea name="message" id="message" rows="5" required></textarea>
-
+  <canvas id="stars"></canvas>
+  <div class="container">
+    <h1>Suggest a Game</h1>
+    <form id="suggestionForm">
+      <label for="name">Your Name:</label>
+      <input type="text" id="name" required>
+      
+      <label for="game">Game Suggestion:</label>
+      <input type="text" id="game" required>
+      
+      <label for="reason">Why Suggest This Game?</label>
+      <textarea id="reason" rows="3" required></textarea>
+      
       <button type="submit">Submit</button>
-      <p id="status"></p>
     </form>
+    <p id="status"></p>
   </div>
 
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
+
   <script>
-    // Firebase config
+    // ✅ Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyDQYpbyK3pSb4n2GnsM4RGeqJFBId6glCQ",
       authDomain: "game-suggestions-abe9a.firebaseapp.com",
@@ -116,74 +86,60 @@
       measurementId: "G-0VQPWT2CYQ"
     };
 
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+    // ✅ Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-    const form = document.getElementById('feedback-form');
-    const status = document.getElementById('status');
+    // ✅ Handle Form Submit
+    document.getElementById("suggestionForm").addEventListener("submit", async (e) => {
+      e.preventDefault(); // stop refresh
 
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      const name = form.name.value;
-      const message = form.message.value;
+      const name = document.getElementById("name").value;
+      const game = document.getElementById("game").value;
+      const reason = document.getElementById("reason").value;
 
-      const newRef = db.ref('submissions').push();
-      newRef.set({ name, message, timestamp: Date.now() })
-        .then(() => {
-          status.textContent = "Thanks! Your message was sent.";
-          status.style.color = "lightgreen";
-          form.reset();
-        })
-        .catch(() => {
-          status.textContent = "Error submitting. Try again.";
-          status.style.color = "orange";
+      try {
+        await db.collection("suggestions").add({
+          name: name,
+          game: game,
+          reason: reason,
+          timestamp: new Date()
         });
+        document.getElementById("status").innerText = "✅ Suggestion submitted!";
+        document.getElementById("suggestionForm").reset();
+      } catch (error) {
+        document.getElementById("status").innerText = "❌ Error: " + error.message;
+      }
     });
 
-    // Starry background
-    const canvas = document.getElementById('starCanvas');
-    const ctx = canvas.getContext('2d');
-    let stars = [];
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
+    // 🌌 Stars Background
+    const canvas = document.getElementById("stars");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
-    function initStars(count = 200) {
-      stars = [];
-      for (let i = 0; i < count; i++) {
-        stars.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          r: Math.random() * 1.2 + 0.3,
-          d: Math.random() * 0.5
-        });
-      }
+    let stars = [];
+    for (let i = 0; i < 200; i++) {
+      stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        radius: Math.random() * 2,
+        speed: Math.random() * 0.5
+      });
     }
-    initStars();
 
     function drawStars() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = "white";
       stars.forEach(star => {
         ctx.beginPath();
-        ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
+        ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
         ctx.fill();
-      });
-      updateStars();
-      requestAnimationFrame(drawStars);
-    }
-
-    function updateStars() {
-      stars.forEach(star => {
-        star.y += star.d;
+        star.y += star.speed;
         if (star.y > canvas.height) star.y = 0;
       });
+      requestAnimationFrame(drawStars);
     }
-
     drawStars();
   </script>
 </body>
