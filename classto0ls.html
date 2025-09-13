@@ -12,14 +12,12 @@
       --search-bg: rgba(0, 0, 0, 0.7);
       --button-bg: rgba(255, 255, 255, 0.05);
     }
-
     body.light {
       --bg: white;
       --text: black;
       --search-bg: rgba(255, 255, 255, 0.7);
       --button-bg: rgba(0, 0, 0, 0.05);
     }
-
     html, body {
       margin: 0;
       padding: 0;
@@ -31,89 +29,50 @@
       overflow-x: hidden;
       transition: background 0.3s, color 0.3s;
     }
+    canvas#stars { position: fixed; top: 0; left: 0; z-index: -1; }
+    h1 { text-align: center; padding: 20px; text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8); }
+    h1 a p { color: cyan; display: inline; }
 
-    canvas#stars {
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: -1;
+    .nav-bar {
+      display: flex; justify-content: center; gap: 15px; margin: 15px 0;
     }
-
-    h1 {
-      text-align: center;
-      padding: 20px;
-      text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
+    .nav-bar button {
+      padding: 10px 20px; border: none; border-radius: 8px;
+      cursor: pointer; font-size: 16px;
+      background-color: #333; color: white; transition: 0.2s;
     }
-
-    h1 a p {
-      color: cyan;
-      display: inline;
-    }
+    .nav-bar button:hover { background-color: cyan; color: black; }
 
     .top-bar {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 10px;
+      display: flex; justify-content: center; align-items: center;
+      flex-wrap: wrap; gap: 10px; margin-top: 10px;
     }
-
     .search-bar {
-      padding: 10px 20px;
-      width: 300px;
-      border-radius: 25px;
-      border: none;
-      outline: none;
-      font-size: 16px;
-      background-color: var(--search-bg);
-      color: var(--text);
+      padding: 10px 20px; width: 300px; border-radius: 25px;
+      border: none; outline: none; font-size: 16px;
+      background-color: var(--search-bg); color: var(--text);
       box-shadow: 0 0 10px cyan;
     }
-
     .toggle-btn {
-      padding: 10px 15px;
-      border-radius: 20px;
-      border: none;
-      cursor: pointer;
-      background-color: var(--search-bg);
-      color: var(--text);
-      font-weight: bold;
+      padding: 10px 15px; border-radius: 20px; border: none;
+      cursor: pointer; background-color: var(--search-bg);
+      color: var(--text); font-weight: bold;
     }
-
     .game-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 20px;
-      padding: 20px;
+      display: flex; flex-wrap: wrap; justify-content: center;
+      gap: 20px; padding: 20px;
     }
-
     .game-button {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      background-color: var(--button-bg);
-      padding: 10px;
-      border-radius: 12px;
-      text-decoration: none;
-      color: var(--text);
-      width: 120px;
-      transition: transform 0.2s, box-shadow 0.2s;
+      display: flex; flex-direction: column; align-items: center;
+      background-color: var(--button-bg); padding: 10px; border-radius: 12px;
+      text-decoration: none; color: var(--text);
+      width: 120px; transition: transform 0.2s, box-shadow 0.2s;
     }
-
     .game-button img {
-      width: 100px;
-      height: 100px;
-      object-fit: cover;
-      border-radius: 8px;
-      margin-bottom: 8px;
+      width: 100px; height: 100px; object-fit: cover;
+      border-radius: 8px; margin-bottom: 8px;
     }
-
-    .game-button:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 10px cyan;
-    }
+    .game-button:hover { transform: scale(1.05); box-shadow: 0 0 10px cyan; }
   </style>
 </head>
 <body class="dark">
@@ -123,119 +82,95 @@
   <a href="./learningtips.html#rigtools"><p>HERE</p></a>
 </h1>
 
+<div class="nav-bar">
+  <button onclick="showTab('games')">Games</button>
+  <button onclick="showTab('apps')">Apps</button>
+  <button onclick="showTab('other')">Other</button>
+</div>
+
 <div class="top-bar">
   <input type="text" class="search-bar" id="searchInput" placeholder="Search for a game...">
   <button class="toggle-btn" onclick="toggleTheme()">Toggle Dark Mode</button>
 </div>
 
 <div class="game-container" id="gameContainer">
-  <!-- FULL LIST OF GAME BUTTONS -->
   <a href="classtools.html?tool=suggest" class="game-button" data-name="suggest">
-    <img src="./images/suggest.jpg" alt="Suggest">
-    <span>Suggest</span>
+    <img src="./images/suggest.jpg" alt="Suggest"><span>Suggest</span>
   </a>
   <a href="classtools.html?tool=puzzles" class="game-button" data-name="1v1 lol">
-    <img src="./images/1v1.jpg" alt="1v1 lol">
-    <span>1v1 lol</span>
+    <img src="./images/1v1.jpg" alt="1v1 lol"><span>1v1 lol</span>
   </a>
   <a href="classtools.html?tool=worksheets" class="game-button" data-name="flappy bird">
-    <img src="./images/flappy.jpg" alt="Flappy Bird">
-    <span>Flappy Bird</span>
+    <img src="./images/flappy.jpg" alt="Flappy Bird"><span>Flappy Bird</span>
   </a>
   <a href="classtools.html?tool=groupgenerator" class="game-button" data-name="pac man">
-    <img src="./images/pacman.jpg" alt="Pac-Man">
-    <span>Pac-Man</span>
+    <img src="./images/pacman.jpg" alt="Pac-Man"><span>Pac-Man</span>
   </a>
   <a href="classtools.html?tool=vista" class="game-button" data-name="subway surfers">
-    <img src="./images/subway.jpg" alt="Subway Surfers">
-    <span>Subway Surfers</span>
+    <img src="./images/subway.jpg" alt="Subway Surfers"><span>Subway Surfers</span>
   </a>
   <a href="classtools.html?tool=whiteboard" class="game-button" data-name="minecraft">
-    <img src="./images/minecraft.jpg" alt="Minecraft">
-    <span>Minecraft</span>
+    <img src="./images/minecraft.jpg" alt="Minecraft"><span>Minecraft</span>
   </a>
   <a href="classtools.html?tool=kahoot" class="game-button" data-name="super mario">
-    <img src="./images/mario.jpg" alt="Super Mario">
-    <span>Super Mario</span>
+    <img src="./images/mario.jpg" alt="Super Mario"><span>Super Mario</span>
   </a>
   <a href="classtools.html?tool=quizlet" class="game-button" data-name="battle wheels">
-    <img src="./images/battlewheels.jpg" alt="Battle Wheels">
-    <span>Battle Wheels</span>
+    <img src="./images/battlewheels.jpg" alt="Battle Wheels"><span>Battle Wheels</span>
   </a>
   <a href="classtools.html?tool=blooket" class="game-button" data-name="moto x3m">
-    <img src="./images/moto.jpg" alt="Moto X3M">
-    <span>Moto X3M</span>
+    <img src="./images/moto.jpg" alt="Moto X3M"><span>Moto X3M</span>
   </a>
   <a href="classtools.html?tool=math" class="game-button" data-name="slope">
-    <img src="./images/slo.jpg" alt="Slope">
-    <span>Slope</span>
+    <img src="./images/slo.jpg" alt="Slope"><span>Slope</span>
   </a>
   <a href="classtools.html?tool=canva" class="game-button" data-name="smash karts">
-    <img src="./images/smash.jpg" alt="Smash Karts">
-    <span>Smash Karts</span>
+    <img src="./images/smash.jpg" alt="Smash Karts"><span>Smash Karts</span>
   </a>
   <a href="classtools.html?tool=brainpop" class="game-button" data-name="drift boss">
-    <img src="./images/boss.jpg" alt="Drift Boss">
-    <span>Drift Boss</span>
+    <img src="./images/boss.jpg" alt="Drift Boss"><span>Drift Boss</span>
   </a>
   <a href="classtools.html?tool=labaids" class="game-button" data-name="retro bowl">
-    <img src="./images/retro-bowl.jpg" alt="Retro Bowl">
-    <span>Retro Bowl</span>
+    <img src="./images/retro-bowl.jpg" alt="Retro Bowl"><span>Retro Bowl</span>
   </a>
 </div>
 
 <script>
-  // Starry Background Animation
+  function showTab(tab) {
+    if (tab === 'games') window.location.href = 'classtools.html';
+    if (tab === 'apps') window.location.href = 'learningtips.html';
+    if (tab === 'other') window.location.href = 'mathhelp.html';
+  }
+
   const canvas = document.getElementById('stars');
   const ctx = canvas.getContext('2d');
   let stars = [];
-
-  function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
-
+  function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
   function initStars() {
     stars = [];
     for (let i = 0; i < 150; i++) {
       stars.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        radius: Math.random() * 1.5 + 0.5,
-        dx: (Math.random() - 0.5) * 0.5,
-        dy: (Math.random() - 0.5) * 0.5
+        x: Math.random() * canvas.width, y: Math.random() * canvas.height,
+        radius: Math.random() * 1.5 + 0.5, dx: (Math.random() - 0.5) * 0.5, dy: (Math.random() - 0.5) * 0.5
       });
     }
   }
-
   function animateStars() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = 'white';
     stars.forEach(star => {
-      ctx.beginPath();
-      ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-      ctx.fill();
-      star.x += star.dx;
-      star.y += star.dy;
+      ctx.beginPath(); ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2); ctx.fill();
+      star.x += star.dx; star.y += star.dy;
       if (star.x < 0 || star.x > canvas.width) star.dx *= -1;
       if (star.y < 0 || star.y > canvas.height) star.dy *= -1;
     });
     requestAnimationFrame(animateStars);
   }
+  window.addEventListener('resize', () => { resizeCanvas(); initStars(); });
+  resizeCanvas(); initStars(); animateStars();
 
-  window.addEventListener('resize', () => {
-    resizeCanvas();
-    initStars();
-  });
-
-  resizeCanvas();
-  initStars();
-  animateStars();
-
-  // Search filter
   const searchInput = document.getElementById('searchInput');
   const gameButtons = document.querySelectorAll('.game-button');
-
   searchInput.addEventListener('input', () => {
     const query = searchInput.value.toLowerCase();
     gameButtons.forEach(button => {
@@ -243,13 +178,9 @@
       button.style.display = name.includes(query) ? 'flex' : 'none';
     });
   });
-
-  // Theme toggle
   function toggleTheme() {
-    document.body.classList.toggle('light');
-    document.body.classList.toggle('dark');
+    document.body.classList.toggle('light'); document.body.classList.toggle('dark');
   }
 </script>
-
 </body>
 </html>
