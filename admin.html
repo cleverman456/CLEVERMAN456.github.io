@@ -3,95 +3,32 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Clever | Admin Panel</title>
-  <link rel="icon" type="image/png" href="images/Clever-Logo.jpg" />
-  <link rel="stylesheet" href="secret.css" />
+  <title>Admin Panel</title>
+  <link rel="icon" type="image/png" href="favicon.png">
   <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      color: white;
-      overflow: hidden;
-    }
-    #starCanvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-    }
-    .container {
-      position: relative;
-      z-index: 1;
-      padding: 20px;
-    }
-    .tabs {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-    .tab {
-      padding: 10px 20px;
-      cursor: pointer;
-      background: #222;
+    body { font-family: Arial, sans-serif; background: #111; color: #eee; }
+    h1 { text-align: center; }
+    .suggestion {
+      background: rgba(255,255,255,0.05);
+      margin: 10px auto;
+      padding: 15px;
       border-radius: 8px;
-      transition: 0.3s;
-    }
-    .tab.active {
-      background: #00ffaa;
-      color: black;
-    }
-    .tab-content {
-      background: rgba(0,0,0,0.75);
-      padding: 20px;
-      border-radius: 16px;
-      max-height: 70vh;
-      overflow-y: auto;
-      box-shadow: 0 0 20px rgba(0, 255, 200, 0.5);
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      color: white;
-    }
-    th, td {
-      padding: 10px;
-      text-align: left;
-      border-bottom: 1px solid #555;
+      max-width: 600px;
     }
   </style>
 </head>
 <body>
-  <canvas id="starCanvas"></canvas>
+  <h1>Admin Panel – Suggestions</h1>
+  <div id="suggestions"></div>
 
-  <div class="container">
-    <h2>Admin Panel</h2>
-    <div class="tabs">
-      <div class="tab active" data-tab="suggestions">Game Requests</div>
-      <div class="tab" data-tab="views">Site Views</div>
-    </div>
-    <div class="tab-content" id="tabContent">
-      <!-- Suggestions Table -->
-      <table id="suggestionsTable">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Message</th>
-            <th>Time</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </div>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-  <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDQYpbyK3pSb4n2GnsM4RGeqJFBId6glCQ",
       authDomain: "game-suggestions-abe9a.firebaseapp.com",
+      databaseURL: "https://game-suggestions-abe9a-default-rtdb.firebaseio.com", 
       projectId: "game-suggestions-abe9a",
       storageBucket: "game-suggestions-abe9a.appspot.com",
       messagingSenderId: "85207461999",
@@ -99,98 +36,29 @@
       measurementId: "G-0VQPWT2CYQ"
     };
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
 
-    const suggestionsTableBody = document.querySelector('#suggestionsTable tbody');
+    const suggestionsRef = ref(db, "suggestions");
 
-    db.ref('submissions').on('value', snapshot => {
-      suggestionsTableBody.innerHTML = '';
-      snapshot.forEach(child => {
-        const data = child.val();
-        const row = document.createElement('tr');
-        row.innerHTML = `<td>${data.name}</td>
-                         <td>${data.message}</td>
-                         <td>${new Date(data.timestamp).toLocaleString()}</td>`;
-        suggestionsTableBody.appendChild(row);
-      });
-    });
-
-    // Star background
-    const canvas = document.getElementById('starCanvas');
-    const ctx = canvas.getContext('2d');
-    let stars = [];
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-
-    function initStars(count = 200) {
-      stars = [];
-      for (let i = 0; i < count; i++) {
-        stars.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          r: Math.random() * 1.2 + 0.3,
-          d: Math.random() * 0.5
+    onValue(suggestionsRef, (snapshot) => {
+      const data = snapshot.val();
+      const container = document.getElementById("suggestions");
+      container.innerHTML = "";
+      if (data) {
+        Object.values(data).forEach(s => {
+          const div = document.createElement("div");
+          div.classList.add("suggestion");
+          div.innerHTML = `
+            <strong>${s.name}</strong> suggested <strong>${s.game}</strong><br>
+            <em>${s.reason}</em><br>
+            <small>${new Date(s.timestamp).toLocaleString()}</small>
+          `;
+          container.appendChild(div);
         });
+      } else {
+        container.innerHTML = "<p>No suggestions yet.</p>";
       }
-    }
-    initStars();
-
-    function drawStars() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "white";
-      stars.forEach(star => {
-        ctx.beginPath();
-        ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
-        ctx.fill();
-      });
-      updateStars();
-      requestAnimationFrame(drawStars);
-    }
-
-    function updateStars() {
-      stars.forEach(star => {
-        star.y += star.d;
-        if (star.y > canvas.height) star.y = 0;
-      });
-    }
-
-    drawStars();
-
-    // Tab switching
-    const tabs = document.querySelectorAll('.tab');
-    const tabContent = document.getElementById('tabContent');
-
-    tabs.forEach(tab => {
-      tab.addEventListener('click', () => {
-        tabs.forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        if (tab.dataset.tab === 'suggestions') {
-          tabContent.innerHTML = `<table id="suggestionsTable">
-            <thead>
-              <tr><th>Name</th><th>Message</th><th>Time</th></tr>
-            </thead>
-            <tbody></tbody>
-          </table>`;
-          db.ref('submissions').once('value', snapshot => {
-            const tbody = document.querySelector('#suggestionsTable tbody');
-            snapshot.forEach(child => {
-              const data = child.val();
-              const row = document.createElement('tr');
-              row.innerHTML = `<td>${data.name}</td>
-                               <td>${data.message}</td>
-                               <td>${new Date(data.timestamp).toLocaleString()}</td>`;
-              tbody.appendChild(row);
-            });
-          });
-        } else if (tab.dataset.tab === 'views') {
-          tabContent.innerHTML = `<p>Site views tracking coming soon!</p>`;
-        }
-      });
     });
   </script>
 </body>
