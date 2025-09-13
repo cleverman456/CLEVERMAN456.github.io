@@ -1,136 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Clever | Portal</title>
-  <link rel="icon" type="image/png" href="images/Clever-Logo.jpg">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clever | Portal</title>
+<link rel="icon" href="/images/Clever-Logo.jpg"/>
+<style>
+body { font-family: Arial, sans-serif; margin:0; padding:0; background-color:#000; color:white; overflow:hidden;}
+#starCanvas { position:fixed; top:0; left:0; width:100%; height:100%; z-index:0; }
 
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-    body { background-color: black; color: white; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
-    canvas#stars { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; }
+.header { text-align:center; padding:20px; font-size:2em; font-weight:bold; }
+.tab-container { display:flex; justify-content:center; margin-bottom:20px; gap:10px; flex-wrap:wrap; z-index:1; position:relative; }
+.tab-container button {
+  padding: 10px 20px; border:none; border-radius:6px; cursor:pointer;
+  background:#00ffaa; color:black; font-weight:bold;
+}
+.tab-container button:hover { background:#00cc88; }
+.content { text-align:center; position:relative; z-index:1; }
 
-    .navbar {
-      width: 100%; background-color: rgba(0,0,0,0.3); padding: 15px 0; display: flex; justify-content: center; gap: 40px;
-      position: fixed; top: 0; left: 0; z-index: 2;
-    }
-    .nav-item { color: white; text-decoration: none; font-size: 18px; padding: 10px 20px; transition: 0.3s ease-in-out; }
-    .nav-item:hover { background-color: rgba(255,255,255,0.2); border-radius: 5px; }
-    .nav-item.active { color: #00ff00; }
-
-    .input-bar {
-      width: 100%; background-color: rgba(0,0,0,0.3); padding: 10px; display: flex; justify-content: center; gap: 10px;
-      position: fixed; top: 60px; z-index: 2;
-    }
-    .input-bar input[type="text"] { width: 400px; padding: 8px; border-radius: 6px; border: none; outline: none; font-size: 16px; text-align: center; }
-    .input-bar button { padding: 8px 16px; border-radius: 6px; border: none; background-color: #00ff00; color: #000; font-weight: bold; cursor: pointer; transition: 0.3s ease; }
-    .input-bar button:hover { background-color: #00cc00; }
-
-    .iframe-container { flex: 1; margin-top: 110px; } /* navbar + input-bar height */
-    iframe { width: 100%; height: 100%; border: none; }
-  </style>
+</style>
 </head>
 <body>
+<canvas id="starCanvas"></canvas>
 
-  <!-- Star canvas -->
-  <canvas id="stars"></canvas>
+<div class="header">Clever Dashboard</div>
+<div class="tab-container">
+  <button onclick="showTab('games')">Games</button>
+  <button onclick="showTab('feedback')">Feedback</button>
+</div>
 
-  <!-- Navbar -->
-  <nav class="navbar">
-    <a href="classto0ls.html" class="nav-item">Class Tools</a>
-    <a href="mathhelp.html" class="nav-item">Math Help</a>
-    <a href="learningtips.html" class="nav-item">Learning Tips</a>
-  </nav>
-
-  <!-- Input bar -->
-  <div class="input-bar">
-    <input type="text" id="urlInput" placeholder="https://example.com">
-    <button id="launchBtn">Launch</button>
+<div class="content" id="content">
+  <div id="games">Games content here...</div>
+  <div id="feedback" style="display:none;">
+    <iframe src="feedback.html" style="width:100%; height:500px; border:none;"></iframe>
   </div>
+</div>
 
-  <!-- Iframe container -->
-  <div class="iframe-container">
-    <iframe id="uv-frame"></iframe>
-  </div>
+<script src="secret.js"></script>
+<script>
+const role = sessionStorage.getItem("role");
 
-  <!-- UV scripts -->
-  <script src="https://interfaith-unsquirming-chan.ngrok-free.app/uv/uv.bundle.js"></script>
+// Add admin tab if user is admin
+if(role === "admin") {
+  const tabContainer = document.querySelector('.tab-container');
+  const adminBtn = document.createElement('button');
+  adminBtn.textContent = "Admin Panel";
+  adminBtn.onclick = () => window.location.href = "admin.html";
+  tabContainer.appendChild(adminBtn);
+}
 
-  <script>
-    const __uv$config = {
-      prefix: "https://interfaith-unsquirming-chan.ngrok-free.app/service/",
-      bare: "https://interfaith-unsquirming-chan.ngrok-free.app/"
-    };
-
-    const iframe = document.getElementById("uv-frame");
-    const urlInput = document.getElementById("urlInput");
-    const launchBtn = document.getElementById("launchBtn");
-
-    async function waitForUV() {
-      while (typeof UV === "undefined") {
-        await new Promise(resolve => setTimeout(resolve, 50));
-      }
-    }
-
-    async function loadURL(url) {
-      await waitForUV();
-      try {
-        const uv = new UV(__uv$config);
-        const encoded = await uv.url(url);
-        iframe.src = __uv$config.prefix + encoded;
-      } catch (e) {
-        console.error(e);
-        alert("Failed to load proxied site. Make sure your backend is running!");
-      }
-    }
-
-    // Connect button
-    launchBtn.addEventListener("click", () => {
-      const url = urlInput.value.trim();
-      if (!url.startsWith("http://") && !url.startsWith("https://")) {
-        alert("Enter a valid URL starting with http:// or https://");
-        return;
-      }
-      loadURL(url);
-    });
-  </script>
-
-  <!-- Star animation -->
-  <script>
-    const canvas = document.getElementById('stars');
-    const ctx = canvas.getContext('2d');
-    const stars = [];
-
-    function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-
-    for (let i = 0; i < 150; i++) {
-      stars.push({
-        x: Math.random()*canvas.width,
-        y: Math.random()*canvas.height,
-        radius: Math.random()*1.5+0.5,
-        dx: (Math.random()-0.5)*0.5,
-        dy: (Math.random()-0.5)*0.5
-      });
-    }
-
-    function animateStars() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = 'white';
-      stars.forEach(star => {
-        ctx.beginPath();
-        ctx.arc(star.x, star.y, star.radius, 0, Math.PI*2);
-        ctx.fill();
-        star.x += star.dx; star.y += star.dy;
-        if (star.x < 0 || star.x > canvas.width) star.dx*=-1;
-        if (star.y < 0 || star.y > canvas.height) star.dy*=-1;
-      });
-      requestAnimationFrame(animateStars);
-    }
-    animateStars();
-  </script>
-
+// Tab switching
+function showTab(tab) {
+  document.getElementById('games').style.display = 'none';
+  document.getElementById('feedback').style.display = 'none';
+  if(tab === 'games') document.getElementById('games').style.display = 'block';
+  if(tab === 'feedback') document.getElementById('feedback').style.display = 'block';
+}
+</script>
 </body>
 </html>

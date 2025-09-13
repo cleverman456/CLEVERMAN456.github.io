@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clever | Admin Panel</title>
+<style>
+body { font-family: Arial, sans-serif; margin:0; padding:0; background-color:#000; color:white; overflow:hidden;}
+#starCanvas { position:fixed; top:0; left:0; width:100%; height:100%; z-index:0; }
+.header { text-align:center; padding:20px; font-size:2em; font-weight:bold; }
+.panel { position:relative; z-index:1; width:90%; max-width:800px; margin:0 auto; background:rgba(0,0,0,0.75); border-radius:16px; padding:20px; }
+.panel h2 { margin-top:0; }
+.data-section { margin-bottom:20px; }
+</style>
+</head>
+<body>
+<canvas id="starCanvas"></canvas>
+<div class="header">Admin Panel</div>
+<div class="panel">
+  <div class="data-section">
+    <h2>Game Requests</h2>
+    <ul id="game-requests"></ul>
+  </div>
+  <div class="data-section">
+    <h2>Site Views Per Day</h2>
+    <ul id="site-views"></ul>
+  </div>
+</div>
+
+<script src="secret.js"></script>
+<script>
+const role = sessionStorage.getItem("role");
+if(role !== "admin") {
+  alert("Access denied.");
+  window.location.href = "login.html";
+}
+
+// Example dynamic data
+const gameRequests = ["Game 1 requested", "Game 2 requested"];
+const siteViews = [{date:"2025-09-12", views:45},{date:"2025-09-11", views:38}];
+
+const reqList = document.getElementById('game-requests');
+gameRequests.forEach(r => {
+  const li = document.createElement('li'); li.textContent = r; reqList.appendChild(li);
+});
+
+const viewsList = document.getElementById('site-views');
+siteViews.forEach(v => {
+  const li = document.createElement('li'); li.textContent = `${v.date}: ${v.views} views`; viewsList.appendChild(li);
+});
+</script>
+</body>
+</html>
