@@ -177,36 +177,53 @@
   </script>
 
   <!-- Proxy launch -->
-  <script>
-    const launchBtn = document.getElementById("launchBtn");
-    const urlInput = document.getElementById("urlInput");
-    const proxyFrame = document.getElementById("proxyFrame");
+ <script>
+  const launchBtn = document.getElementById("launchBtn");
+  const urlInput = document.getElementById("urlInput");
+  const proxyFrame = document.getElementById("proxyFrame");
 
-    launchBtn.addEventListener("click", async function() {
-      const url = urlInput.value.trim();
-      if (!url.startsWith("http://") && !url.startsWith("https://")) {
-        alert("Enter a valid URL starting with http:// or https://");
-        return;
-      }
+  // UV config pointing to your backend
+  const __uv$config = {
+    prefix: "https://interfaith-unsquirming-chan.ngrok-free.app/service/",
+    bare: "https://interfaith-unsquirming-chan.ngrok-free.app/"
+  };
 
-      // UV config pointing to your ngrok backend
-      const __uv$config = {
-        prefix: "https://interfaith-unsquirming-chan.ngrok-free.app/service/",
-        bare: "https://interfaith-unsquirming-chan.ngrok-free.app/"
-      };
+  // Wait until UV is loaded
+  function waitForUV() {
+    return new Promise(resolve => {
+      if (typeof UV !== "undefined") return resolve();
+      const interval = setInterval(() => {
+        if (typeof UV !== "undefined") {
+          clearInterval(interval);
+          resolve();
+        }
+      }, 50);
+    });
+  }
 
-      while (typeof UV === "undefined") {
-        await new Promise(resolve => setTimeout(resolve, 50));
-      }
+  launchBtn.addEventListener("click", async () => {
+    const url = urlInput.value.trim();
+    if (!url.startsWith("http://") && !url.startsWith("https://")) {
+      alert("Enter a valid URL starting with http:// or https://");
+      return;
+    }
 
+    await waitForUV();
+
+    try {
       const uv = new UV(__uv$config);
       const encodedUrl = await uv.url(url);
       const fullUrl = __uv$config.prefix + encodedUrl;
 
-      // Load in iframe
+      // Load the proxied page in iframe
       proxyFrame.src = fullUrl;
-    });
-  </script>
+    } catch (e) {
+      alert("Failed to load the proxy URL. Make sure your backend is running!");
+      console.error(e);
+    }
+  });
+</script>
+
 
 </body>
 </html>
