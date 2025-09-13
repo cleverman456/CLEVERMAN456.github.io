@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Submit Feedback</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clever | Submit Feedback</title>
+  <link rel="icon" type="image/png" href="images/Clever-Logo.jpg" />
   <link rel="stylesheet" href="secret.css" />
   <style>
     body {
@@ -100,39 +102,89 @@
     </form>
   </div>
 
-  <script src="secret.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <script>
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyDQYpbyK3pSb4n2GnsM4RGeqJFBId6glCQ",
+      authDomain: "game-suggestions-abe9a.firebaseapp.com",
+      projectId: "game-suggestions-abe9a",
+      storageBucket: "game-suggestions-abe9a.appspot.com",
+      messagingSenderId: "85207461999",
+      appId: "1:85207461999:web:ab2454467a249122a85d9a",
+      measurementId: "G-0VQPWT2CYQ"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
     const form = document.getElementById('feedback-form');
     const status = document.getElementById('status');
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
-
       const name = form.name.value;
       const message = form.message.value;
 
-      fetch('https://api.backendless.com/9091C975-CAE2-4C35-887B-C8293A283FFA/8425CF08-B66A-4A0A-87CF-ED0DA8A407D6/data/Submissions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ name, message })
-      })
-        .then(res => {
-          if (res.ok) {
-            status.textContent = "Thanks! Your message was sent.";
-            status.style.color = "lightgreen";
-            form.reset();
-          } else {
-            status.textContent = "Error submitting. Try again.";
-            status.style.color = "orange";
-          }
+      const newRef = db.ref('submissions').push();
+      newRef.set({ name, message, timestamp: Date.now() })
+        .then(() => {
+          status.textContent = "Thanks! Your message was sent.";
+          status.style.color = "lightgreen";
+          form.reset();
         })
         .catch(() => {
-          status.textContent = "Network error. Check CORS settings.";
-          status.style.color = "red";
+          status.textContent = "Error submitting. Try again.";
+          status.style.color = "orange";
         });
     });
+
+    // Starry background
+    const canvas = document.getElementById('starCanvas');
+    const ctx = canvas.getContext('2d');
+    let stars = [];
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function initStars(count = 200) {
+      stars = [];
+      for (let i = 0; i < count; i++) {
+        stars.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: Math.random() * 1.2 + 0.3,
+          d: Math.random() * 0.5
+        });
+      }
+    }
+    initStars();
+
+    function drawStars() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "white";
+      stars.forEach(star => {
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      updateStars();
+      requestAnimationFrame(drawStars);
+    }
+
+    function updateStars() {
+      stars.forEach(star => {
+        star.y += star.d;
+        if (star.y > canvas.height) star.y = 0;
+      });
+    }
+
+    drawStars();
   </script>
 </body>
 </html>
