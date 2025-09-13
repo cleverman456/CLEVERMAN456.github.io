@@ -70,11 +70,11 @@
     <p id="status"></p>
   </div>
 
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
+  <!-- ✅ Firebase v10 Modular SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  <script>
     // ✅ Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyDQYpbyK3pSb4n2GnsM4RGeqJFBId6glCQ",
@@ -86,23 +86,23 @@
       measurementId: "G-0VQPWT2CYQ"
     };
 
-    // ✅ Initialize Firebase
-    const app = firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+    // ✅ Init Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-    // ✅ Handle Form Submit
+    // ✅ Form handler
     document.getElementById("suggestionForm").addEventListener("submit", async (e) => {
-      e.preventDefault(); // stop refresh
+      e.preventDefault();
 
       const name = document.getElementById("name").value;
       const game = document.getElementById("game").value;
       const reason = document.getElementById("reason").value;
 
       try {
-        await db.collection("suggestions").add({
-          name: name,
-          game: game,
-          reason: reason,
+        await addDoc(collection(db, "suggestions"), {
+          name,
+          game,
+          reason,
           timestamp: new Date()
         });
         document.getElementById("status").innerText = "✅ Suggestion submitted!";
@@ -112,7 +112,7 @@
       }
     });
 
-    // 🌌 Stars Background
+    // 🌌 Star Background
     const canvas = document.getElementById("stars");
     const ctx = canvas.getContext("2d");
     canvas.width = window.innerWidth;
