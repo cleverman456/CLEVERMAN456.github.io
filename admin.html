@@ -3,63 +3,125 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Panel</title>
-  <link rel="icon" type="image/png" href="favicon.png">
+  <title>Clever | Admin Panel</title>
+  <link rel="icon" type="image/png" href="images/Clever-Logo.jpg">
   <style>
-    body { font-family: Arial, sans-serif; background: #111; color: #eee; }
-    h1 { text-align: center; }
-    .suggestion {
-      background: rgba(255,255,255,0.05);
-      margin: 10px auto;
-      padding: 15px;
-      border-radius: 8px;
-      max-width: 600px;
-    }
+    body { font-family: Arial, sans-serif; background: #111; color: #eee; margin:0; padding:0; }
+    header { background: #222; padding: 20px; text-align: center; font-size: 1.5em; font-weight: bold; color: cyan; }
+    .container { padding: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { padding: 10px; border-bottom: 1px solid #333; text-align: left; }
+    th { cursor: pointer; background: #222; color: #0ff; }
+    tr:hover { background: rgba(0, 255, 255, 0.1); }
+    .counter { margin-top: 10px; text-align: right; font-weight: bold; }
+    .tab-buttons { display: flex; gap: 10px; margin-bottom: 20px; }
+    .tab-buttons button { padding: 10px; border: none; border-radius: 6px; cursor: pointer; background: #222; color: #0ff; }
+    .tab-buttons button.active { background: #0ff; color: #111; }
   </style>
 </head>
 <body>
-  <h1>Admin Panel – Suggestions</h1>
-  <div id="suggestions"></div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+<header>Clever Admin Panel</header>
+<div class="container">
+  <div class="tab-buttons">
+    <button class="active" onclick="showTab('suggestions')">Suggestions</button>
+    <button onclick="showTab('views')">Site Views</button>
+  </div>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyDQYpbyK3pSb4n2GnsM4RGeqJFBId6glCQ",
-      authDomain: "game-suggestions-abe9a.firebaseapp.com",
-      databaseURL: "https://game-suggestions-abe9a-default-rtdb.firebaseio.com", 
-      projectId: "game-suggestions-abe9a",
-      storageBucket: "game-suggestions-abe9a.appspot.com",
-      messagingSenderId: "85207461999",
-      appId: "1:85207461999:web:ab2454467a249122a85d9a",
-      measurementId: "G-0VQPWT2CYQ"
-    };
+  <div id="suggestions">
+    <table id="suggestionsTable">
+      <thead>
+        <tr>
+          <th onclick="sortTable(0)">Name</th>
+          <th onclick="sortTable(1)">Game</th>
+          <th onclick="sortTable(2)">Reason</th>
+          <th onclick="sortTable(3)">Time</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
+  <div id="views" style="display:none;">
+    <p class="counter">Site Views: <span id="viewCount">0</span></p>
+  </div>
+</div>
 
-    const suggestionsRef = ref(db, "suggestions");
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getDatabase, ref, onValue, increment, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-    onValue(suggestionsRef, (snapshot) => {
-      const data = snapshot.val();
-      const container = document.getElementById("suggestions");
-      container.innerHTML = "";
-      if (data) {
-        Object.values(data).forEach(s => {
-          const div = document.createElement("div");
-          div.classList.add("suggestion");
-          div.innerHTML = `
-            <strong>${s.name}</strong> suggested <strong>${s.game}</strong><br>
-            <em>${s.reason}</em><br>
-            <small>${new Date(s.timestamp).toLocaleString()}</small>
-          `;
-          container.appendChild(div);
-        });
-      } else {
-        container.innerHTML = "<p>No suggestions yet.</p>";
-      }
+  // 🔹 Firebase Config
+  const firebaseConfig = {
+    apiKey: "AIzaSyDQYpbyK3pSb4n2GnsM4RGeqJFBId6glCQ",
+    authDomain: "game-suggestions-abe9a.firebaseapp.com",
+    databaseURL: "https://game-suggestions-abe9a-default-rtdb.firebaseio.com",
+    projectId: "game-suggestions-abe9a",
+    storageBucket: "game-suggestions-abe9a.appspot.com",
+    messagingSenderId: "85207461999",
+    appId: "1:85207461999:web:ab2454467a249122a85d9a",
+    measurementId: "G-0VQPWT2CYQ"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  // 🔹 Suggestions Table
+  const suggestionsTable = document.querySelector("#suggestionsTable tbody");
+  const suggestionsRef = ref(db, "suggestions");
+
+  onValue(suggestionsRef, snapshot => {
+    const data = snapshot.val();
+    suggestionsTable.innerHTML = "";
+    if (data) {
+      const sorted = Object.values(data).sort((a,b) => b.timestamp - a.timestamp); // latest first
+      sorted.forEach(s => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${s.name}</td>
+          <td>${s.game}</td>
+          <td>${s.reason}</td>
+          <td>${new Date(s.timestamp).toLocaleString()}</td>
+        `;
+        suggestionsTable.appendChild(row);
+      });
+    }
+  });
+
+  // 🔹 Site Views Counter
+  const viewCountEl = document.getElementById("viewCount");
+  const viewsRef = ref(db, "siteViews");
+
+  // Increment view on page load
+  runTransaction(viewsRef, current => (current || 0) + 1);
+
+  // Live update
+  onValue(viewsRef, snapshot => {
+    viewCountEl.innerText = snapshot.val() || 0;
+  });
+
+  // 🔹 Sort Table Function
+  function sortTable(n) {
+    const table = document.getElementById("suggestionsTable");
+    let rows = Array.from(table.rows).slice(1);
+    let asc = table.getAttribute("data-sort-col") != n || table.getAttribute("data-sort-dir") === "desc";
+    rows.sort((a,b) => {
+      let x = a.cells[n].innerText.toLowerCase();
+      let y = b.cells[n].innerText.toLowerCase();
+      return x > y ? (asc ? 1 : -1) : x < y ? (asc ? -1 : 1) : 0;
     });
-  </script>
+    rows.forEach(r => table.appendChild(r));
+    table.setAttribute("data-sort-col", n);
+    table.setAttribute("data-sort-dir", asc ? "asc" : "desc");
+  }
+
+  // 🔹 Tabs
+  function showTab(tab) {
+    document.getElementById("suggestions").style.display = tab==="suggestions" ? "block" : "none";
+    document.getElementById("views").style.display = tab==="views" ? "block" : "none";
+    document.querySelectorAll(".tab-buttons button").forEach(b => b.classList.remove("active"));
+    document.querySelector(`.tab-buttons button[onclick="showTab('${tab}')"]`).classList.add("active");
+  }
+</script>
 </body>
 </html>
