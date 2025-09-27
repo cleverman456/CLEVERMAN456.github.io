@@ -6,7 +6,7 @@
   <link rel="stylesheet" href="25030706/theme/game.css">
   <meta name="robots" content="noindex, nofollow">
 
-  <!-- ✅ Fixed canonical link -->
+  <!-- ✅ Fixed canonical URL -->
   <link rel="canonical" href="https://cleverman456.github.io/g/assets/escaperoad.html">
 
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500&display=swap" rel="stylesheet">
@@ -50,7 +50,7 @@
     var buildUrl = "Build";
     var versionFolder = "25030706/";
     buildUrl = "" + versionFolder + buildUrl;
-    var loaderUrl = "./esroad/escape-road-city-2-v25030706.loader.js"; // ✅ use your path
+    var loaderUrl = "./esroad/escape-road-city-2-v25030706.loader.js"; 
     var config = {
       dataUrl: buildUrl + "/escape-road-city-2-v25030706.data.unityweb",
       frameworkUrl: buildUrl + "/escape-road-city-2-v25030706.framework.js.unityweb",
@@ -61,7 +61,10 @@
       productVersion: "25030706",
       pubId: ""
     };
-    config.gameId = "escape-road-city-2";
+
+    // ✅ Set gameId to match your page URL
+    config.gameId = "escaperoad"; 
+
     config.eventLog = true;
     config.buildAPI = "";
 
