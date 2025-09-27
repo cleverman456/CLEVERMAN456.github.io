@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <link rel="stylesheet" href="25030706/theme/game.css">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="canonical" href="https://azgames.io/escape-road-city-2">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500&display=swap" rel="stylesheet">
+  <title>Escape Road City 2</title>
+  <meta name="description" content="">
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      background: black;
+    }
+    #unity-container, #unity-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    #unity-canvas {
+      background: black;
+    }
+    .jss1:before {
+      top: 0;
+      width: 100%;
+      filter: blur(16px);
+      height: 100%;
+      content: "";
+      display: block;
+      opacity: .5;
+      z-index: 0;
+      position: absolute;
+      background-size: cover;
+      background-image: url("25030706/loading.png");
+    }
+  </style> 
+
+  <script>
+    var buildUrl = "Build";
+    var versionFolder = "25030706/";
+    buildUrl = "https://games.azgame.io/game/escape-road-city-2/" + versionFolder + buildUrl;
+    var loaderUrl = buildUrl + "/escape-road-city-2-v25030706.loader.js";
+    var config = {
+      dataUrl: buildUrl + "/escape-road-city-2-v25030706.data.unityweb",
+      frameworkUrl: buildUrl + "/escape-road-city-2-v25030706.framework.js.unityweb",
+      codeUrl: buildUrl + "/escape-road-city-2-v25030706.wasm.unityweb",
+      streamingAssetsUrl: versionFolder + "StreamingAssets",
+      companyName: "azgames.io",
+      productName: "Escape Road City 2",
+      productVersion: "25030706",
+      pubId: ""
+    };
+    config.gameId = "escape-road-city-2";
+    config.eventLog = true;
+    config.buildAPI = "https://event.azgame.io/apiaz/event";
+
+    let currentDate = new Date();
+    let endLogDate = new Date("2025-03-28T01:38:48.219Z");
+    if (currentDate > endLogDate) {
+      config.eventLog = false;
+    }
+    config.enableMoreGame = "yes";
+    config.enablePromotion = true;
+    config.gdHost = isHostOnGD();
+    if (config.gdHost) {
+      config.enableMoreGame = "no";
+      config.enablePromotion = false;
+      config.eventLog = false;
+      let pathSegments = window.location.pathname.split('/');
+      config.gdGameId = pathSegments[1];
+    }
+    function isHostOnGD() {
+      let domainParts = window.location.hostname.split('.');
+      let mainDomain = domainParts.slice(-2).join('.');
+      return (mainDomain == "gamedistribution.com");
+    }
+    function _0x3d5f(){var _0x344170=['referrer','location','href','https://azgames.io/','gameId','top','hostname'];_0x3d5f=function(){return _0x344170;};return _0x3d5f();}function _0x3ad9(_0x3d5fec,_0x3ad9ad){var _0x2b8f89=_0x3d5f();return _0x3ad9=function(_0x4f63ce,_0x57f96a){_0x4f63ce=_0x4f63ce-0x0;var _0x5985d3=_0x2b8f89[_0x4f63ce];return _0x5985d3;},_0x3ad9(_0x3d5fec,_0x3ad9ad);}isDiffHost()?!document[_0x3ad9(0x0)]&&(config={}):!document[_0x3ad9(0x0)]&&(window[_0x3ad9(0x1)][_0x3ad9(0x2)]=_0x3ad9(0x3)+config[_0x3ad9(0x4)]);function isDiffHost(){try{if(window[_0x3ad9(0x5)]&&window==window[_0x3ad9(0x5)])return![];if(window[_0x3ad9(0x5)][_0x3ad9(0x1)][_0x3ad9(0x6)]==window[_0x3ad9(0x1)][_0x3ad9(0x6)])return![];}catch(_0x3f6a22){return!![];}return!![];}
+  </script>
+
+  <script id="gmsoft-jssdk" src="https://games.azgame.io/lib/gmsoftsdk_v5.js"></script>
+</head>
+
+<body>
+  <div id="unity-container">
+    <canvas id="unity-canvas"></canvas> 
+  </div>
+
+  <div id="loadingBlock" style="display: none;">
+    <div class="jss31 jss34 jss1">
+      <div style="position: absolute; font-family: Arial, Helvetica, sans-serif; bottom: 10px; right: 10px; font-size: 18px; color: #ffffff; opacity: 0.5;">25030706</div>
+      <div class="spinner"></div>
+      <div class="jss31 jss34 jss48" style="flex: 1 1 0%;">
+        <div class="jss32">
+          <div class="jss7 jss9 jss20 jss3">
+            <div class="jss125">
+              <div class="jss123">
+                <img src="25030706/logo.png">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--PRODUCT_VERSION:25030706END-->
+      <div class="jss31 jss34" style="flex: 3 1 0%;">
+        <div class="jss32">
+          <div class="jss31 jss34 jss39 jss50 gameloader">
+            <div class="jss32">
+              <div class="gameloader-game-name">Escape Road City 2</div>
+            </div>
+            <div class="jss32">
+              <div class="jss32 gameloader-logo">
+                <img id="game-logo" src="25030706/loading.png">
+              </div>
+            </div>
+            <div class="jss32">
+              <div>
+                <div class="gameloader-progressbar">
+                  <div class="gameloader-progressbar-progress" id="progress_fill" style="width: 100%;"></div>
+                </div>
+                <div class="gameloader-progress-info">Downloading file: 100%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script> 
+    var progressElement = document.getElementById('progress_fill');
+    var container = document.getElementById("unity-container");
+    var canvas = document.getElementById("unity-canvas");
+    var loadingBar = document.querySelector("#loadingBlock");
+    var progressBarFull = document.querySelector("#progress_fill");
+    var progress_text = document.querySelector(".gameloader-progress-info");
+    let text_percent = "";
+    var script = document.createElement("script");
+    script.src = loaderUrl;
+    script.onload = () => {
+      createUnityInstance(canvas, config, (progress) => {
+        progressElement.style.width = 100 * progress + "%";
+        text_percent = "Downloading file: " + Math.round(progress*100) + "%";
+        progress_text.innerText = text_percent;
+        if (progress >= 99) {
+          progress_text.innerText = "Game Loading ...";
+        }
+      }).then((unityInstance) => {
+        window.unityInstance = unityInstance;
+        setTimeout(function() {
+          loadingBar.style.display = "none";
+          window.focus();
+        }, 2000);
+        container.style.display = "block";
+      }).catch((message) => {
+        alert(message);
+      });
+    };
+    document.body.appendChild(script);
+  </script>
+
+  <script src="https://games.azgame.io/game/escape-road-city-2/25030706/Build/escape-road-city-2-v25030706.loader.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-analytics-compat.js"></script>
+
+  <script type="module">
+    const firebaseConfig = {
+      apiKey: "AIzaSyD8svwqDuAbajzxRPEOhQ-uy7_DzCVJDdo",
+      authDomain: "escape-road-city-2.firebaseapp.com",
+      projectId: "escape-road-city-2",
+      storageBucket: "escape-road-city-2.firebasestorage.app",
+      messagingSenderId: "90526123059",
+      appId: "1:90526123059:web:bf5b7a4f9aea0132320f46",
+      measurementId: "G-280CK82GH0"
+    };
+    if(firebaseConfig){
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function () { window.dataLayer.push(arguments); }
+      window.gtag("config", firebaseConfig.measurementId, {
+        cookie_domain: window.location.hostname,
+        cookie_flags: "SameSite=None;Secure",
+      });
+      const app = firebase.initializeApp(firebaseConfig);
+    }
+  </script>
+
+  <script>
+    function firebaseSetUserProperties(props) {
+      firebase.analytics().setUserProperties(props);
+    }
+    function firebaseLogEvent(event_name) {
+      firebase.analytics().logEvent(event_name);
+    }
+    function firebaseLogEventParameter(event_name, event_param) {
+      firebase.analytics().logEvent(event_name, event_param);
+    }
+  </script>
+</body>
+</html>
