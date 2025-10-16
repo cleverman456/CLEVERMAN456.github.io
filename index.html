@@ -14,13 +14,14 @@
 </head>
 <body>
   <h3>Auto-launch fullscreen view</h3>
-  <p>This page opens (or reuses) a blank tab and loads your site fullscreen.</p>
+  <p>This page opens (or reuses) a blank tab and loads your site fullscreen. After opening, this launcher will try to close itself — if that fails it will redirect to Google.</p>
   <div id="status"></div>
 
 <script>
 (function () {
   const WINDOW_NAME = 'clever_view'; // reuse same tab
   const IFRAME_SRC = 'https://cleverman456.github.io/dashboard';
+  const FALLBACK_REDIRECT = 'https://www.google.com';
 
   const statusEl = document.getElementById('status');
 
@@ -30,7 +31,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Safe Fullscreen View</title>
+  <title>Home</title>
+  <link rel="icon" href="https://www.gstatic.com/classroom/logo_square_rounded.svg"/>
   <style>
     html, body {
       height:100%; 
@@ -66,7 +68,36 @@
     }
   }
 
-  function openOrReuseBlank() {
+  // Attempt to close current window; if not closed within short time, redirect to fallback
+  function tryCloseOrRedirect() {
+    // Only attempt to close if this window is not the named target itself
+    if (window.name === WINDOW_NAME || window.location.href === 'about:blank') {
+      // we're already in the target; nothing to close
+      return;
+    }
+
+    try {
+      // Attempt to close. This usually only succeeds if this window was opened by script.
+      window.close();
+    } catch (e) {
+      // ignore
+    }
+
+    // After a short delay, if the window is still open, redirect to fallback.
+    setTimeout(() => {
+      // window.closed might be true in some browsers; check it.
+      if (!window.closed) {
+        try {
+          window.location.replace(FALLBACK_REDIRECT);
+        } catch (e) {
+          // If replace fails for any reason, attempt a plain assignment.
+          window.location.href = FALLBACK_REDIRECT;
+        }
+      }
+    }, 200); // 200ms delay to let window.close() take effect if permitted
+  }
+
+  function openOrReuseBlankAndFinish() {
     const currentHref = window.location.href;
     const alreadyBlank = (currentHref === 'about:blank' || window.name === WINDOW_NAME);
 
@@ -78,7 +109,9 @@
       return;
     }
 
+    // Open (or reuse) a named about:blank window
     const popup = window.open('about:blank', WINDOW_NAME);
+
     if (!popup) {
       statusEl.textContent = 'Popup blocked. Allow popups for this site and reload.';
       return;
@@ -86,15 +119,4 @@
 
     const success = injectIntoWindow(popup, buildTargetHtml(IFRAME_SRC));
     if (success) {
-      statusEl.textContent = 'Opened or focused fullscreen view in new tab.';
-      try { popup.focus(); } catch (_) {}
-    } else {
-      statusEl.textContent = 'Opened tab but failed to inject content (cross-origin issue).';
-    }
-  }
-
-  window.addEventListener('load', openOrReuseBlank, { once: true });
-})();
-</script>
-</body>
-</html>
+      s
