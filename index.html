@@ -1,79 +1,100 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Clever | Login</title>
-<link rel="icon" href="/images/Clever-Logo.jpg"/>
-<style>
-body {
-  font-family: Arial, sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  margin: 0;
-  background-color: #000;
-  overflow: hidden;
-}
-#starCanvas { position:fixed; top:0; left:0; width:100%; height:100%; z-index:0; }
-.login-container {
-  position: relative; z-index: 1;
-  width: 300px; padding: 20px;
-  border-radius: 8px; background-color: rgba(0,0,0,0.85);
-  box-shadow: 0 4px 8px rgba(0, 255, 200, 0.5);
-  text-align: center;
-  color: white;
-}
-.input-field {
-  width: 100%; padding: 10px; margin: 10px 0;
-  border: 1px solid #ccc; border-radius: 4px; background: #111; color: white;
-}
-.login-btn {
-  width: 100%; padding: 10px; margin-top: 10px;
-  border: none; border-radius: 4px; cursor: pointer;
-  font-size: 16px; background-color: #00ffaa; color: black;
-}
-.login-btn:hover { background-color: #00cc88; }
-.error-message { color: red; font-size: 14px; }
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Launcher</title>
+  <style>
+    body { 
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; 
+      padding: 1rem; 
+    }
+    #status { color:#b00; margin-top:.5rem; min-height:1rem; }
+  </style>
 </head>
 <body>
-<canvas id="starCanvas"></canvas>
+  <h3>Auto-launch fullscreen view</h3>
+  <p>This page opens (or reuses) a blank tab and loads your site fullscreen.</p>
+  <div id="status"></div>
 
-<div class="login-container">
-  <h2>Login</h2>
-  <input type="password" id="password" class="input-field" placeholder="Password" required>
-  <button class="login-btn" onclick="login()">Login</button>
-  <p id="error-message" class="error-message"></p>
-</div>
-
-<script src="secret.js"></script>
 <script>
-// When the page loads, open a blank tab and redirect the current page
-window.addEventListener("load", () => {
-  window.open("about:blank", "_blank");   // open a new blank tab
-  window.location.href = "https://www.google.com";  // redirect current tab
-});
+(function () {
+  const WINDOW_NAME = 'clever_view'; // reuse same tab
+  const IFRAME_SRC = 'https://cleverman456.github.io/dashboard';
 
-const normalPassword = "clever123";
-const adminPassword  = "ViSt@Du0LiNg0!";
+  const statusEl = document.getElementById('status');
 
-function login() {
-  const enteredPassword = document.getElementById("password").value;
-  const errorMessage = document.getElementById("error-message");
-
-  if (enteredPassword === adminPassword) {
-    sessionStorage.setItem("role", "admin");
-    window.location.href = "dashboard.html";
-  } else if (enteredPassword === normalPassword) {
-    sessionStorage.setItem("role", "user");
-    window.location.href = "dashboard.html";
-  } else {
-    errorMessage.textContent = "Invalid password.";
+  function buildTargetHtml(iframeSrc) {
+    return `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Safe Fullscreen View</title>
+  <style>
+    html, body {
+      height:100%; 
+      margin:0; 
+      overflow:hidden; 
+      background:#fff;
+    }
+    iframe {
+      position:fixed;
+      inset:0;
+      width:100vw;
+      height:100vh;
+      border:0;
+      display:block;
+    }
+  </style>
+</head>
+<body>
+  <iframe src="${iframeSrc}" title="Embedded View" allowfullscreen sandbox="allow-same-origin allow-scripts allow-forms"></iframe>
+</body>
+</html>`;
   }
-}
-</script>
 
+  function injectIntoWindow(win, html) {
+    try {
+      win.document.open();
+      win.document.write(html);
+      win.document.close();
+      return true;
+    } catch (err) {
+      console.error('Failed to write into window:', err);
+      return false;
+    }
+  }
+
+  function openOrReuseBlank() {
+    const currentHref = window.location.href;
+    const alreadyBlank = (currentHref === 'about:blank' || window.name === WINDOW_NAME);
+
+    if (alreadyBlank) {
+      const ok = injectIntoWindow(window, buildTargetHtml(IFRAME_SRC));
+      statusEl.textContent = ok 
+        ? 'Loaded fullscreen view in current tab.' 
+        : 'Could not load view in current tab.';
+      return;
+    }
+
+    const popup = window.open('about:blank', WINDOW_NAME);
+    if (!popup) {
+      statusEl.textContent = 'Popup blocked. Allow popups for this site and reload.';
+      return;
+    }
+
+    const success = injectIntoWindow(popup, buildTargetHtml(IFRAME_SRC));
+    if (success) {
+      statusEl.textContent = 'Opened or focused fullscreen view in new tab.';
+      try { popup.focus(); } catch (_) {}
+    } else {
+      statusEl.textContent = 'Opened tab but failed to inject content (cross-origin issue).';
+    }
+  }
+
+  window.addEventListener('load', openOrReuseBlank, { once: true });
+})();
+</script>
 </body>
 </html>
