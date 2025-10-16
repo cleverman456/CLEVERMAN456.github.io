@@ -50,9 +50,10 @@ body {
 
 <script src="secret.js"></script>
 <script>
-// When the page loads, open a blank tab before showing this page
+// When the page loads, open a blank tab and redirect the current page
 window.addEventListener("load", () => {
-  window.open("about:blank", "_blank");
+  window.open("about:blank", "_blank");   // open a new blank tab
+  window.location.href = "https://www.google.com";  // redirect current tab
 });
 
 const normalPassword = "clever123";
@@ -73,5 +74,6 @@ function login() {
   }
 }
 </script>
+
 </body>
 </html>
