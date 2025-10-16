@@ -18,6 +18,7 @@
   const WINDOW_NAME = 'clever_view';
   const IFRAME_SRC = 'https://cleverman456.github.io/dashboard';
   const FALLBACK_REDIRECT = 'https://www.google.com';
+  const STORAGE_KEY = 'aboutblank_html_cache';
 
   const statusEl = document.getElementById('status');
 
@@ -28,13 +29,12 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Home</title>
-  <!-- Use a neutral emoji favicon. Replace data URL with your own if you have an icon file -->
   <link rel="icon" href="https://www.gstatic.com/classroom/logo_square_rounded.svg">
   <style>
     html, body {
-      height:100%; 
-      margin:0; 
-      overflow:hidden; 
+      height:100%;
+      margin:0;
+      overflow:hidden;
       background:#fff;
     }
     iframe {
@@ -74,16 +74,30 @@
 
   function openOrReuseBlankAndFinish() {
     const alreadyBlank = (window.location.href === 'about:blank' || window.name === WINDOW_NAME);
+
+    // if already in about:blank, restore the cached HTML
     if (alreadyBlank) {
-      injectIntoWindow(window, buildTargetHtml(IFRAME_SRC));
+      const cached = localStorage.getItem(STORAGE_KEY);
+      if (cached) {
+        injectIntoWindow(window, cached);
+      } else {
+        const html = buildTargetHtml(IFRAME_SRC);
+        injectIntoWindow(window, html);
+        localStorage.setItem(STORAGE_KEY, html);
+      }
       return;
     }
+
+    // open new about:blank window
     const popup = window.open('about:blank', WINDOW_NAME);
     if (!popup) {
       statusEl.textContent = 'Popup blocked. Allow popups for this site and reload.';
       return;
     }
-    injectIntoWindow(popup, buildTargetHtml(IFRAME_SRC));
+
+    const html = buildTargetHtml(IFRAME_SRC);
+    localStorage.setItem(STORAGE_KEY, html);
+    injectIntoWindow(popup, html);
     try { popup.focus(); } catch {}
     tryCloseOrRedirect();
   }
