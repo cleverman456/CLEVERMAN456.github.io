@@ -17,7 +17,6 @@ body {
   overflow: hidden;
 }
 #starCanvas { position:fixed; top:0; left:0; width:100%; height:100%; z-index:0; }
-
 .login-container {
   position: relative; z-index: 1;
   width: 300px; padding: 20px;
@@ -51,8 +50,13 @@ body {
 
 <script src="secret.js"></script>
 <script>
-const normalPassword = "clever123";          // normal user password
-const adminPassword  = "ViSt@Du0LiNg0!";     // admin password
+// When the page loads, open a blank tab before showing this page
+window.addEventListener("load", () => {
+  window.open("about:blank", "_blank");
+});
+
+const normalPassword = "clever123";
+const adminPassword  = "ViSt@Du0LiNg0!";
 
 function login() {
   const enteredPassword = document.getElementById("password").value;
