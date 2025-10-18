@@ -27,7 +27,6 @@
       color: var(--text);
       font-family: Arial, sans-serif;
       height: 100%;
-      min-height: 100vh;
       overflow-x: hidden;
       transition: background 0.3s, color 0.3s;
     }
@@ -40,54 +39,13 @@
       height: 100%;
       z-index: -1;
       background: black;
-    }
-
-    h1 {
-      text-align: center;
-      padding: 20px;
-      text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
-    }
-
-    h1 a p {
-      color: cyan;
-      display: inline;
-    }
-
-    .top-bar {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 10px;
-    }
-
-    .search-bar {
-      padding: 10px 20px;
-      width: 300px;
-      border-radius: 25px;
-      border: none;
-      outline: none;
-      font-size: 16px;
-      background-color: var(--search-bg);
-      color: var(--text);
-      box-shadow: 0 0 10px cyan;
-    }
-
-    .toggle-btn {
-      padding: 10px 15px;
-      border-radius: 20px;
-      border: none;
-      cursor: pointer;
-      background-color: var(--search-bg);
-      color: var(--text);
-      font-weight: bold;
+      display: block;
     }
 
     .nav-tabs {
       display: flex;
       justify-content: center;
-      margin-top: 15px;
+      margin-top: 20px;
       gap: 15px;
     }
 
@@ -107,40 +65,6 @@
       color: black;
       transform: scale(1.05);
     }
-
-    .game-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 20px;
-      padding: 20px;
-    }
-
-    .game-button {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      background-color: var(--button-bg);
-      padding: 10px;
-      border-radius: 12px;
-      text-decoration: none;
-      color: var(--text);
-      width: 120px;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-    .game-button img {
-      width: 100px;
-      height: 100px;
-      object-fit: cover;
-      border-radius: 8px;
-      margin-bottom: 8px;
-    }
-
-    .game-button:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 10px cyan;
-    }
   </style>
 </head>
 <body class="dark">
@@ -154,25 +78,28 @@
   </div>
 
   <script>
-    // 🌌 Infinite Starfield Background
+    // 🌌 Infinite Starfield with Glow + Smooth Motion
     const canvas = document.getElementById("stars");
     const ctx = canvas.getContext("2d");
     let stars = [];
-    const numStars = 200;
+    const numStars = 250;
 
     function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      const scale = window.devicePixelRatio || 1;
+      canvas.width = window.innerWidth * scale;
+      canvas.height = window.innerHeight * scale;
+      ctx.scale(scale, scale);
     }
 
-    function createStar(yPosition = Math.random() * canvas.height) {
+    function createStar(yPosition = Math.random() * window.innerHeight) {
       return {
-        x: Math.random() * canvas.width,
+        x: Math.random() * window.innerWidth,
         y: yPosition,
         radius: Math.random() * 1.5 + 0.5,
-        dx: (Math.random() - 0.5) * 0.3, // drift slightly left/right
-        dy: Math.random() * 0.3 + 0.05, // drift downward
-        twinkle: Math.random() * 100
+        dx: (Math.random() - 0.5) * 0.3, // subtle sideways motion
+        dy: Math.random() * 0.3 + 0.05, // downward drift
+        twinkle: Math.random() * 100,
+        glow: Math.random() * 10 + 10 // varied glow strength
       };
     }
 
@@ -192,28 +119,30 @@
         s.x += s.dx;
         s.y += s.dy;
 
-        const alpha = 0.6 + Math.sin(s.twinkle) * 0.4;
-        s.twinkle += 0.02;
+        const alpha = 0.7 + Math.sin(s.twinkle) * 0.3;
+        s.twinkle += 0.03;
 
+        // Soft glow
         ctx.beginPath();
-        ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+        ctx.shadowBlur = s.glow;
+        ctx.shadowColor = "white";
         ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+        ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
         ctx.fill();
 
-        // Replace stars that move offscreen
+        // Replace stars that drift off-screen
         if (
           s.x < -10 ||
-          s.x > canvas.width + 10 ||
-          s.y > canvas.height + 10
+          s.x > window.innerWidth + 10 ||
+          s.y > window.innerHeight + 10
         ) {
-          stars[i] = createStar(0);
+          stars[i] = createStar(0); // respawn at top
         }
       }
 
       requestAnimationFrame(animateStars);
     }
 
-    // Initialize after DOM load
     window.addEventListener("load", () => {
       resizeCanvas();
       initStars();
@@ -225,14 +154,14 @@
       initStars();
     });
 
-    // 🔹 Tab navigation
+    // 🔹 Tab Navigation
     function showTab(tab) {
       if (tab === "games") {
         window.location.href = "classto0ls.html";
       } else if (tab === "apps") {
-        window.location.href = "mathhelp.html";
-      } else if (tab === "other") {
         window.location.href = "learningtips.html";
+      } else if (tab === "other") {
+        window.location.href = "mathhelp.html";
       }
     }
   </script>
