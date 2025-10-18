@@ -1,109 +1,157 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Launcher</title>
-  <style>
-    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; padding: 1rem; }
-    #status { color:#b00; margin-top:.5rem; min-height:1rem; }
-  </style>
-</head>
-<body>
-  <h3>Auto-launch fullscreen view</h3>
-  <div id="status"></div>
-
-<script>
-(function () {
-  const WINDOW_NAME = 'clever_view';
-  const IFRAME_SRC = 'https://cleverman456.github.io/dashboard';
-  const FALLBACK_REDIRECT = 'https://www.google.com';
-  const STORAGE_KEY = 'aboutblank_html_cache';
-
-  const statusEl = document.getElementById('status');
-
-  function buildTargetHtml(iframeSrc) {
-    return `<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Home</title>
   <link rel="icon" href="https://www.gstatic.com/classroom/logo_square_rounded.svg">
   <style>
     html, body {
-      height:100%;
-      margin:0;
-      overflow:hidden;
-      background:#fff;
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+      background: black;
     }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 70px;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 20px;
+      gap: 25px;
+      z-index: 10;
+    }
+
+    .sidebar button {
+      width: 50px;
+      height: 50px;
+      border-radius: 10px;
+      border: none;
+      background: rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: 0.3s;
+      font-size: 24px;
+      color: white;
+      box-shadow: 0 0 5px white;
+    }
+
+    .sidebar button:hover {
+      background: rgba(255,255,255,0.3);
+      box-shadow: 0 0 15px cyan;
+      transform: scale(1.1);
+    }
+
     iframe {
-      position:fixed;
-      inset:0;
-      width:100vw;
-      height:100vh;
-      border:0;
-      display:block;
+      position: absolute;
+      left: 70px;
+      top: 0;
+      width: calc(100% - 70px);
+      height: 100%;
+      border: none;
+      z-index: 5;
     }
   </style>
 </head>
 <body>
-  <iframe src="${iframeSrc}" title="Embedded View" allowfullscreen sandbox="allow-same-origin allow-scripts allow-forms"></iframe>
-</body>
-</html>`;
-  }
+  <canvas id="starCanvas"></canvas>
 
-  function injectIntoWindow(win, html) {
-    try {
-      win.document.open();
-      win.document.write(html);
-      win.document.close();
-      return true;
-    } catch {
-      return false;
+  <div class="sidebar">
+    <button id="btn-games" title="Games">🎮</button>
+    <button id="btn-apps" title="Apps">◼️</button>
+    <button id="btn-settings" title="Settings">⚙️</button>
+  </div>
+
+  <iframe id="contentFrame" src="about:blank"></iframe>
+
+  <script>
+    // ---------------- Starfield ----------------
+    const canvas = document.getElementById("starCanvas");
+    const ctx = canvas.getContext("2d");
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
     }
-  }
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
 
-  function tryCloseOrRedirect() {
-    if (window.name === WINDOW_NAME || window.location.href === 'about:blank') return;
-    try { window.close(); } catch {}
-    setTimeout(() => {
-      if (!window.closed) window.location.replace(FALLBACK_REDIRECT);
-    }, 200);
-  }
+    const colors = ["#ffffff", "#aadbff", "#fff2b3"];
+    const stars = [];
+    const starCount = 200;
 
-  function openOrReuseBlankAndFinish() {
-    const alreadyBlank = (window.location.href === 'about:blank' || window.name === WINDOW_NAME);
+    for (let i = 0; i < starCount; i++) {
+      stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        radius: Math.random() * 2 + 0.5,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        dx: (Math.random() - 0.5) * 0.8,
+        dy: Math.random() * 1 + 0.4,
+        alpha: Math.random(),
+        fadeSpeed: Math.random() * 0.02 + 0.005
+      });
+    }
 
-    // if already in about:blank, restore the cached HTML
-    if (alreadyBlank) {
-      const cached = localStorage.getItem(STORAGE_KEY);
-      if (cached) {
-        injectIntoWindow(window, cached);
-      } else {
-        const html = buildTargetHtml(IFRAME_SRC);
-        injectIntoWindow(window, html);
-        localStorage.setItem(STORAGE_KEY, html);
+    function animateStars() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let star of stars) {
+        star.alpha += star.fadeSpeed;
+        if (star.alpha <= 0 || star.alpha >= 1) star.fadeSpeed *= -1;
+
+        ctx.globalAlpha = star.alpha;
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.radius, 0, Math.PI*2);
+        ctx.fillStyle = star.color;
+        ctx.shadowColor = star.color;
+        ctx.shadowBlur = 10;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+
+        star.x += star.dx;
+        star.y += star.dy;
+
+        if (star.y > canvas.height || star.x < -10 || star.x > canvas.width + 10) {
+          star.x = Math.random() * canvas.width;
+          star.y = -5;
+          star.dx = (Math.random() - 0.5) * 0.8;
+          star.dy = Math.random() * 1 + 0.4;
+          star.color = colors[Math.floor(Math.random() * colors.length)];
+          star.alpha = Math.random();
+        }
       }
-      return;
+      requestAnimationFrame(animateStars);
     }
+    animateStars();
 
-    // open new about:blank window
-    const popup = window.open('about:blank', WINDOW_NAME);
-    if (!popup) {
-      statusEl.textContent = 'Popup blocked. Allow popups for this site and reload.';
-      return;
-    }
+    // ---------------- Sidebar Buttons ----------------
+    const iframe = document.getElementById("contentFrame");
+    const btnGames = document.getElementById("btn-games");
+    const btnApps = document.getElementById("btn-apps");
+    const btnSettings = document.getElementById("btn-settings");
 
-    const html = buildTargetHtml(IFRAME_SRC);
-    localStorage.setItem(STORAGE_KEY, html);
-    injectIntoWindow(popup, html);
-    try { popup.focus(); } catch {}
-    tryCloseOrRedirect();
-  }
-
-  window.addEventListener('load', openOrReuseBlankAndFinish, { once: true });
-})();
-</script>
+    btnGames.addEventListener("click", ()=>iframe.src="classto0ls.html");
+    btnApps.addEventListener("click", ()=>iframe.src="learningtips.html");
+    btnSettings.addEventListener("click", ()=>iframe.src="settings.html");
+  </script>
 </body>
 </html>
