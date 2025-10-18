@@ -1,169 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Clever | Portal</title>
-  <link rel="icon" href="/images/Clever-Logo.jpg"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home</title>
+  <link rel="icon" href="https://www.gstatic.com/classroom/logo_square_rounded.svg">
   <style>
-    :root {
-      --bg: black;
-      --text: white;
-      --search-bg: rgba(0, 0, 0, 0.7);
-      --button-bg: rgba(255, 255, 255, 0.05);
-    }
-
-    body.light {
-      --bg: white;
-      --text: black;
-      --search-bg: rgba(255, 255, 255, 0.7);
-      --button-bg: rgba(0, 0, 0, 0.05);
-    }
-
     html, body {
       margin: 0;
       padding: 0;
-      background: var(--bg);
-      color: var(--text);
-      font-family: Arial, sans-serif;
+      overflow: hidden;
       height: 100%;
-      overflow-x: hidden;
-      transition: background 0.3s, color 0.3s;
-    }
-
-    canvas#stars {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
       background: black;
+    }
+    canvas {
       display: block;
-    }
-
-    .nav-tabs {
-      display: flex;
-      justify-content: center;
-      margin-top: 20px;
-      gap: 15px;
-    }
-
-    .nav-tabs button {
-      background: var(--button-bg);
-      border: none;
-      padding: 10px 20px;
-      border-radius: 10px;
-      color: var(--text);
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.2s;
-    }
-
-    .nav-tabs button:hover {
-      background: cyan;
-      color: black;
-      transform: scale(1.05);
     }
   </style>
 </head>
-<body class="dark">
-  <canvas id="stars"></canvas>
-
-  <!-- Nav Tabs -->
-  <div class="nav-tabs">
-    <button onclick="showTab('games')">Games</button>
-    <button onclick="showTab('apps')">Apps</button>
-    <button onclick="showTab('other')">Other</button>
-  </div>
+<body>
+  <canvas id="starCanvas"></canvas>
 
   <script>
-    // 🌌 Infinite Starfield with Glow + Smooth Motion
-    const canvas = document.getElementById("stars");
+    const canvas = document.getElementById("starCanvas");
     const ctx = canvas.getContext("2d");
-    let stars = [];
-    const numStars = 250;
 
+    // Resize canvas to full window
     function resizeCanvas() {
-      const scale = window.devicePixelRatio || 1;
-      canvas.width = window.innerWidth * scale;
-      canvas.height = window.innerHeight * scale;
-      ctx.scale(scale, scale);
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    // Star colors for variety
+    const colors = ["#ffffff", "#aadbff", "#fff2b3"]; // white, soft blue, faint yellow
+
+    // Create stars
+    const stars = [];
+    const starCount = 200;
+
+    for (let i = 0; i < starCount; i++) {
+      stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        radius: Math.random() * 2 + 0.5,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        dx: (Math.random() - 0.5) * 0.5, // horizontal drift
+        dy: Math.random() * 0.6 + 0.2 // downward movement
+      });
     }
 
-    function createStar(yPosition = Math.random() * window.innerHeight) {
-      return {
-        x: Math.random() * window.innerWidth,
-        y: yPosition,
-        radius: Math.random() * 1.5 + 0.5,
-        dx: (Math.random() - 0.5) * 0.3, // subtle sideways motion
-        dy: Math.random() * 0.3 + 0.05, // downward drift
-        twinkle: Math.random() * 100,
-        glow: Math.random() * 10 + 10 // varied glow strength
-      };
-    }
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    function initStars() {
-      stars = [];
-      for (let i = 0; i < numStars; i++) {
-        stars.push(createStar());
-      }
-    }
-
-    function animateStars() {
-      ctx.fillStyle = "black";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      for (let i = 0; i < stars.length; i++) {
-        const s = stars[i];
-        s.x += s.dx;
-        s.y += s.dy;
-
-        const alpha = 0.7 + Math.sin(s.twinkle) * 0.3;
-        s.twinkle += 0.03;
-
-        // Soft glow
+      for (let star of stars) {
         ctx.beginPath();
-        ctx.shadowBlur = s.glow;
-        ctx.shadowColor = "white";
-        ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
-        ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+        ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+        ctx.fillStyle = star.color;
+        ctx.shadowColor = star.color;
+        ctx.shadowBlur = 8;
         ctx.fill();
 
-        // Replace stars that drift off-screen
-        if (
-          s.x < -10 ||
-          s.x > window.innerWidth + 10 ||
-          s.y > window.innerHeight + 10
-        ) {
-          stars[i] = createStar(0); // respawn at top
+        // Move stars
+        star.x += star.dx;
+        star.y += star.dy;
+
+        // Respawn stars when they move off screen
+        if (star.y > canvas.height || star.x < -5 || star.x > canvas.width + 5) {
+          star.x = Math.random() * canvas.width;
+          star.y = -5;
+          star.dx = (Math.random() - 0.5) * 0.5;
+          star.dy = Math.random() * 0.6 + 0.2;
+          star.color = colors[Math.floor(Math.random() * colors.length)];
         }
       }
 
-      requestAnimationFrame(animateStars);
+      requestAnimationFrame(animate);
     }
 
-    window.addEventListener("load", () => {
-      resizeCanvas();
-      initStars();
-      animateStars();
-    });
-
-    window.addEventListener("resize", () => {
-      resizeCanvas();
-      initStars();
-    });
-
-    // 🔹 Tab Navigation
-    function showTab(tab) {
-      if (tab === "games") {
-        window.location.href = "classto0ls.html";
-      } else if (tab === "apps") {
-        window.location.href = "learningtips.html";
-      } else if (tab === "other") {
-        window.location.href = "mathhelp.html";
-      }
-    }
+    animate();
   </script>
 </body>
 </html>
