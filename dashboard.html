@@ -157,41 +157,65 @@
 
 
 <script>
-  // Starry Background Animation
+ // Starry Background Animation (Smooth Infinite Drift)
   const canvas = document.getElementById('stars');
   const ctx = canvas.getContext('2d');
   let stars = [];
+  const numStars = 200;
 
   function resizeCanvas() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
   }
 
+  function createStar(yPosition = Math.random() * canvas.height) {
+    return {
+      x: Math.random() * canvas.width,
+      y: yPosition,
+      radius: Math.random() * 1.5 + 0.5,
+      dx: (Math.random() - 0.5) * 0.3, // small horizontal drift
+      dy: Math.random() * 0.3 + 0.05, // downward drift
+      twinkle: Math.random() * 100
+    };
+  }
+
   function initStars() {
     stars = [];
-    for (let i = 0; i < 150; i++) {
-      stars.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        radius: Math.random() * 1.5 + 0.5,
-        dx: (Math.random() - 0.5) * 0.5,
-        dy: (Math.random() - 0.5) * 0.5
-      });
+    for (let i = 0; i < numStars; i++) {
+      stars.push(createStar());
     }
   }
 
   function animateStars() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = 'white';
-    stars.forEach(star => {
+
+    for (let i = 0; i < stars.length; i++) {
+      const s = stars[i];
+
+      // Move the star
+      s.x += s.dx;
+      s.y += s.dy;
+
+      // Twinkling effect
+      const alpha = 0.5 + Math.sin(s.twinkle) * 0.5;
+      s.twinkle += 0.03;
+
+      // Draw the star
       ctx.beginPath();
-      ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+      ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
       ctx.fill();
-      star.x += star.dx;
-      star.y += star.dy;
-      if (star.x < 0 || star.x > canvas.width) star.dx *= -1;
-      if (star.y < 0 || star.y > canvas.height) star.dy *= -1;
-    });
+
+      // Remove stars that move off screen
+      if (
+        s.x < -10 || 
+        s.x > canvas.width + 10 || 
+        s.y > canvas.height + 10
+      ) {
+        stars[i] = createStar(0); // Replace with a new one at top
+      }
+    }
+
     requestAnimationFrame(animateStars);
   }
 
@@ -203,19 +227,7 @@
   resizeCanvas();
   initStars();
   animateStars();
-
-  // Search filter
-  const searchInput = document.getElementById('searchInput');
-  const gameButtons = document.querySelectorAll('.game-button');
-
-  searchInput.addEventListener('input', () => {
-    const query = searchInput.value.toLowerCase();
-    gameButtons.forEach(button => {
-      const name = button.getAttribute('data-name');
-      button.style.display = name.includes(query) ? 'flex' : 'none';
-    });
-  });
-
+  
   
 
   // Tab redirects
@@ -224,10 +236,10 @@
       window.location.href = 'classto0ls.html';
     }
     if (tab === 'apps') {
-      window.location.href = 'learningtips.html';
+      window.location.href = 'mathhelp.html';
     }
     if (tab === 'other') {
-      window.location.href = 'mathhelp.html';
+      window.location.href = 'learningtips.html';
     }
   }
 </script>
