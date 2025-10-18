@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings - Dashboard</title>
+  <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/6/6e/Gear_icon.png">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: rgba(0,0,0,0.85);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+
+    input, select {
+      padding: 5px;
+      margin-top: 3px;
+      border-radius: 5px;
+      border: none;
+      background: rgba(255,255,255,0.1);
+      color: white;
+      font-size: 14px;
+      width: 250px;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 5px 10px;
+      border-radius: 5px;
+      border: none;
+      background: cyan;
+      color: black;
+      cursor: pointer;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h2>Settings</h2>
+
+  <label>
+    Theme:
+    <select id="themeSelect">
+      <option value="dark">Dark</option>
+      <option value="light">Light</option>
+      <option value="cosmic">Cosmic</option>
+    </select>
+  </label>
+
+  <label>
+    <input type="checkbox" id="enableCloak"> Enable Cloak
+  </label>
+
+  <label>
+    Cloak Title:
+    <input type="text" id="cloakTitle" placeholder="Custom title...">
+  </label>
+
+  <label>
+    Cloak Favicon URL:
+    <input type="text" id="cloakIcon" placeholder="https://example.com/favicon.ico">
+  </label>
+
+  <button id="openBlank">Open in about:blank</button>
+
+  <script>
+    const themeSelect = document.getElementById("themeSelect");
+    const enableCloak = document.getElementById("enableCloak");
+    const cloakTitle = document.getElementById("cloakTitle");
+    const cloakIcon = document.getElementById("cloakIcon");
+    const openBlankBtn = document.getElementById("openBlank");
+
+    // Communicate with parent dashboard
+    function updateParentCloak() {
+      if (enableCloak.checked) {
+        if (cloakTitle.value) window.parent.document.title = cloakTitle.value;
+        if (cloakIcon.value) window.parent.document.querySelector("link[rel='icon']").href = cloakIcon.value;
+      }
+    }
+
+    enableCloak.addEventListener("change", updateParentCloak);
+    cloakTitle.addEventListener("input", updateParentCloak);
+    cloakIcon.addEventListener("input", updateParentCloak);
+
+    themeSelect.addEventListener("change", (e) => {
+      const theme = e.target.value;
+      const canvas = window.parent.document.getElementById("starCanvas");
+      if(theme==="dark") canvas.style.background="black";
+      else if(theme==="light") canvas.style.background="#ffffff";
+      else if(theme==="cosmic") canvas.style.background="linear-gradient(180deg, #0b0c2c, #1a1a40)";
+    });
+
+    openBlankBtn.addEventListener("click", ()=>{
+      const iframeSrc = window.parent.document.getElementById("contentFrame").src;
+      window.open(iframeSrc || "about:blank", "_blank");
+    });
+  </script>
+</body>
+</html>
