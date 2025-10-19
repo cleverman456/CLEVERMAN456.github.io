@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dashboard</title>
-  <link rel="icon" href="https://cdn.leonardo.ai/users/96b07389-91a8-4090-82e1-bceb6ff0ce60/generations/42953288-7ed4-48c3-a526-e9214ac5ec43/segments/2:4:1/Lucid_Origin_Design_a_futuristic_3D_abstract_logo_for_Clever_a_1.jpg">
+  <link rel="icon" href="https://cdn.leonardo.ai/users/96b07389-91a8-4090-82e1-bceb6ff0ce60/generations/42953288-7ed4-48c3-a526-e9214ac5ec43/segments/2:4:1/Lucid_Origin_Design_a_futuristic_3D_abstract_logo_for_Clever_a_1.jpg" />
   <style>
     html, body {
       margin: 0;
@@ -12,7 +12,43 @@
       height: 100%;
       overflow: hidden;
       font-family: "Segoe UI", Arial, sans-serif;
-      background: black;
+      transition: background 0.5s;
+    }
+
+    /* THEME COLORS */
+    :root {
+      --sidebar-bg: #11182c;
+      --accent: cyan;
+      --text-color: #bfc8e0;
+      --shadow: rgba(0, 255, 255, 0.4);
+    }
+
+    [data-theme="light"] {
+      --sidebar-bg: #f3f4f8;
+      --accent: #0066ff;
+      --text-color: #222;
+      --shadow: rgba(0, 102, 255, 0.3);
+    }
+
+    [data-theme="purple"] {
+      --sidebar-bg: #201026;
+      --accent: #c77dff;
+      --text-color: #d9c9ff;
+      --shadow: rgba(199, 125, 255, 0.5);
+    }
+
+    [data-theme="green"] {
+      --sidebar-bg: #0e2617;
+      --accent: #00ff88;
+      --text-color: #c0ffc0;
+      --shadow: rgba(0, 255, 136, 0.5);
+    }
+
+    [data-theme="red"] {
+      --sidebar-bg: #240f0f;
+      --accent: #ff4747;
+      --text-color: #ffdada;
+      --shadow: rgba(255, 71, 71, 0.5);
     }
 
     canvas {
@@ -24,14 +60,13 @@
       z-index: 0;
     }
 
-    /* Sidebar Styling */
     .sidebar {
       position: fixed;
       left: 20px;
       top: 20px;
       bottom: 20px;
       width: 75px;
-      background: #11182c;
+      background: var(--sidebar-bg);
       border-radius: 20px;
       display: flex;
       flex-direction: column;
@@ -40,6 +75,7 @@
       padding: 15px 0;
       box-shadow: 0 0 15px rgba(0,0,0,0.5);
       z-index: 10;
+      transition: background 0.4s, box-shadow 0.3s;
     }
 
     .sidebar-top,
@@ -69,21 +105,21 @@
       justify-content: center;
       cursor: pointer;
       transition: all 0.25s ease;
-      color: #bfc8e0;
+      color: var(--text-color);
       font-size: 22px;
     }
 
     .sidebar button:hover {
       background: rgba(255,255,255,0.15);
-      box-shadow: 0 0 10px rgba(0,255,255,0.4);
-      color: cyan;
+      box-shadow: 0 0 10px var(--shadow);
+      color: var(--accent);
       transform: translateY(-2px);
     }
 
     .sidebar button.active {
-      background: rgba(0,255,255,0.15);
-      color: cyan;
-      box-shadow: 0 0 10px rgba(0,255,255,0.5);
+      background: rgba(255,255,255,0.15);
+      color: var(--accent);
+      box-shadow: 0 0 10px var(--shadow);
     }
 
     iframe {
@@ -94,27 +130,32 @@
       height: 100%;
       border: none;
       z-index: 5;
-    }
-
-    img.icon {
-      width: 26px;
-      height: 26px;
-      object-fit: contain;
-      pointer-events: none;
+      transition: filter 0.3s;
     }
 
     .logo {
       width: 40px;
       height: 40px;
       border-radius: 10px;
-      background: linear-gradient(135deg, #3a7bff, #00d4ff);
+      background: linear-gradient(135deg, var(--accent), var(--shadow));
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: bold;
       color: white;
       font-size: 22px;
-      box-shadow: 0 0 10px rgba(0,255,255,0.4);
+      box-shadow: 0 0 10px var(--shadow);
+    }
+
+    .apps-icon {
+      width: 28px;
+      height: 28px;
+      filter: brightness(0) invert(1);
+      transition: filter 0.3s;
+    }
+    .sidebar button:hover .apps-icon,
+    .sidebar button.active .apps-icon {
+      filter: drop-shadow(0 0 6px var(--accent));
     }
   </style>
 </head>
@@ -128,26 +169,37 @@
     </div>
 
     <div class="sidebar-middle">
-      <button id="btn-home" title="Home">🏠</button>
       <button id="btn-games" title="Games">🎮</button>
-      <button id="btn-apps" title="Apps"><img src="https://ssl.gstatic.com/gb/images/bar/al-icon.png"></button>
+      <button id="btn-apps" title="Apps">
+        <img src="https://ssl.gstatic.com/gb/images/bar/al-icon.png" alt="Apps" class="apps-icon" />
+      </button>
       <button id="btn-web" title="Web">🌐</button>
     </div>
 
     <div class="sidebar-bottom">
       <div class="divider"></div>
-      
       <button id="btn-settings" title="Settings">⚙️</button>
     </div>
   </div>
 
-  <iframe id="contentFrame" src="about:blank"></iframe>
+  <iframe id="contentFrame" src="settings.html"></iframe>
 
   <script>
-    // ---------------- Starfield ----------------
+    // ---------- THEME SYSTEM ----------
+    const theme = localStorage.getItem("theme") || "dark";
+    document.documentElement.setAttribute("data-theme", theme);
+
+    // Listen for theme updates from settings page
+    window.addEventListener("message", (event) => {
+      if (event.data?.theme) {
+        document.documentElement.setAttribute("data-theme", event.data.theme);
+        localStorage.setItem("theme", event.data.theme);
+      }
+    });
+
+    // ---------- STARFIELD ----------
     const canvas = document.getElementById("starCanvas");
     const ctx = canvas.getContext("2d");
-
     function resizeCanvas() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
@@ -155,66 +207,46 @@
     window.addEventListener("resize", resizeCanvas);
     resizeCanvas();
 
-    const colors = ["#ffffff", "#aadbff", "#fff2b3"];
-    const stars = [];
-    const starCount = 200;
+    const stars = Array.from({ length: 200 }, () => ({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      r: Math.random() * 2 + 0.5,
+      c: ["#fff", "#aadbff", "#fff2b3"][Math.floor(Math.random() * 3)],
+      dx: (Math.random() - 0.5) * 0.8,
+      dy: Math.random() * 1 + 0.4,
+      a: Math.random(),
+      fade: Math.random() * 0.02 + 0.005
+    }));
 
-    for (let i = 0; i < starCount; i++) {
-      stars.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        radius: Math.random() * 2 + 0.5,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        dx: (Math.random() - 0.5) * 0.8,
-        dy: Math.random() * 1 + 0.4,
-        alpha: Math.random(),
-        fadeSpeed: Math.random() * 0.02 + 0.005
-      });
-    }
-
-    function animateStars() {
+    function animate() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      for (let star of stars) {
-        star.alpha += star.fadeSpeed;
-        if (star.alpha <= 0 || star.alpha >= 1) star.fadeSpeed *= -1;
-
-        ctx.globalAlpha = star.alpha;
+      for (const s of stars) {
+        s.a += s.fade;
+        if (s.a <= 0 || s.a >= 1) s.fade *= -1;
+        ctx.globalAlpha = s.a;
         ctx.beginPath();
-        ctx.arc(star.x, star.y, star.radius, 0, Math.PI*2);
-        ctx.fillStyle = star.color;
-        ctx.shadowColor = star.color;
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fillStyle = s.c;
+        ctx.shadowColor = s.c;
         ctx.shadowBlur = 10;
         ctx.fill();
         ctx.globalAlpha = 1;
-
-        star.x += star.dx;
-        star.y += star.dy;
-
-        if (star.y > canvas.height || star.x < -10 || star.x > canvas.width + 10) {
-          star.x = Math.random() * canvas.width;
-          star.y = -5;
-          star.dx = (Math.random() - 0.5) * 0.8;
-          star.dy = Math.random() * 1 + 0.4;
-          star.color = colors[Math.floor(Math.random() * colors.length)];
-          star.alpha = Math.random();
-        }
+        s.x += s.dx;
+        s.y += s.dy;
+        if (s.y > canvas.height) s.y = -5;
       }
-      requestAnimationFrame(animateStars);
+      requestAnimationFrame(animate);
     }
-    animateStars();
+    animate();
 
-    // ---------------- Sidebar Buttons ----------------
+    // ---------- NAVIGATION ----------
     const iframe = document.getElementById("contentFrame");
     const buttons = document.querySelectorAll(".sidebar button");
+    buttons.forEach(b => b.addEventListener("click", () => {
+      buttons.forEach(x => x.classList.remove("active"));
+      b.classList.add("active");
+    }));
 
-    buttons.forEach(btn => {
-      btn.addEventListener("click", () => {
-        buttons.forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-      });
-    });
-
-    document.getElementById("btn-home").addEventListener("click", ()=>iframe.src="index.html");
     document.getElementById("btn-games").addEventListener("click", ()=>iframe.src="classto0ls.html");
     document.getElementById("btn-apps").addEventListener("click", ()=>iframe.src="mathhelp.html");
     document.getElementById("btn-web").addEventListener("click", ()=>iframe.src="https://googlay-classroom.global.ssl.fastly.net/search.html");

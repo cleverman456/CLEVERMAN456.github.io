@@ -3,94 +3,47 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Settings - Dashboard</title>
-  <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/6/6e/Gear_icon.png">
+  <title>Settings</title>
   <style>
-    /* General Page Style */
     body {
-      font-family: "Segoe UI", Arial, sans-serif;
-      background: radial-gradient(circle at top left, #0b0c2c, #000);
-      color: #f1f1f1;
+      background: transparent;
+      color: white;
+      font-family: "Segoe UI", sans-serif;
+      padding: 40px;
       display: flex;
       flex-direction: column;
       gap: 15px;
-      padding: 40px;
-      max-width: 500px;
-      margin: 0 auto;
-      min-height: 100vh;
-      box-sizing: border-box;
     }
 
     h2 {
-      font-size: 28px;
-      font-weight: 600;
-      margin-bottom: 10px;
-      color: cyan;
-      text-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+      color: var(--accent);
+      text-shadow: 0 0 10px var(--shadow);
     }
 
-    label {
-      display: flex;
-      flex-direction: column;
-      font-size: 16px;
-      gap: 6px;
-    }
-
-    select, input[type="text"] {
-      padding: 8px 10px;
-      border-radius: 8px;
-      border: 1px solid rgba(255,255,255,0.2);
+    select, input {
       background: rgba(255,255,255,0.1);
-      color: #fff;
-      outline: none;
+      border: 1px solid rgba(255,255,255,0.2);
+      color: white;
+      border-radius: 8px;
+      padding: 6px 10px;
       font-size: 15px;
-      transition: all 0.2s ease;
-    }
-
-    select:focus, input[type="text"]:focus {
-      border-color: cyan;
-      background: rgba(255,255,255,0.15);
-    }
-
-    input[type="checkbox"] {
-      transform: scale(1.2);
-      accent-color: cyan;
-      margin-right: 8px;
-    }
-
-    label.checkbox {
-      flex-direction: row;
-      align-items: center;
-      gap: 8px;
-      font-size: 15px;
+      width: 250px;
     }
 
     button {
-      align-self: flex-start;
-      margin-top: 15px;
-      padding: 10px 20px;
-      border-radius: 8px;
+      background: var(--accent);
+      color: black;
       border: none;
-      background: linear-gradient(90deg, cyan, #00ffaa);
-      color: #000;
+      border-radius: 8px;
+      padding: 10px 16px;
       cursor: pointer;
       font-weight: 600;
-      font-size: 15px;
-      box-shadow: 0 0 10px rgba(0,255,255,0.5);
-      transition: all 0.25s ease;
+      transition: 0.3s;
     }
 
     button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 0 20px rgba(0,255,255,0.8);
-    }
-
-    footer {
-      margin-top: auto;
-      font-size: 13px;
-      color: #aaa;
-      text-align: center;
-      opacity: 0.7;
+      background: white;
+      color: var(--accent);
     }
   </style>
 </head>
@@ -102,12 +55,10 @@
     <select id="themeSelect">
       <option value="dark">Dark</option>
       <option value="light">Light</option>
-      <option value="cosmic">Cosmic</option>
+      <option value="purple">Purple</option>
+      <option value="green">Green</option>
+      <option value="red">Red</option>
     </select>
-  </label>
-
-  <label class="checkbox">
-    <input type="checkbox" id="enableCloak"> Enable Cloak
   </label>
 
   <label>
@@ -120,74 +71,17 @@
     <input type="text" id="cloakIcon" placeholder="https://example.com/favicon.ico">
   </label>
 
-  <button id="openBlank">Open in about:blank</button>
-
-  <footer>© 2025 CleverMan Dashboard</footer>
+  <button id="saveSettings">Save Settings</button>
 
   <script>
     const themeSelect = document.getElementById("themeSelect");
-    const enableCloak = document.getElementById("enableCloak");
-    const cloakTitle = document.getElementById("cloakTitle");
-    const cloakIcon = document.getElementById("cloakIcon");
-    const openBlankBtn = document.getElementById("openBlank");
+    themeSelect.value = localStorage.getItem("theme") || "dark";
 
-    // Apply cloak settings to parent
-    function updateParentCloak() {
-      if (enableCloak.checked) {
-        if (cloakTitle.value) window.parent.document.title = cloakTitle.value;
-        if (cloakIcon.value) {
-          let icon = window.parent.document.querySelector("link[rel='icon']");
-          if (icon) icon.href = cloakIcon.value;
-        }
-      }
-    }
-
-    enableCloak.addEventListener("change", updateParentCloak);
-    cloakTitle.addEventListener("input", updateParentCloak);
-    cloakIcon.addEventListener("input", updateParentCloak);
-
-    themeSelect.addEventListener("change", (e) => {
-      const theme = e.target.value;
-      const canvas = window.parent.document.getElementById("starCanvas");
-      if (!canvas) return;
-
-      switch (theme) {
-        case "dark":
-          canvas.style.background = "#000";
-          break;
-        case "light":
-          canvas.style.background = "#fff";
-          break;
-        case "cosmic":
-          canvas.style.background = "linear-gradient(180deg, #0b0c2c, #1a1a40)";
-          break;
-      }
-    });
-
-    // Open the GitHub page inside about:blank
-    openBlankBtn.addEventListener("click", () => {
-      const win = window.open("about:blank", "_blank");
-      const doc = win.document;
-      doc.open();
-      doc.write(`
-        <html>
-          <head>
-            <title>Loading...</title>
-            <style>
-              body { margin:0; overflow:hidden; background:black; }
-              iframe {
-                border:none;
-                width:100vw;
-                height:100vh;
-              }
-            </style>
-          </head>
-          <body>
-            <iframe src="https://cleverman456.github.io" allowfullscreen></iframe>
-          </body>
-        </html>
-      `);
-      doc.close();
+    document.getElementById("saveSettings").addEventListener("click", () => {
+      const theme = themeSelect.value;
+      localStorage.setItem("theme", theme);
+      window.parent.document.documentElement.setAttribute("data-theme", theme);
+      alert("Theme updated!");
     });
   </script>
 </body>
