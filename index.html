@@ -11,7 +11,7 @@
       padding: 0;
       height: 100%;
       overflow: hidden;
-      font-family: Arial, sans-serif;
+      font-family: "Segoe UI", Arial, sans-serif;
       background: black;
     }
 
@@ -24,51 +24,97 @@
       z-index: 0;
     }
 
+    /* Sidebar Styling */
     .sidebar {
       position: fixed;
-      left: 0;
-      top: 0;
-      width: 70px;
-      height: 100%;
-      background: rgba(0,0,0,0.7);
+      left: 20px;
+      top: 20px;
+      bottom: 20px;
+      width: 75px;
+      background: #11182c;
+      border-radius: 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding-top: 20px;
-      gap: 25px;
+      justify-content: space-between;
+      padding: 15px 0;
+      box-shadow: 0 0 15px rgba(0,0,0,0.5);
       z-index: 10;
+    }
+
+    .sidebar-top,
+    .sidebar-middle,
+    .sidebar-bottom {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 25px;
+    }
+
+    .divider {
+      width: 50%;
+      height: 1px;
+      background: rgba(255,255,255,0.1);
+      margin: 10px 0;
     }
 
     .sidebar button {
       width: 50px;
       height: 50px;
-      border-radius: 10px;
+      border-radius: 15px;
       border: none;
-      background: rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.05);
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: 0.3s;
-      font-size: 24px;
-      color: white;
-      box-shadow: 0 0 5px white;
+      transition: all 0.25s ease;
+      color: #bfc8e0;
+      font-size: 22px;
     }
 
     .sidebar button:hover {
-      background: rgba(255,255,255,0.3);
-      box-shadow: 0 0 15px cyan;
-      transform: scale(1.1);
+      background: rgba(255,255,255,0.15);
+      box-shadow: 0 0 10px rgba(0,255,255,0.4);
+      color: cyan;
+      transform: translateY(-2px);
+    }
+
+    .sidebar button.active {
+      background: rgba(0,255,255,0.15);
+      color: cyan;
+      box-shadow: 0 0 10px rgba(0,255,255,0.5);
     }
 
     iframe {
       position: absolute;
-      left: 70px;
+      left: 115px;
       top: 0;
-      width: calc(100% - 70px);
+      width: calc(100% - 115px);
       height: 100%;
       border: none;
       z-index: 5;
+    }
+
+    img.icon {
+      width: 26px;
+      height: 26px;
+      object-fit: contain;
+      pointer-events: none;
+    }
+
+    .logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #3a7bff, #00d4ff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: white;
+      font-size: 22px;
+      box-shadow: 0 0 10px rgba(0,255,255,0.4);
     }
   </style>
 </head>
@@ -76,9 +122,23 @@
   <canvas id="starCanvas"></canvas>
 
   <div class="sidebar">
-    <button id="btn-games" title="Games">🎮</button>
-    <button id="btn-apps" title="Apps">◼️</button>
-    <button id="btn-settings" title="Settings">⚙️</button>
+    <div class="sidebar-top">
+      <div class="logo">H</div>
+      <div class="divider"></div>
+    </div>
+
+    <div class="sidebar-middle">
+      <button id="btn-home" title="Home">🏠</button>
+      <button id="btn-games" title="Games">🎮</button>
+      <button id="btn-apps" title="Apps"><img src="https://ssl.gstatic.com/gb/images/bar/al-icon.png"></button>
+      <button id="btn-web" title="Web">🌐</button>
+    </div>
+
+    <div class="sidebar-bottom">
+      <div class="divider"></div>
+      
+      <button id="btn-settings" title="Settings">⚙️</button>
+    </div>
   </div>
 
   <iframe id="contentFrame" src="about:blank"></iframe>
@@ -145,13 +205,20 @@
 
     // ---------------- Sidebar Buttons ----------------
     const iframe = document.getElementById("contentFrame");
-    const btnGames = document.getElementById("btn-games");
-    const btnApps = document.getElementById("btn-apps");
-    const btnSettings = document.getElementById("btn-settings");
+    const buttons = document.querySelectorAll(".sidebar button");
 
-    btnGames.addEventListener("click", ()=>iframe.src="classto0ls.html");
-    btnApps.addEventListener("click", ()=>iframe.src="learningtips.html");
-    btnSettings.addEventListener("click", ()=>iframe.src="settings.html");
+    buttons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        buttons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+      });
+    });
+
+    document.getElementById("btn-home").addEventListener("click", ()=>iframe.src="index.html");
+    document.getElementById("btn-games").addEventListener("click", ()=>iframe.src="classto0ls.html");
+    document.getElementById("btn-apps").addEventListener("click", ()=>iframe.src="mathhelp.html");
+    document.getElementById("btn-web").addEventListener("click", ()=>iframe.src="https://googlay-classroom.global.ssl.fastly.net/search.html");
+    document.getElementById("btn-settings").addEventListener("click", ()=>iframe.src="settings.html");
   </script>
 </body>
 </html>
