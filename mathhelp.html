@@ -6,94 +6,108 @@
 <title>Clever | Portal</title>
 <link rel="icon" href="/images/Clever-Logo.jpg">
 <style>
-  /* Theme variables */
   :root {
-    --bg: black; --text: white; --search-bg: rgba(0,0,0,0.7); --button-bg: rgba(255,255,255,0.05);
+    --bg: black; --text: white; --button-bg: rgba(255,255,255,0.05); --search-bg: rgba(0,0,0,0.7);
   }
-  body.light {
-    --bg: white; --text: black; --search-bg: rgba(255,255,255,0.7); --button-bg: rgba(0,0,0,0.05);
-  }
-  body.cosmic {
-    --bg: #1b0033; --text: #ff66ff; --search-bg: rgba(50,0,50,0.7); --button-bg: rgba(255,102,255,0.1);
-  }
-  body.ocean {
-    --bg: #002b4c; --text: #00ffff; --search-bg: rgba(0,50,80,0.7); --button-bg: rgba(0,255,255,0.1);
-  }
-  body.forest {
-    --bg: #003300; --text: #99ff66; --search-bg: rgba(0,50,0,0.7); --button-bg: rgba(153,255,102,0.1);
-  }
-  html, body { margin:0; padding:0; background:var(--bg); color:var(--text); font-family:Arial,sans-serif; height:100%; min-height:100vh; overflow-x:hidden; transition:background 0.3s,color 0.3s; }
+  body.light { --bg: white; --text: black; --button-bg: rgba(0,0,0,0.05); --search-bg: rgba(255,255,255,0.7); }
+  body.cosmic { --bg: #1b003b; --text: #ff80ff; --button-bg: rgba(255,128,255,0.1); --search-bg: rgba(255,128,255,0.2); }
+  body.ocean { --bg: #00334d; --text: #33ffff; --button-bg: rgba(51,255,255,0.1); --search-bg: rgba(51,255,255,0.2); }
+  body.forest { --bg: #003300; --text: #99ff99; --button-bg: rgba(153,255,153,0.1); --search-bg: rgba(153,255,153,0.2); }
+
+  html, body { margin:0; padding:0; height:100%; font-family: Arial, sans-serif; background: var(--bg); color: var(--text); transition: background 0.3s, color 0.3s; overflow-x:hidden; }
+  canvas#stars { position: fixed; top:0; left:0; z-index:-1; }
   .nav-bar { display:flex; justify-content:center; gap:15px; margin:15px 0; }
-  .nav-bar button { padding:10px 20px; border:none; border-radius:8px; cursor:pointer; font-size:16px; background-color:#333; color:white; transition:0.2s; }
-  .nav-bar button:hover { background-color:cyan; color:black; }
-  .background { position:fixed; top:0; left:0; width:100%; height:100%; z-index:-1; }
+  .nav-bar button { padding:10px 20px; border:none; border-radius:8px; cursor:pointer; font-size:16px; background:#333; color:white; transition:0.2s; }
+  .nav-bar button:hover { background:cyan; color:black; }
+  .top-bar { display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:10px; margin-top:10px; }
+  .search-bar { padding:10px 20px; width:300px; border-radius:25px; border:none; outline:none; font-size:16px; background-color: var(--search-bg); color: var(--text); box-shadow:0 0 10px cyan; }
   .game-container { display:flex; flex-wrap:wrap; justify-content:center; gap:20px; padding:20px; }
-  .game-button { display:flex; flex-direction:column; align-items:center; background-color:var(--button-bg); padding:10px; border-radius:12px; text-decoration:none; color:var(--text); width:120px; transition: transform 0.2s, box-shadow 0.2s; }
+  .game-button { display:flex; flex-direction:column; align-items:center; background-color: var(--button-bg); padding:10px; border-radius:12px; color: var(--text); width:140px; border:none; cursor:pointer; transition: transform 0.2s, box-shadow 0.2s; font-family:inherit; font-size:14px; }
   .game-button img { width:100px; height:100px; object-fit:cover; border-radius:8px; margin-bottom:8px; }
   .game-button:hover { transform:scale(1.05); box-shadow:0 0 10px cyan; }
 </style>
 </head>
 <body>
+<canvas id="stars"></canvas>
+
 <div class="nav-bar">
   <button onclick="showTab('games')">Games</button>
   <button onclick="showTab('apps')">Apps</button>
   <button onclick="showTab('other')">Other</button>
 </div>
 
-<div class="background"></div>
+<div class="top-bar">
+  <input type="text" id="searchInput" class="search-bar" placeholder="Search for an app...">
+</div>
 
 <div class="game-container">
-  <a href="classtools.html?tool=sb" class="game-button">
-    <img src="./images/soundboard.jpg" alt="Soundboard"><span>Soundboard</span>
-  </a>
-  <a href="classtools.html?tool=calculus" class="game-button">
-    <img src="./images/youtube-logo-featured.jpg" alt="Youtube"><span>Youtube</span>
-  </a>
+  <button class="game-button" data-name="soundboard" onclick="openApp('sb')"><img src="./images/soundboard.jpg" alt="Soundboard"><span>Soundboard</span></button>
+  <button class="game-button" data-name="youtube" onclick="openApp('calculus')"><img src="./images/youtube-logo-featured.jpg" alt="Youtube"><span>Youtube</span></button>
 </div>
 
 <script>
-  function showTab(tab){
-    if(tab==='games') window.location.href='classtools.html';
-    if(tab==='apps') window.location.href='learningtips.html';
-    if(tab==='other') window.location.href='mathhelp.html';
+const themes = ["dark","light","cosmic","ocean","forest"];
+let currentTheme = localStorage.getItem("theme") || "dark";
+applyTheme(currentTheme);
+
+function applyTheme(theme){
+  document.body.classList.remove(...themes);
+  document.body.classList.add(theme);
+  localStorage.setItem("theme", theme);
+}
+
+function showTab(tab){
+  if(tab==='games') window.location.href='classto0ls.html';
+  if(tab==='apps') window.location.href='mathhelp.html';
+  if(tab==='other') window.location.href='learningtips.html';
+}
+
+function openApp(tool){
+  window.location.href=`classtools.html?tool=${tool}`;
+}
+
+// Search filter
+const searchInput = document.getElementById('searchInput');
+const buttons = document.querySelectorAll('.game-button');
+searchInput.addEventListener('input', ()=>{
+  const query = searchInput.value.toLowerCase();
+  buttons.forEach(btn=> btn.style.display = btn.getAttribute('data-name').toLowerCase().includes(query)?'flex':'none');
+});
+
+// Star background
+const canvas = document.getElementById('stars');
+const ctx = canvas.getContext('2d');
+let stars = [];
+function resizeCanvas(){ canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+function initStars(){
+  stars = [];
+  for(let i=0;i<150;i++){
+    stars.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,radius:Math.random()*1.5+0.5,dx:(Math.random()-0.5)*0.5,dy:(Math.random()-0.5)*0.5});
   }
-
-  const background = document.querySelector('.background');
-  function createStars(count){
-    for(let i=0;i<count;i++){
-      let star = document.createElement('div');
-      star.classList.add('star');
-      star.style.top = `${Math.random()*100}vh`;
-      star.style.left = `${Math.random()*100}vw`;
-      star.style.animationDuration = `${1.5 + Math.random()}s`;
-      background.appendChild(star);
-    }
-  }
-  createStars(150);
-
-  // Theme sync
-  const themes = ['dark','light','cosmic','ocean','forest'];
-  let savedTheme = localStorage.getItem('theme') || 'dark';
-  document.body.classList.add(savedTheme);
-
-  function setTheme(theme){
-    document.body.classList.remove(...themes);
-    document.body.classList.add(theme);
-    localStorage.setItem('theme', theme);
-    window.postMessage({ type:'sync-theme', theme: theme }, '*');
-  }
-
-  function cycleTheme(){ // optional button if needed
-    let index = themes.indexOf(document.body.classList[0]);
-    index = (index+1) % themes.length;
-    setTheme(themes[index]);
-  }
-
-  window.addEventListener('message', (event)=>{
-    if(event.data.type==='sync-theme'){
-      setTheme(event.data.theme);
-    }
+}
+function animateStars(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle='white';
+  stars.forEach(s=>{
+    ctx.beginPath();
+    ctx.arc(s.x,s.y,s.radius,0,Math.PI*2);
+    ctx.fill();
+    s.x+=s.dx; s.y+=s.dy;
+    if(s.x<0||s.x>canvas.width) s.dx*=-1;
+    if(s.y<0||s.y>canvas.height) s.dy*=-1;
   });
+  requestAnimationFrame(animateStars);
+}
+window.addEventListener('resize', ()=>{ resizeCanvas(); initStars(); });
+resizeCanvas(); initStars(); animateStars();
+
+// Theme sync from other pages
+window.addEventListener("message", e=>{
+  if(e.data.type==="sync-theme"){
+    currentTheme=e.data.theme;
+    applyTheme(currentTheme);
+  }
+});
 </script>
 </body>
 </html>

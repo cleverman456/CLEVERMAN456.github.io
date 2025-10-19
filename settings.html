@@ -1,63 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Settings</title>
-  <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/6/6e/Gear_icon.png" />
-  <style>
-    * {
-      transition: background 0.4s ease, color 0.4s ease;
-    }
-
-    body {
-      font-family: Arial, sans-serif;
-      color: white;
-      background: transparent;
-      display: flex;
-      flex-direction: column;
-      padding: 20px;
-      margin: 0;
-      animation: fadeIn 0.4s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    label {
-      margin-bottom: 12px;
-      font-size: 16px;
-    }
-
-    select, input[type="text"] {
-      width: 250px;
-      padding: 6px;
-      border-radius: 6px;
-      border: none;
-      background: rgba(255, 255, 255, 0.15);
-      color: white;
-      font-size: 14px;
-      margin-top: 4px;
-    }
-
-    button {
-      margin-top: 15px;
-      padding: 6px 12px;
-      border-radius: 6px;
-      border: none;
-      background: cyan;
-      color: black;
-      font-weight: bold;
-      cursor: pointer;
-      width: fit-content;
-    }
-
-    button:hover {
-      background: #00e0e0;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Clever | Settings</title>
+<link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/6/6e/Gear_icon.png" />
+<style>
+  * { transition: background 0.4s ease, color 0.4s ease; }
+  body {
+    font-family: Arial, sans-serif;
+    color: white;
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    margin: 0;
+    animation: fadeIn 0.4s ease;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  label { margin-bottom: 12px; font-size: 16px; }
+  select, input[type="text"] {
+    width: 250px;
+    padding: 6px;
+    border-radius: 6px;
+    border: none;
+    background: rgba(255,255,255,0.15);
+    color: white;
+    font-size: 14px;
+    margin-top: 4px;
+  }
+  button {
+    margin-top: 15px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: none;
+    background: cyan;
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+    width: fit-content;
+  }
+  button:hover { background: #00e0e0; }
+</style>
 </head>
 <body>
   <h2>Settings</h2>
@@ -74,16 +61,8 @@
   </label>
 
   <label><input type="checkbox" id="enableCloak"> Enable Cloak</label>
-
-  <label>
-    Cloak Title:
-    <input type="text" id="cloakTitle" placeholder="Custom title...">
-  </label>
-
-  <label>
-    Cloak Favicon URL:
-    <input type="text" id="cloakIcon" placeholder="https://example.com/favicon.ico">
-  </label>
+  <label>Cloak Title: <input type="text" id="cloakTitle" placeholder="Custom title..."></label>
+  <label>Cloak Favicon URL: <input type="text" id="cloakIcon" placeholder="https://example.com/favicon.ico"></label>
 
   <button id="openBlank">Open in about:blank</button>
 
@@ -94,28 +73,44 @@
     const cloakIcon = document.getElementById("cloakIcon");
     const openBlank = document.getElementById("openBlank");
 
-    const savedTheme = localStorage.getItem("theme") || "dark";
-    themeSelect.value = savedTheme;
+    const themes = ["dark","light","cosmic","ocean","forest"];
 
-    // Update theme live
-    themeSelect.addEventListener("change", (e) => {
-      const theme = e.target.value;
-      localStorage.setItem("theme", theme);
-      window.parent.postMessage({ type: "change-theme", value: theme }, "*");
+    // Load saved theme or default
+    let currentTheme = localStorage.getItem("theme") || "dark";
+    applyTheme(currentTheme);
+    themeSelect.value = currentTheme;
+
+    // Change theme on select
+    themeSelect.addEventListener("change", e => {
+      currentTheme = e.target.value;
+      applyTheme(currentTheme);
+      syncTheme(currentTheme);
     });
 
-    // Theme sync from parent
-    window.addEventListener("message", (event) => {
-      if (event.data.type === "sync-theme") {
-        document.body.dataset.theme = event.data.theme;
+    // Apply theme function
+    function applyTheme(theme){
+      document.body.dataset.theme = theme;
+      localStorage.setItem("theme", theme);
+      // Also update other pages in same window
+      document.querySelectorAll("iframe").forEach(iframe => {
+        iframe.contentWindow.postMessage({type:"sync-theme", theme}, "*");
+      });
+    }
+
+    // Sync theme to/from other pages
+    window.addEventListener("message", e => {
+      if(e.data.type === "sync-theme"){
+        currentTheme = e.data.theme;
+        applyTheme(currentTheme);
+        themeSelect.value = currentTheme;
       }
     });
 
     // Cloak
     function updateCloak() {
-      if (enableCloak.checked) {
-        if (cloakTitle.value) window.parent.document.title = cloakTitle.value;
-        if (cloakIcon.value)
+      if(enableCloak.checked){
+        if(cloakTitle.value) window.parent.document.title = cloakTitle.value;
+        if(cloakIcon.value)
           window.parent.document.querySelector("link[rel='icon']").href = cloakIcon.value;
       }
     }
@@ -126,10 +121,8 @@
 
     openBlank.addEventListener("click", () => {
       const newWin = window.open("about:blank", "_blank");
-      const doc = newWin.document;
-      doc.open();
-      doc.write(`<iframe src="https://cleverman456.github.io" style="border:none;width:100%;height:100vh;"></iframe>`);
-      doc.close();
+      newWin.document.write(`<iframe src="https://cleverman456.github.io" style="border:none;width:100%;height:100vh;"></iframe>`);
+      newWin.document.close();
     });
   </script>
 </body>
