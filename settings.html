@@ -6,6 +6,10 @@
   <title>Settings</title>
   <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/6/6e/Gear_icon.png" />
   <style>
+    * {
+      transition: background 0.4s ease, color 0.4s ease;
+    }
+
     body {
       font-family: Arial, sans-serif;
       color: white;
@@ -14,6 +18,12 @@
       flex-direction: column;
       padding: 20px;
       margin: 0;
+      animation: fadeIn 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     label {
@@ -84,7 +94,6 @@
     const cloakIcon = document.getElementById("cloakIcon");
     const openBlank = document.getElementById("openBlank");
 
-    // Load saved theme
     const savedTheme = localStorage.getItem("theme") || "dark";
     themeSelect.value = savedTheme;
 
@@ -95,7 +104,14 @@
       window.parent.postMessage({ type: "change-theme", value: theme }, "*");
     });
 
-    // Cloak settings
+    // Theme sync from parent
+    window.addEventListener("message", (event) => {
+      if (event.data.type === "sync-theme") {
+        document.body.dataset.theme = event.data.theme;
+      }
+    });
+
+    // Cloak
     function updateCloak() {
       if (enableCloak.checked) {
         if (cloakTitle.value) window.parent.document.title = cloakTitle.value;

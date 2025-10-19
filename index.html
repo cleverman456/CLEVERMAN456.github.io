@@ -6,17 +6,20 @@
   <title>Dashboard</title>
   <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/6/6e/Gear_icon.png" />
   <style>
+    * {
+      transition: background 0.4s ease, color 0.4s ease;
+    }
+
     body {
       font-family: "Segoe UI", Arial, sans-serif;
       margin: 0;
       padding: 0;
-      background: #0d0d0d;
-      color: white;
       height: 100vh;
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      transition: background 0.4s, color 0.4s;
+      background: #0d0d0d;
+      color: white;
     }
 
     header {
@@ -84,6 +87,15 @@
       background: linear-gradient(180deg, #0b3d0b, #228b22);
       color: white;
     }
+
+    .fade {
+      animation: fadeTheme 0.4s ease;
+    }
+
+    @keyframes fadeTheme {
+      from { opacity: 0.6; }
+      to { opacity: 1; }
+    }
   </style>
 </head>
 <body>
@@ -101,34 +113,36 @@
   <script>
     const iframe = document.getElementById("contentFrame");
 
-    // Load saved theme from localStorage
+    // Load saved theme
     const savedTheme = localStorage.getItem("theme") || "dark";
     document.body.classList.add(`theme-${savedTheme}`);
 
+    function applyTheme(theme) {
+      document.body.className = "";
+      document.body.classList.add(`theme-${theme}`, "fade");
+      localStorage.setItem("theme", theme);
+
+      // Send theme to iframe if it can receive it
+      iframe.contentWindow?.postMessage({ type: "sync-theme", theme }, "*");
+
+      // Remove fade class after animation
+      setTimeout(() => document.body.classList.remove("fade"), 500);
+    }
+
     // Button navigation
-    document.getElementById("btn-games").addEventListener("click", () => {
-      iframe.src = "classto0ls.html";
-    });
+    document.getElementById("btn-games").addEventListener("click", () => iframe.src = "classto0ls.html");
+    document.getElementById("btn-apps").addEventListener("click", () => iframe.src = "mathhelp.html");
+    document.getElementById("btn-web").addEventListener("click", () => iframe.src = "https://googlay-classroom.global.ssl.fastly.net/search.html");
+    document.getElementById("btn-settings").addEventListener("click", () => iframe.src = "settings.html");
 
-    document.getElementById("btn-apps").addEventListener("click", () => {
-      iframe.src = "mathhelp.html";
-    });
-
-    document.getElementById("btn-web").addEventListener("click", () => {
-      iframe.src = "https://googlay-classroom.global.ssl.fastly.net/search.html";
-    });
-
-    document.getElementById("btn-settings").addEventListener("click", () => {
-      iframe.src = "settings.html";
-    });
-
-    // Listen for theme changes from settings
+    // Theme change listener from settings
     window.addEventListener("message", (event) => {
-      if (event.data.type === "change-theme") {
-        document.body.className = ""; // Clear all themes
-        document.body.classList.add(`theme-${event.data.value}`);
-        localStorage.setItem("theme", event.data.value);
-      }
+      if (event.data.type === "change-theme") applyTheme(event.data.value);
+    });
+
+    // Sync theme on iframe load
+    iframe.addEventListener("load", () => {
+      iframe.contentWindow?.postMessage({ type: "sync-theme", theme: savedTheme }, "*");
     });
   </script>
 </body>
