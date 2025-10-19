@@ -1,65 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Settings</title>
+  <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/6/6e/Gear_icon.png" />
   <style>
     body {
-      background: transparent;
+      font-family: Arial, sans-serif;
       color: white;
-      font-family: "Segoe UI", sans-serif;
-      padding: 40px;
+      background: transparent;
       display: flex;
       flex-direction: column;
-      gap: 15px;
+      padding: 20px;
+      margin: 0;
     }
 
-    h2 {
-      color: var(--accent);
-      text-shadow: 0 0 10px var(--shadow);
+    label {
+      margin-bottom: 12px;
+      font-size: 16px;
     }
 
-    select, input {
-      background: rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.2);
-      color: white;
-      border-radius: 8px;
-      padding: 6px 10px;
-      font-size: 15px;
+    select, input[type="text"] {
       width: 250px;
+      padding: 6px;
+      border-radius: 6px;
+      border: none;
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+      font-size: 14px;
+      margin-top: 4px;
     }
 
     button {
-      background: var(--accent);
-      color: black;
+      margin-top: 15px;
+      padding: 6px 12px;
+      border-radius: 6px;
       border: none;
-      border-radius: 8px;
-      padding: 10px 16px;
+      background: cyan;
+      color: black;
+      font-weight: bold;
       cursor: pointer;
-      font-weight: 600;
-      transition: 0.3s;
+      width: fit-content;
     }
 
     button:hover {
-      background: white;
-      color: var(--accent);
+      background: #00e0e0;
     }
   </style>
 </head>
 <body>
-  <h2>⚙️ Settings</h2>
+  <h2>Settings</h2>
 
   <label>
     Theme:
     <select id="themeSelect">
       <option value="dark">Dark</option>
       <option value="light">Light</option>
-      <option value="purple">Purple</option>
-      <option value="green">Green</option>
-      <option value="red">Red</option>
+      <option value="cosmic">Cosmic</option>
+      <option value="ocean">Ocean</option>
+      <option value="forest">Forest</option>
     </select>
   </label>
+
+  <label><input type="checkbox" id="enableCloak"> Enable Cloak</label>
 
   <label>
     Cloak Title:
@@ -71,17 +75,45 @@
     <input type="text" id="cloakIcon" placeholder="https://example.com/favicon.ico">
   </label>
 
-  <button id="saveSettings">Save Settings</button>
+  <button id="openBlank">Open in about:blank</button>
 
   <script>
     const themeSelect = document.getElementById("themeSelect");
-    themeSelect.value = localStorage.getItem("theme") || "dark";
+    const enableCloak = document.getElementById("enableCloak");
+    const cloakTitle = document.getElementById("cloakTitle");
+    const cloakIcon = document.getElementById("cloakIcon");
+    const openBlank = document.getElementById("openBlank");
 
-    document.getElementById("saveSettings").addEventListener("click", () => {
-      const theme = themeSelect.value;
+    // Load saved theme
+    const savedTheme = localStorage.getItem("theme") || "dark";
+    themeSelect.value = savedTheme;
+
+    // Update theme live
+    themeSelect.addEventListener("change", (e) => {
+      const theme = e.target.value;
       localStorage.setItem("theme", theme);
-      window.parent.document.documentElement.setAttribute("data-theme", theme);
-      alert("Theme updated!");
+      window.parent.postMessage({ type: "change-theme", value: theme }, "*");
+    });
+
+    // Cloak settings
+    function updateCloak() {
+      if (enableCloak.checked) {
+        if (cloakTitle.value) window.parent.document.title = cloakTitle.value;
+        if (cloakIcon.value)
+          window.parent.document.querySelector("link[rel='icon']").href = cloakIcon.value;
+      }
+    }
+
+    enableCloak.addEventListener("change", updateCloak);
+    cloakTitle.addEventListener("input", updateCloak);
+    cloakIcon.addEventListener("input", updateCloak);
+
+    openBlank.addEventListener("click", () => {
+      const newWin = window.open("about:blank", "_blank");
+      const doc = newWin.document;
+      doc.open();
+      doc.write(`<iframe src="https://cleverman456.github.io" style="border:none;width:100%;height:100vh;"></iframe>`);
+      doc.close();
     });
   </script>
 </body>
