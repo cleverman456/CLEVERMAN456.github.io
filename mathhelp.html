@@ -30,11 +30,7 @@
 <body>
 <canvas id="stars"></canvas>
 
-<div class="nav-bar">
-  <button onclick="showTab('games')">Games</button>
-  <button onclick="showTab('apps')">Apps</button>
-  <button onclick="showTab('other')">Other</button>
-</div>
+
 
 <div class="top-bar">
   <input type="text" id="searchInput" class="search-bar" placeholder="Search for an app...">
@@ -56,11 +52,6 @@ function applyTheme(theme){
   localStorage.setItem("theme", theme);
 }
 
-function showTab(tab){
-  if(tab==='games') window.location.href='classto0ls.html';
-  if(tab==='apps') window.location.href='mathhelp.html';
-  if(tab==='other') window.location.href='learningtips.html';
-}
 
 function openApp(tool){
   window.location.href=`classtools.html?tool=${tool}`;
