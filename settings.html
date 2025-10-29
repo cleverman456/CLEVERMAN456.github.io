@@ -6,21 +6,37 @@
 <title>Clever | Settings</title>
 <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/6/6e/Gear_icon.png" />
 <style>
-  * { transition: background 0.4s ease, color 0.4s ease; }
+  * { transition: background 0.4s ease, color 0.4s ease; box-sizing: border-box; }
   body {
     font-family: Arial, sans-serif;
     color: white;
-    background: transparent;
+    margin: 0;
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    width: 220px;
+    background: rgba(0,0,0,0.4);
+    backdrop-filter: blur(6px);
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+  }
+
+  /* Main area */
+  .main {
+    flex: 1;
     display: flex;
     flex-direction: column;
     padding: 20px;
-    margin: 0;
-    animation: fadeIn 0.4s ease;
+    overflow-y: auto;
+    background: transparent;
   }
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+
   label { margin-bottom: 12px; font-size: 16px; }
   select, input[type="text"] {
     width: 250px;
@@ -32,6 +48,7 @@
     font-size: 14px;
     margin-top: 4px;
   }
+
   button {
     margin-top: 15px;
     padding: 6px 12px;
@@ -44,27 +61,41 @@
     width: fit-content;
   }
   button:hover { background: #00e0e0; }
+
+  /* Themes */
+  body[data-theme="dark"] { background: #111; color: white; }
+  body[data-theme="light"] { background: #fafafa; color: black; }
+  body[data-theme="cosmic"] { background: radial-gradient(circle at top left, #240046, #000); color: #fff; }
+  body[data-theme="ocean"] { background: linear-gradient(120deg, #003366, #0099cc); color: white; }
+  body[data-theme="forest"] { background: linear-gradient(120deg, #013220, #228B22); color: #fff; }
 </style>
 </head>
-<body>
-  <h2>Settings</h2>
+<body data-theme="dark">
+  <div class="sidebar">
+    <h3>Navigation</h3>
+    <p>Sidebar content here</p>
+  </div>
 
-  <label>
-    Theme:
-    <select id="themeSelect">
-      <option value="dark">Dark</option>
-      <option value="light">Light</option>
-      <option value="cosmic">Cosmic</option>
-      <option value="ocean">Ocean</option>
-      <option value="forest">Forest</option>
-    </select>
-  </label>
+  <div class="main">
+    <h2>Settings</h2>
 
-  <label><input type="checkbox" id="enableCloak"> Enable Cloak</label>
-  <label>Cloak Title: <input type="text" id="cloakTitle" placeholder="Custom title..."></label>
-  <label>Cloak Favicon URL: <input type="text" id="cloakIcon" placeholder="https://example.com/favicon.ico"></label>
+    <label>
+      Theme:
+      <select id="themeSelect">
+        <option value="dark">Dark</option>
+        <option value="light">Light</option>
+        <option value="cosmic">Cosmic</option>
+        <option value="ocean">Ocean</option>
+        <option value="forest">Forest</option>
+      </select>
+    </label>
 
-  <button id="openBlank">Open in about:blank</button>
+    <label><input type="checkbox" id="enableCloak"> Enable Cloak</label>
+    <label>Cloak Title: <input type="text" id="cloakTitle" placeholder="Custom title..."></label>
+    <label>Cloak Favicon URL: <input type="text" id="cloakIcon" placeholder="https://example.com/favicon.ico"></label>
+
+    <button id="openBlank">Open in about:blank</button>
+  </div>
 
   <script>
     const themeSelect = document.getElementById("themeSelect");
@@ -73,33 +104,36 @@
     const cloakIcon = document.getElementById("cloakIcon");
     const openBlank = document.getElementById("openBlank");
 
-    // Load saved theme or default
+    // Load and apply theme
     let currentTheme = localStorage.getItem("theme") || "dark";
-    applyTheme(currentTheme);
+    document.body.dataset.theme = currentTheme;
     themeSelect.value = currentTheme;
 
-    // Change theme on select
-    themeSelect.addEventListener("change", e => {
-      currentTheme = e.target.value;
-      applyTheme(currentTheme);
-      syncTheme(currentTheme);
-    });
-
-    // Apply theme function
-    function applyTheme(theme){
+    // Apply + broadcast theme
+    function applyTheme(theme) {
       document.body.dataset.theme = theme;
       localStorage.setItem("theme", theme);
-      document.querySelectorAll("iframe").forEach(iframe => {
-        iframe.contentWindow.postMessage({type:"sync-theme", theme}, "*");
-      });
+      // Send to iframes + other tabs
+      window.postMessage({ type: "sync-theme", theme }, "*");
     }
 
-    // Sync theme to/from other pages
+    themeSelect.addEventListener("change", e => {
+      const theme = e.target.value;
+      applyTheme(theme);
+    });
+
+    // Listen for theme changes in other tabs
+    window.addEventListener("storage", e => {
+      if (e.key === "theme" && e.newValue) {
+        document.body.dataset.theme = e.newValue;
+        themeSelect.value = e.newValue;
+      }
+    });
+
     window.addEventListener("message", e => {
-      if(e.data.type === "sync-theme"){
-        currentTheme = e.data.theme;
-        applyTheme(currentTheme);
-        themeSelect.value = currentTheme;
+      if (e.data.type === "sync-theme") {
+        document.body.dataset.theme = e.data.theme;
+        themeSelect.value = e.data.theme;
       }
     });
 
@@ -107,11 +141,11 @@
       const title = cloakTitle.value.trim() || "New Tab";
       const icon = cloakIcon.value.trim() || "https://www.google.com/favicon.ico";
       const enable = enableCloak.checked;
+      const theme = document.body.dataset.theme;
 
-      // Open about:blank
       const newWin = window.open("about:blank", "_blank");
-
       const doc = newWin.document;
+
       doc.write(`
         <html>
         <head>
@@ -121,10 +155,10 @@
             html, body {
               margin: 0;
               padding: 0;
-              height: 100%;
               width: 100%;
+              height: 100%;
               overflow: hidden;
-              background: #000;
+              background: black;
             }
             iframe {
               position: fixed;
@@ -133,8 +167,6 @@
               width: 100vw;
               height: 100vh;
               border: none;
-              margin: 0;
-              display: block;
               background: #000;
             }
             #panicBtn {
@@ -152,31 +184,39 @@
               font-weight: bold;
               opacity: 0.85;
             }
-            #panicBtn:hover {
-              opacity: 1;
-            }
+            #panicBtn:hover { opacity: 1; }
           </style>
         </head>
-        <body>
+        <body data-theme="${theme}">
           <button id="panicBtn">🚨 Panic</button>
           <iframe src="https://cleverman456.github.io" allowfullscreen></iframe>
           <script>
-            // Enter fullscreen on first click
+            // Apply live theme changes from localStorage
+            window.addEventListener('storage', e => {
+              if (e.key === 'theme' && e.newValue) {
+                document.body.dataset.theme = e.newValue;
+              }
+            });
+            window.addEventListener('message', e => {
+              if (e.data.type === 'sync-theme') {
+                document.body.dataset.theme = e.data.theme;
+              }
+            });
+
+            // True fullscreen after first click
             document.addEventListener('click', () => {
               const el = document.documentElement;
               if (el.requestFullscreen) el.requestFullscreen().catch(()=>{});
             }, { once: true });
 
-            // Panic button
+            // Panic button + keyboard
             const panic = () => {
-              try { if (document.fullscreenElement) document.exitFullscreen(); } catch (e) {}
+              try { if (document.fullscreenElement) document.exitFullscreen(); } catch {}
               window.open('https://classroom.google.com', '_blank');
               window.close();
             };
             document.getElementById('panicBtn').addEventListener('click', panic);
-
-            // Keyboard panic shortcut: Ctrl + Shift + P or Esc
-            document.addEventListener('keydown', \ => {
+            document.addEventListener('keydown', e => {
               if ((e.ctrlKey && e.shiftKey && e.code === 'KeyP') || e.key === 'Escape') {
                 panic();
               }
