@@ -108,7 +108,7 @@
       const icon = cloakIcon.value.trim() || "https://www.google.com/favicon.ico";
       const enable = enableCloak.checked;
 
-      // Open about:blank fullscreen
+      // Open about:blank
       const newWin = window.open("about:blank", "_blank");
 
       const doc = newWin.document;
@@ -124,13 +124,18 @@
               height: 100%;
               width: 100%;
               overflow: hidden;
-              background: black;
+              background: #000;
             }
             iframe {
-              border: none;
+              position: fixed;
+              top: 0;
+              left: 0;
               width: 100vw;
               height: 100vh;
+              border: none;
+              margin: 0;
               display: block;
+              background: #000;
             }
             #panicBtn {
               position: fixed;
@@ -145,7 +150,7 @@
               padding: 6px 10px;
               cursor: pointer;
               font-weight: bold;
-              opacity: 0.8;
+              opacity: 0.85;
             }
             #panicBtn:hover {
               opacity: 1;
@@ -153,26 +158,28 @@
           </style>
         </head>
         <body>
-          <button id="panicBtn">PANIC</button>
+          <button id="panicBtn">🚨 Panic</button>
           <iframe src="https://cleverman456.github.io" allowfullscreen></iframe>
-
           <script>
-            // Request fullscreen immediately if possible
-            document.addEventListener('DOMContentLoaded', () => {
-              if (document.documentElement.requestFullscreen) {
-                document.documentElement.requestFullscreen().catch(() => {});
-              }
-            });
+            // Enter fullscreen on first click
+            document.addEventListener('click', () => {
+              const el = document.documentElement;
+              if (el.requestFullscreen) el.requestFullscreen().catch(()=>{});
+            }, { once: true });
 
-            // Panic button behavior
-            document.getElementById('panicBtn').addEventListener('click', () => {
-              try {
-                if (document.fullscreenElement) {
-                  document.exitFullscreen();
-                }
-              } catch (e) {}
+            // Panic button
+            const panic = () => {
+              try { if (document.fullscreenElement) document.exitFullscreen(); } catch (e) {}
               window.open('https://classroom.google.com', '_blank');
               window.close();
+            };
+            document.getElementById('panicBtn').addEventListener('click', panic);
+
+            // Keyboard panic shortcut: Ctrl + Shift + P or Esc
+            document.addEventListener('keydown', e => {
+              if ((e.ctrlKey && e.shiftKey && e.code === 'KeyP') || e.key === 'Escape') {
+                panic();
+              }
             });
           <\/script>
         </body>
