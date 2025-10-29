@@ -73,8 +73,6 @@
     const cloakIcon = document.getElementById("cloakIcon");
     const openBlank = document.getElementById("openBlank");
 
-    const themes = ["dark","light","cosmic","ocean","forest"];
-
     // Load saved theme or default
     let currentTheme = localStorage.getItem("theme") || "dark";
     applyTheme(currentTheme);
@@ -91,7 +89,6 @@
     function applyTheme(theme){
       document.body.dataset.theme = theme;
       localStorage.setItem("theme", theme);
-      // Also update other pages in same window
       document.querySelectorAll("iframe").forEach(iframe => {
         iframe.contentWindow.postMessage({type:"sync-theme", theme}, "*");
       });
@@ -106,23 +103,82 @@
       }
     });
 
-    // Cloak
-    function updateCloak() {
-      if(enableCloak.checked){
-        if(cloakTitle.value) window.parent.document.title = cloakTitle.value;
-        if(cloakIcon.value)
-          window.parent.document.querySelector("link[rel='icon']").href = cloakIcon.value;
-      }
-    }
-
-    enableCloak.addEventListener("change", updateCloak);
-    cloakTitle.addEventListener("input", updateCloak);
-    cloakIcon.addEventListener("input", updateCloak);
-
     openBlank.addEventListener("click", () => {
+      const title = cloakTitle.value.trim() || "New Tab";
+      const icon = cloakIcon.value.trim() || "https://www.google.com/favicon.ico";
+      const enable = enableCloak.checked;
+
+      // Open about:blank fullscreen
       const newWin = window.open("about:blank", "_blank");
-      newWin.document.write(`<iframe src="https://cleverman456.github.io" style="border:none;width:100%;height:100vh;"></iframe>`);
-      newWin.document.close();
+
+      const doc = newWin.document;
+      doc.write(`
+        <html>
+        <head>
+          <title>${enable ? title : "Clever Portal"}</title>
+          <link rel="icon" href="${enable ? icon : "https://upload.wikimedia.org/wikipedia/commons/6/6e/Gear_icon.png"}">
+          <style>
+            html, body {
+              margin: 0;
+              padding: 0;
+              height: 100%;
+              width: 100%;
+              overflow: hidden;
+              background: black;
+            }
+            iframe {
+              border: none;
+              width: 100vw;
+              height: 100vh;
+              display: block;
+            }
+            #panicBtn {
+              position: fixed;
+              top: 10px;
+              right: 10px;
+              z-index: 9999;
+              background: red;
+              color: white;
+              border: none;
+              border-radius: 6px;
+              font-size: 14px;
+              padding: 6px 10px;
+              cursor: pointer;
+              font-weight: bold;
+              opacity: 0.8;
+            }
+            #panicBtn:hover {
+              opacity: 1;
+            }
+          </style>
+        </head>
+        <body>
+          <button id="panicBtn">PANIC</button>
+          <iframe src="https://cleverman456.github.io" allowfullscreen></iframe>
+
+          <script>
+            // Request fullscreen immediately if possible
+            document.addEventListener('DOMContentLoaded', () => {
+              if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen().catch(() => {});
+              }
+            });
+
+            // Panic button behavior
+            document.getElementById('panicBtn').addEventListener('click', () => {
+              try {
+                if (document.fullscreenElement) {
+                  document.exitFullscreen();
+                }
+              } catch (e) {}
+              window.open('https://classroom.google.com', '_blank');
+              window.close();
+            });
+          <\/script>
+        </body>
+        </html>
+      `);
+      doc.close();
     });
   </script>
 </body>
