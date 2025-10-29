@@ -176,7 +176,7 @@
             document.getElementById('panicBtn').addEventListener('click', panic);
 
             // Keyboard panic shortcut: Ctrl + Shift + P or Esc
-            document.addEventListener('keydown', e => {
+            document.addEventListener('keydown', \ => {
               if ((e.ctrlKey && e.shiftKey && e.code === 'KeyP') || e.key === 'Escape') {
                 panic();
               }
