@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard</title>
+  <link rel="icon" href="https://cdn.leonardo.ai/users/96b07389-91a8-4090-82e1-bceb6ff0ce60/generations/42953288-7ed4-48c3-a526-e9214ac5ec43/segments/2:4:1/Lucid_Origin_Design_a_futuristic_3D_abstract_logo_for_Clever_a_1.jpg">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      font-family: "Segoe UI", Arial, sans-serif;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 70px;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 20px;
+      gap: 25px;
+      z-index: 10;
+      backdrop-filter: blur(10px);
+    }
+
+    .sidebar button {
+      width: 50px;
+      height: 50px;
+      border-radius: 10px;
+      border: none;
+      background: rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: 0.3s;
+      color: white;
+      font-size: 24px;
+      box-shadow: 0 0 5px rgba(255, 255, 255, 0.4);
+    }
+
+    .sidebar button:hover {
+      background: rgba(255, 255, 255, 0.3);
+      box-shadow: 0 0 15px cyan;
+      transform: scale(1.1);
+    }
+
+    iframe {
+      position: absolute;
+      left: 70px;
+      top: 0;
+      width: calc(100% - 70px);
+      height: 100%;
+      border: none;
+      background: transparent;
+      z-index: 5;
+    }
+
+    img.icon {
+      width: 25px;
+      height: 25px;
+      filter: brightness(100);
+    }
+
+    /* THEME COLORS */
+    body.theme-dark { background: #0d0d0d; color: white; }
+    body.theme-light { background: #f4f4f4; color: #222; }
+    body.theme-cosmic { background: linear-gradient(180deg, #0b0c2c, #1a1a40); color: white; }
+    body.theme-ocean { background: linear-gradient(180deg, #003366, #0099cc); color: white; }
+    body.theme-forest { background: linear-gradient(180deg, #0b3d0b, #228b22); color: white; }
+
+    .fade { animation: fadeTheme 0.4s ease; }
+    @keyframes fadeTheme { from { opacity: 0.6; } to { opacity: 1; } }
+  </style>
+</head>
+<body class="theme-dark">
+  <canvas id="starCanvas"></canvas>
+
+  <div class="sidebar">
+    <button id="btn-games" title="Games">🎮</button>
+    <button id="btn-apps" title="Apps"><img src="https://ssl.gstatic.com/gb/images/bar/al-icon.png" class="icon" /></button>
+    <button id="btn-web" title="Web">🌐</button>
+    <button id="btn-settings" title="Settings">⚙️</button>
+  </div>
+
+  <iframe id="contentFrame" src="about:blank"></iframe>
+
+  <script>
+    const iframe = document.getElementById("contentFrame");
+
+    // Restore theme
+    const savedTheme = localStorage.getItem("theme") || "dark";
+    document.body.className = `theme-${savedTheme}`;
+
+    function applyTheme(theme) {
+      document.body.className = "";
+      document.body.classList.add(`theme-${theme}`, "fade");
+      localStorage.setItem("theme", theme);
+      iframe.contentWindow?.postMessage({ type: "sync-theme", theme }, "*");
+      setTimeout(() => document.body.classList.remove("fade"), 400);
+    }
+
+    // Sidebar navigation
+    document.getElementById("btn-games").addEventListener("click", ()=>iframe.src="classto0ls.html");
+    document.getElementById("btn-apps").addEventListener("click", ()=>iframe.src="mathhelp.html");
+    document.getElementById("btn-web").addEventListener("click", ()=>iframe.src="https://video-editing.atamanco.eu/search.html");
+    document.getElementById("btn-settings").addEventListener("click", ()=>iframe.src="settings.html");
+
+    // Listen for theme changes from iframe
+    window.addEventListener("message", (event)=>{
+      if(event.data.type==="change-theme") applyTheme(event.data.value);
+    });
+
+    iframe.addEventListener("load", ()=>{
+      iframe.contentWindow?.postMessage({ type: "sync-theme", theme: savedTheme }, "*");
+    });
+
+    // ---- Starfield Animation ----
+    const canvas = document.getElementById("starCanvas");
+    const ctx = canvas.getContext("2d");
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    const colors = ["#ffffff", "#aadbff", "#fff2b3"];
+    const stars = [];
+    for (let i = 0; i < 200; i++) {
+      stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        radius: Math.random() * 2 + 0.5,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        dx: (Math.random() - 0.5) * 0.8,
+        dy: Math.random() * 1 + 0.4,
+        alpha: Math.random(),
+        fadeSpeed: Math.random() * 0.02 + 0.005
+      });
+    }
+
+    function animateStars() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (const star of stars) {
+        star.alpha += star.fadeSpeed;
+        if (star.alpha <= 0 || star.alpha >= 1) star.fadeSpeed *= -1;
+        ctx.globalAlpha = star.alpha;
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+        ctx.fillStyle = star.color;
+        ctx.shadowColor = star.color;
+        ctx.shadowBlur = 10;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+        star.x += star.dx;
+        star.y += star.dy;
+        if (star.y > canvas.height || star.x < -10 || star.x > canvas.width + 10) {
+          star.x = Math.random() * canvas.width;
+          star.y = -5;
+        }
+      }
+      requestAnimationFrame(animateStars);
+    }
+    animateStars();
+  </script>
+</body>
+</html>
